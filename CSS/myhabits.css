@@ -1,0 +1,47 @@
+body{
+font-family: Roboto,arial;
+display: flex;
+background-color: #0f172a;
+color: #f1f5f9;
+}
+.habit-categories {
+margin-top: 30px;
+}
+
+.category-grid {
+display: grid;
+grid-template-columns: repeat(4, 1fr);
+gap: 15px;
+margin-top: 15px;
+}
+
+.category {
+padding: 16px;
+border-radius: 10px;
+background: #1e293b;
+color: white;
+border: none;
+cursor: pointer;
+}
+
+.category:hover {
+background: #334155;
+}
+
+.habit-list {
+margin-top: 40px;
+}
+
+.habit-item {
+background: #1e293b;
+padding: 12px;
+border-radius: 10px;
+margin-bottom: 10px;
+color: white;
+}
+
+.add-habit {
+text-align: center;
+cursor: pointer;
+background: #0ea5e9;
+}
