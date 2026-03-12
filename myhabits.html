@@ -74,6 +74,42 @@ Read 20 Pages
 </div>
 
 </div>
+<script>
+    const categoryGrid = document.querySelector(".category-grid");
+    const addCategoryBtn = document.querySelector(".category.add");
+
+    const addHabitBtn = document.querySelector(".habit-item.add-habit");
+    const habitList = document.querySelector(".habit-list");
+
+    // Add new category
+    addCategoryBtn.addEventListener("click", function () {
+        const categoryName = prompt("Enter new category name:");
+
+        if (categoryName && categoryName.trim() !== "") {
+            const newCategory = document.createElement("button");
+            newCategory.classList.add("category");
+            newCategory.textContent = categoryName;
+
+            categoryGrid.insertBefore(newCategory, addCategoryBtn);
+        }
+    });
+
+    // Add new habit
+    addHabitBtn.addEventListener("click", function () {
+        const habitName = prompt("Enter new habit name:");
+
+        if (habitName && habitName.trim() !== "") {
+            const newHabit = document.createElement("div");
+            newHabit.classList.add("habit-item");
+
+            newHabit.innerHTML = `
+                <label><input type="checkbox"> ${habitName}</label>
+            `;
+
+            habitList.insertBefore(newHabit, addHabitBtn);
+        }
+    });
+</script>
 
 </body>
 </html>

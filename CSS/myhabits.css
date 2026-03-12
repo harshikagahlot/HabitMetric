@@ -80,10 +80,12 @@ padding: 12px;
 border-radius: 10px;
 margin-bottom: 10px;
 color: white;
+width:fit-content;
 }
 
 .add-habit {
 text-align: center;
+width:fit-content;
 cursor: pointer;
 background: #0ea5e9;
 }
@@ -138,11 +140,11 @@ background: #0ea5e9;
     }
 
     .habit-item {
-        width: 100%;
+        width:fit-content;
         padding: 14px;
     }
 
     .add-habit {
-        width: 100%;
+        width: fit-content;
     }
 }
