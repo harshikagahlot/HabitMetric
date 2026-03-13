@@ -12,10 +12,10 @@
 
 <body>
 <div class="sidebar">
-        <h1>My Habits</h1>
+        <h2>🧠 HabitMetric</h2>
         <ul>
-            <li class="active">Dashboard</li>
-            <li><a href="myhabits.html">My Habits</a></li>
+            <li><a href="habitmetric.html">Dashboard</a></li>
+            <li class="active"><a href="myhabits.html">My Habits</a></li>
             <li>Analytics</li>
             <li>Risk Insights</li>
             <li>Settings</li>
@@ -23,6 +23,7 @@
 </div>    
 
 <div class="main">
+<h1>My Habits</h1>    
 
 <div class="habit-categories">
 
@@ -81,6 +82,24 @@ Read 20 Pages
     const addHabitBtn = document.querySelector(".habit-item.add-habit");
     const habitList = document.querySelector(".habit-list");
 
+     // Load saved categories
+    const savedCategories = JSON.parse(localStorage.getItem("categories")) || [];
+    savedCategories.forEach(function(categoryName) {
+        const newCategory = document.createElement("button");
+        newCategory.classList.add("category");
+        newCategory.textContent = categoryName;
+        categoryGrid.insertBefore(newCategory, addCategoryBtn);
+    });
+
+    // Load saved habits
+    const savedHabits = JSON.parse(localStorage.getItem("habits")) || [];
+    savedHabits.forEach(function(habitName) {
+        const newHabit = document.createElement("div");
+        newHabit.classList.add("habit-item");
+        newHabit.innerHTML = `<label><input type="checkbox"> ${habitName}</label>`;
+        habitList.insertBefore(newHabit, addHabitBtn);
+    });
+
     // Add new category
     addCategoryBtn.addEventListener("click", function () {
         const categoryName = prompt("Enter new category name:");
@@ -91,6 +110,8 @@ Read 20 Pages
             newCategory.textContent = categoryName;
 
             categoryGrid.insertBefore(newCategory, addCategoryBtn);
+            savedCategories.push(categoryName);
+            localStorage.setItem("categories", JSON.stringify(savedCategories));
         }
     });
 
@@ -107,6 +128,8 @@ Read 20 Pages
             `;
 
             habitList.insertBefore(newHabit, addHabitBtn);
+            savedHabits.push(habitName);
+            localStorage.setItem("habits", JSON.stringify(savedHabits));
         }
     });
 </script>

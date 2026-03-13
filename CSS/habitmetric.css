@@ -2,14 +2,13 @@
     margin: 0;
     padding: 0;
     box-sizing: border-box;
-    font-family: 'Segoe UI', sans-serif;
 }
 
 body {
     display: flex;
     background-color: #0f172a;
     color: #f1f5f9;
-     font-family: Roboto,arial;
+    font-family: Roboto,Arial,sans-serif;
 }
 
 /* Sidebar */
@@ -48,6 +47,9 @@ body {
 .sidebar ul li a:hover{
     color:#38bdf8;
 }
+.sidebar ul li.active a {
+    color: #38bdf8;
+}
 /* Main Section */
 .main {
     flex: 1;
@@ -75,7 +77,6 @@ body {
 .cards {
     display: flex;
     gap: 20px;
-    grid-template-columns: repeat(3,50px);
     margin-bottom: 30px;
 }
 
@@ -151,7 +152,7 @@ body {
 .day:hover {
     transform: scale(1.08);
 }
-.month-year {
+#monthYear {
     margin-left: 2px;
     margin-right: 2px;
 }

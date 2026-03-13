@@ -8,7 +8,7 @@ h1{
     color: #38bdf8;
 }
 .main{
-flex:1px;
+flex:1;
 padding:40px 50px;
 }
 .sidebar {
@@ -45,6 +45,9 @@ padding:40px 50px;
 }
 .sidebar ul li a:hover{
     color:#38bdf8;
+}
+.sidebar ul li.active a {
+    color: #38bdf8;
 }
 .habit-categories {
 margin-top: 30px;
