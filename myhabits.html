@@ -93,10 +93,19 @@ Read 20 Pages
 
     // Load saved habits
     const savedHabits = JSON.parse(localStorage.getItem("habits")) || [];
-    savedHabits.forEach(function(habitName) {
+    savedHabits.forEach(function(habit, index) {
         const newHabit = document.createElement("div");
         newHabit.classList.add("habit-item");
-        newHabit.innerHTML = `<label><input type="checkbox"> ${habitName}</label>`;
+        newHabit.innerHTML = `<label>
+             <input type="checkbox" ${habit.completed ? "checked" : ""}>
+            ${habit.name}
+            </label>`;
+        const checkbox = newHabit.querySelector("input");
+        checkbox.addEventListener("change", function () {
+            savedHabits[index].completed = checkbox.checked;
+            localStorage.setItem("habits", JSON.stringify(savedHabits));
+        });
+
         habitList.insertBefore(newHabit, addHabitBtn);
     });
 
@@ -120,16 +129,33 @@ Read 20 Pages
         const habitName = prompt("Enter new habit name:");
 
         if (habitName && habitName.trim() !== "") {
+            const cleanHabitName = habitName.trim();
+
+            const habitObject = {
+              name: cleanHabitName,
+              completed: false
+        };
+
+        savedHabits.push(habitObject);
+        localStorage.setItem("habits", JSON.stringify(savedHabits));
             const newHabit = document.createElement("div");
             newHabit.classList.add("habit-item");
 
             newHabit.innerHTML = `
-                <label><input type="checkbox"> ${habitName}</label>
+                <label>
+                    <input type="checkbox"> ${habitObject.name}
+                </label>
             `;
 
-            habitList.insertBefore(newHabit, addHabitBtn);
-            savedHabits.push(habitName);
-            localStorage.setItem("habits", JSON.stringify(savedHabits));
+            const checkbox = newHabit.querySelector("input");
+
+           checkbox.addEventListener("change", function () {
+              const habitIndex = savedHabits.length - 1;
+              savedHabits[habitIndex].completed = checkbox.checked;
+              localStorage.setItem("habits", JSON.stringify(savedHabits));
+        });
+
+        habitList.insertBefore(newHabit, addHabitBtn);
         }
     });
 </script>
