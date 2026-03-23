@@ -43,31 +43,6 @@
 
 </div>
 
-<div class="habit-list">
-
-<h2>Habits</h2>
-
-<div class="habit-item">
-<label>
-<input type="checkbox">
-Morning Run
-</label>
-</div>
-
-<div class="habit-item">
-<label>
-<input type="checkbox">
-Drink 2L Water
-</label>
-</div>
-
-<div class="habit-item">
-<label>
-<input type="checkbox">
-Read 20 Pages
-</label>
-</div>
-
 <div class="habit-item add-habit">
 + Add New Habit
 </div>
@@ -92,7 +67,17 @@ Read 20 Pages
     });
 
     // Load saved habits
-    const savedHabits = JSON.parse(localStorage.getItem("habits")) || [];
+    let savedHabits = JSON.parse(localStorage.getItem("habits"));
+
+   if (!savedHabits) {
+    savedHabits = [
+        { name: "Morning Run", completed: false },
+        { name: "Drink 2L Water", completed: false },
+        { name: "Read 20 Pages", completed: false }
+    ];
+
+    localStorage.setItem("habits", JSON.stringify(savedHabits));
+}
     savedHabits.forEach(function(habit, index) {
         const newHabit = document.createElement("div");
         newHabit.classList.add("habit-item");
