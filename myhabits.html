@@ -1,149 +1,63 @@
 <!DOCTYPE html>
 <html lang="en">
 <head>
-<meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
-<title>My Habits - HabitMetric</title>
-<link rel="stylesheet" href="CSS/myhabits.css">
-<link rel="preconnect" href="https://fonts.googleapis.com"> 
-<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin> 
-<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet"> 
-</head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="HabitMetric — Manage and track your daily habits. Add, complete, and organize habits by category.">
+    <title>My Habits — HabitMetric</title>
 
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Styles: base first, then page-specific -->
+    <link rel="stylesheet" href="CSS/base.css">
+    <link rel="stylesheet" href="CSS/myhabits.css">
+</head>
 <body>
-<div class="sidebar">
+
+    <!-- Sidebar -->
+    <div class="sidebar">
         <h2>🧠 HabitMetric</h2>
         <ul>
-            <li><a href="habitmetric.html">Dashboard</a></li>
-            <li class="active"><a href="myhabits.html">My Habits</a></li>
-            <li>Analytics</li>
-            <li>Risk Insights</li>
-            <li>Settings</li>
+            <li><a href="index.html">Dashboard</a></li>
+            <li><a href="myhabits.html">My Habits</a></li>
+            <li><a href="analytics.html">Analytics</a></li>
+            <li><a href="risk-insights.html">Risk Insights</a></li>
+            <li><a href="settings.html">Settings</a></li>
         </ul>
-</div>    
+    </div>
 
-<div class="main">
-<h1>My Habits</h1>    
+    <!-- Main Content -->
+    <div class="main">
 
-<div class="habit-categories">
+        <h1>My Habits</h1>
 
-<h2>Choose Habit Category</h2>
+        <!-- Category Selector -->
+        <div class="habit-categories">
+            <h2>Choose Habit Category</h2>
+            <div class="category-grid">
+                <button class="category">🏃 Fitness</button>
+                <button class="category">📚 Study</button>
+                <button class="category">🧠 Mindfulness</button>
+                <button class="category">💧 Health</button>
+                <button class="category">💻 Productivity</button>
+                <!-- This button MUST stay last — JS inserts new categories before it -->
+                <button class="category add">+ Add Category</button>
+            </div>
+        </div>
 
-<div class="category-grid">
+        <!-- Habit List — populated by myhabits.js -->
+        <div class="habit-list"></div>
 
-<button class="category">🏃 Fitness</button>
-<button class="category">📚 Study</button>
-<button class="category">🧠 Mindfulness</button>
-<button class="category">💧 Health</button>
-<button class="category">💻 Productivity</button>
+        <!-- Add Habit — changed from <div> to <button> for accessibility -->
+        <button id="add-habit-btn">+ Add New Habit</button>
 
-<button class="category add">+ Add Category</button>
+    </div>
 
-</div>
-
-</div>
-
-<div class="habit-item add-habit">
-+ Add New Habit
-</div>
-
-</div>
-
-</div>
-<script>
-    const categoryGrid = document.querySelector(".category-grid");
-    const addCategoryBtn = document.querySelector(".category.add");
-
-    const addHabitBtn = document.querySelector(".habit-item.add-habit");
-    const habitList = document.querySelector(".habit-list");
-
-     // Load saved categories
-    const savedCategories = JSON.parse(localStorage.getItem("categories")) || [];
-    savedCategories.forEach(function(categoryName) {
-        const newCategory = document.createElement("button");
-        newCategory.classList.add("category");
-        newCategory.textContent = categoryName;
-        categoryGrid.insertBefore(newCategory, addCategoryBtn);
-    });
-
-    // Load saved habits
-    let savedHabits = JSON.parse(localStorage.getItem("habits"));
-
-   if (!savedHabits) {
-    savedHabits = [
-        { name: "Morning Run", completed: false },
-        { name: "Drink 2L Water", completed: false },
-        { name: "Read 20 Pages", completed: false }
-    ];
-
-    localStorage.setItem("habits", JSON.stringify(savedHabits));
-}
-    savedHabits.forEach(function(habit, index) {
-        const newHabit = document.createElement("div");
-        newHabit.classList.add("habit-item");
-        newHabit.innerHTML = `<label>
-             <input type="checkbox" ${habit.completed ? "checked" : ""}>
-            ${habit.name}
-            </label>`;
-        const checkbox = newHabit.querySelector("input");
-        checkbox.addEventListener("change", function () {
-            savedHabits[index].completed = checkbox.checked;
-            localStorage.setItem("habits", JSON.stringify(savedHabits));
-        });
-
-        habitList.insertBefore(newHabit, addHabitBtn);
-    });
-
-    // Add new category
-    addCategoryBtn.addEventListener("click", function () {
-        const categoryName = prompt("Enter new category name:");
-
-        if (categoryName && categoryName.trim() !== "") {
-            const newCategory = document.createElement("button");
-            newCategory.classList.add("category");
-            newCategory.textContent = categoryName;
-
-            categoryGrid.insertBefore(newCategory, addCategoryBtn);
-            savedCategories.push(categoryName);
-            localStorage.setItem("categories", JSON.stringify(savedCategories));
-        }
-    });
-
-    // Add new habit
-    addHabitBtn.addEventListener("click", function () {
-        const habitName = prompt("Enter new habit name:");
-
-        if (habitName && habitName.trim() !== "") {
-            const cleanHabitName = habitName.trim();
-
-            const habitObject = {
-              name: cleanHabitName,
-              completed: false
-        };
-
-        savedHabits.push(habitObject);
-        localStorage.setItem("habits", JSON.stringify(savedHabits));
-            const newHabit = document.createElement("div");
-            newHabit.classList.add("habit-item");
-
-            newHabit.innerHTML = `
-                <label>
-                    <input type="checkbox"> ${habitObject.name}
-                </label>
-            `;
-
-            const checkbox = newHabit.querySelector("input");
-
-           checkbox.addEventListener("change", function () {
-              const habitIndex = savedHabits.length - 1;
-              savedHabits[habitIndex].completed = checkbox.checked;
-              localStorage.setItem("habits", JSON.stringify(savedHabits));
-        });
-
-        habitList.insertBefore(newHabit, addHabitBtn);
-        }
-    });
-</script>
-
+    <!-- Scripts: shared logic first, then page-specific -->
+    <script src="JS/app.js"></script>
+    <script src="JS/myhabits.js"></script>
 </body>
 </html>

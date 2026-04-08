@@ -1,0 +1,80 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="description" content="HabitMetric — Your Adaptive Habit Intelligence Dashboard. Track streaks, consistency scores, and smart daily insights.">
+    <title>Dashboard — HabitMetric</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
+
+    <!-- Styles: base first, then page-specific -->
+    <link rel="stylesheet" href="CSS/base.css">
+    <link rel="stylesheet" href="CSS/habitmetric.css">
+</head>
+<body>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>🧠 HabitMetric</h2>
+        <ul>
+            <li><a href="index.html">Dashboard</a></li>
+            <li><a href="myhabits.html">My Habits</a></li>
+            <li><a href="analytics.html">Analytics</a></li>
+            <li><a href="risk-insights.html">Risk Insights</a></li>
+            <li><a href="settings.html">Settings</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+
+        <div class="header">
+            <!-- id="greeting" is updated dynamically by app.js -->
+            <h1 id="greeting">Good Evening, Jiyuu 👋</h1>
+            <div class="profile" id="user-avatar">JD</div>
+        </div>
+
+        <div class="cards">
+            <div class="card">
+                <h3>Current Streak</h3>
+                <p class="big">12 Days</p>
+            </div>
+
+            <div class="card warning">
+                <h3>Drop Risk</h3>
+                <p class="big">Medium</p>
+                <small>Day 8–10 historically risky</small>
+            </div>
+
+            <div class="card">
+                <h3>Consistency Score</h3>
+                <p class="big">78%</p>
+            </div>
+        </div>
+
+        <div class="calendar-wrapper">
+            <div class="calendar-header">
+                <button id="prevMonth">←</button>
+                <h2 id="monthYear"></h2>
+                <button id="nextMonth">→</button>
+            </div>
+            <div class="calendar" id="calendar"></div>
+        </div>
+
+        <div class="insight">
+            <h2>Smart Insight</h2>
+            <p>You tend to miss habits after 2 low-energy days.
+               Consider switching to "Light Mode" tomorrow.</p>
+        </div>
+
+    </div>
+
+    <!-- Scripts: shared logic first, then page-specific -->
+    <script src="JS/app.js"></script>
+    <script src="JS/dashboard.js"></script>
+</body>
+</html>
