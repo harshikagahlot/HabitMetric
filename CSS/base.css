@@ -1,0 +1,130 @@
+/* ==========================================
+   HabitMetric — Base Styles
+   Shared across ALL pages
+   ========================================== */
+
+/* ---- 1. Reset ---- */
+*, *::before, *::after {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+/* ---- 2. Design Tokens (CSS Variables) ---- */
+:root {
+    /* Backgrounds */
+    --bg-dark:        #0f172a;
+    --bg-card:        #1e293b;
+    --bg-hover:       #334155;
+    --bg-hover-2:     #475569;
+
+    /* Accent */
+    --accent:         #38bdf8;
+    --accent-dark:    #0ea5e9;
+
+    /* Text */
+    --text-light:     #f1f5f9;
+    --text-muted:     #94a3b8;
+    --text-dark:      #0f172a;
+
+    /* Semantic */
+    --warning:        #facc15;
+    --success-low:    #bbf7d0;
+    --success-mid:    #22c55e;
+    --success-high:   #15803d;
+
+    /* Radii */
+    --radius-sm:      8px;
+    --radius-md:      12px;
+    --radius-lg:      16px;
+
+    /* Transitions */
+    --transition:     0.2s ease;
+}
+
+/* ---- 3. Base Body ---- */
+body {
+    display: flex;
+    background-color: var(--bg-dark);
+    color: var(--text-light);
+    font-family: 'Roboto', Arial, sans-serif;
+    min-height: 100vh;
+}
+
+/* ---- 4. Sidebar ---- */
+.sidebar {
+    width: 220px;
+    height: 100vh;
+    background-color: var(--bg-card);
+    padding: 25px;
+    position: sticky;
+    top: 0;
+    flex-shrink: 0;
+}
+
+.sidebar h2 {
+    margin-bottom: 30px;
+    color: var(--accent);
+}
+
+.sidebar ul {
+    list-style: none;
+}
+
+.sidebar ul li {
+    padding: 12px 0;
+    cursor: pointer;
+    color: var(--text-muted);
+    transition: color var(--transition);
+}
+
+.sidebar ul li a {
+    text-decoration: none;
+    color: var(--text-muted);
+    transition: color var(--transition);
+}
+
+.sidebar ul li a:hover,
+.sidebar ul li.active a {
+    color: var(--accent);
+}
+
+/* ---- 5. Main Content Area ---- */
+.main {
+    flex: 1;
+    padding: 40px 50px;
+    max-width: 1100px;
+    overflow-y: auto;
+}
+
+/* ==========================================
+   Responsive — Shared
+   ========================================== */
+@media (max-width: 768px) {
+    body {
+        flex-direction: column;
+    }
+
+    .sidebar {
+        width: 100%;
+        height: auto;
+        padding: 15px 20px;
+        position: static;
+    }
+
+    .sidebar ul {
+        display: flex;
+        gap: 15px;
+        overflow-x: auto;
+        white-space: nowrap;
+        margin-top: 10px;
+    }
+
+    .sidebar ul li {
+        padding: 6px 0;
+    }
+
+    .main {
+        padding: 20px;
+    }
+}
