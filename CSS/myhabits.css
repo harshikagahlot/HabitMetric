@@ -1,130 +1,120 @@
-body{
-font-family: Roboto,arial;
-display: flex;
-background-color: #0f172a;
-color: #f1f5f9;
-}
-h1{
-    color: #38bdf8;
-}
-.main{
-flex:1;
-padding:40px 50px;
-}
-.sidebar {
-    width: 200px;
-    height: 100vh;
-    background-color: #1e293b;
-    padding: 25px;
+/* ==========================================
+   HabitMetric — My Habits Styles
+   Page-specific only. base.css handles reset,
+   variables, body, and sidebar.
+   ========================================== */
+
+/* ---- Page Title ---- */
+h1 {
+    color: var(--accent);
+    margin-bottom: 10px;
 }
 
-.sidebar h2 {
-    margin-bottom: 30px;
-    color: #38bdf8;
-}
-
-.sidebar ul {
-    list-style: none;
-}
-
-.sidebar ul li {
-    padding: 12px 0;
-    cursor: pointer;
-    color: #94a3b8;
-}
-
-.sidebar ul li.active,
-.sidebar ul li:hover {
-    color: #38bdf8;
-}
-
-.sidebar ul li a
-{
-    text-decoration: none;
-    color: #94a3b8;
-}
-.sidebar ul li a:hover{
-    color:#38bdf8;
-}
-.sidebar ul li.active a {
-    color: #38bdf8;
-}
+/* ---- Habit Categories ---- */
 .habit-categories {
-margin-top: 30px;
+    margin-top: 30px;
+}
+
+.habit-categories h2 {
+    margin-bottom: 15px;
+    color: var(--text-light);
 }
 
 .category-grid {
-display: grid;
-grid-template-columns: repeat(4, 1fr);
-gap: 15px;
-margin-top: 15px;
+    display: grid;
+    grid-template-columns: repeat(4, 1fr);
+    gap: 15px;
+    margin-top: 15px;
 }
 
 .category {
-padding: 16px;
-border-radius: 10px;
-background: #1e293b;
-color: white;
-border: none;
-cursor: pointer;
+    padding: 16px;
+    border-radius: var(--radius-sm);
+    background: var(--bg-card);
+    color: var(--text-light);
+    border: none;
+    cursor: pointer;
+    font-size: 14px;
+    font-family: inherit;
+    transition: background var(--transition);
 }
 
 .category:hover {
-background: #334155;
+    background: var(--bg-hover);
 }
 
+/* "Add Category" button gets a distinct look */
+.category.add {
+    border: 1px dashed var(--text-muted);
+    background: transparent;
+    color: var(--text-muted);
+}
+
+.category.add:hover {
+    border-color: var(--accent);
+    color: var(--accent);
+    background: transparent;
+}
+
+/* ---- Habit List ---- */
 .habit-list {
-margin-top: 40px;
+    margin-top: 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }
 
 .habit-item {
-background: #1e293b;
-padding: 12px;
-border-radius: 10px;
-margin-bottom: 10px;
-color: white;
-width:fit-content;
+    background: var(--bg-card);
+    padding: 14px 18px;
+    border-radius: var(--radius-sm);
+    color: var(--text-light);
 }
 
-.add-habit {
-text-align: center;
-width:fit-content;
-cursor: pointer;
-background: #0ea5e9;
+.habit-item label {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+    cursor: pointer;
 }
+
+.habit-item input[type="checkbox"] {
+    accent-color: var(--accent);
+    width: 16px;
+    height: 16px;
+    cursor: pointer;
+}
+
+/* ---- Add Habit Button ---- */
+#add-habit-btn {
+    display: inline-flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--accent-dark);
+    color: var(--text-light);
+    border: none;
+    padding: 12px 20px;
+    border-radius: var(--radius-sm);
+    cursor: pointer;
+    font-size: 15px;
+    font-weight: 500;
+    font-family: inherit;
+    margin-top: 16px;
+    transition: background var(--transition), transform var(--transition);
+}
+
+#add-habit-btn:hover {
+    background: var(--accent);
+    color: var(--text-dark);
+    transform: translateY(-2px);
+}
+
+/* ==========================================
+   Responsive — My Habits
+   ========================================== */
 @media (max-width: 768px) {
-    body {
-        flex-direction: column;
-    }
-
-    .sidebar {
-        width: 100%;
-        height: auto;
-        padding: 15px 20px;
-    }
-
-    .sidebar h2 {
-        margin-bottom: 15px;
-    }
-
-    .sidebar ul {
-        display: flex;
-        gap: 15px;
-        overflow-x: auto;
-        white-space: nowrap;
-        margin-top: 10px;
-    }
-
-    .sidebar ul li {
-        padding: 6px 0;
-    }
-
-    .main {
-        padding: 20px;
-    }
-
     h1 {
-        font-size: 30px;
+        font-size: 26px;
         margin-bottom: 20px;
     }
 
@@ -135,19 +125,10 @@ background: #0ea5e9;
 
     .category {
         padding: 14px;
-        font-size: 14px;
+        font-size: 13px;
     }
 
     .habit-list {
         margin-top: 30px;
-    }
-
-    .habit-item {
-        width:fit-content;
-        padding: 14px;
-    }
-
-    .add-habit {
-        width: fit-content;
     }
 }

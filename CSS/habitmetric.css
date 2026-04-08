@@ -1,63 +1,10 @@
-* {
-    margin: 0;
-    padding: 0;
-    box-sizing: border-box;
-}
+/* ==========================================
+   HabitMetric — Dashboard Styles
+   Page-specific only. base.css handles reset,
+   variables, body, and sidebar.
+   ========================================== */
 
-body {
-    display: flex;
-    background-color: #0f172a;
-    color: #f1f5f9;
-    font-family: Roboto,Arial,sans-serif;
-}
-
-/* Sidebar */
-.sidebar {
-    width: 220px;
-    height: 100vh;
-    background-color: #1e293b;
-    padding: 25px;
-}
-
-.sidebar h2 {
-    margin-bottom: 30px;
-    color: #38bdf8;
-}
-
-.sidebar ul {
-    list-style: none;
-}
-
-.sidebar ul li {
-    padding: 12px 0;
-    cursor: pointer;
-    color: #94a3b8;
-}
-
-.sidebar ul li.active,
-.sidebar ul li:hover {
-    color: #38bdf8;
-}
-
-.sidebar ul li a
-{
-    text-decoration: none;
-    color: #94a3b8;
-}
-.sidebar ul li a:hover{
-    color:#38bdf8;
-}
-.sidebar ul li.active a {
-    color: #38bdf8;
-}
-/* Main Section */
-.main {
-    flex: 1;
-    padding: 40px 50px;
-    max-width:1100px;
-}
-
-/* Header */
+/* ---- Header ---- */
 .header {
     display: flex;
     justify-content: space-between;
@@ -66,14 +13,14 @@ body {
 }
 
 .profile {
-    background: #38bdf8;
-    color: #0f172a;
+    background: var(--accent);
+    color: var(--text-dark);
     padding: 10px 15px;
     border-radius: 50%;
     font-weight: bold;
 }
 
-/* Cards */
+/* ---- Stat Cards ---- */
 .cards {
     display: flex;
     gap: 20px;
@@ -82,10 +29,10 @@ body {
 
 .card {
     flex: 1;
-    background: #1e293b;
+    background: var(--bg-card);
     padding: 20px;
-    border-radius: 12px;
-    transition: 0.3s;
+    border-radius: var(--radius-md);
+    transition: transform var(--transition);
 }
 
 .card:hover {
@@ -93,7 +40,7 @@ body {
 }
 
 .card.warning {
-    border: 1px solid #facc15;
+    border: 1px solid var(--warning);
 }
 
 .big {
@@ -101,12 +48,12 @@ body {
     margin-top: 10px;
 }
 
-/* Color Levels */
+/* ---- Calendar ---- */
 .calendar-wrapper {
     margin-top: 40px;
-    background: #1e293b;
+    background: var(--bg-card);
     padding: 20px;
-    border-radius: 16px;
+    border-radius: var(--radius-lg);
     width: fit-content;
 }
 
@@ -118,23 +65,27 @@ body {
 }
 
 .calendar-header button {
-    background: #334155;
+    background: var(--bg-hover);
     border: none;
-    color: white;
+    color: var(--text-light);
     padding: 6px 12px;
-    border-radius: 8px;
+    border-radius: var(--radius-sm);
     cursor: pointer;
+    transition: background var(--transition);
 }
 
 .calendar-header button:hover {
-    background: #475569;
+    background: var(--bg-hover-2);
+}
+
+#monthYear {
+    margin: 0 8px;
 }
 
 .calendar {
     display: grid;
     grid-template-columns: repeat(7, 1fr);
     gap: 6px;
-    justify-content: start;
 }
 
 .day {
@@ -146,84 +97,40 @@ body {
     align-items: center;
     justify-content: center;
     cursor: pointer;
-    transition: 0.2s ease;
+    transition: transform var(--transition);
 }
 
 .day:hover {
     transform: scale(1.08);
 }
-#monthYear {
-    margin-left: 2px;
-    margin-right: 2px;
-}
 
 .empty {
     visibility: hidden;
+    width: 30px;
+    height: 30px;
 }
 
-/* Heatmap Levels */
+/* ---- Heatmap Levels ---- */
+.none   { background: var(--bg-hover); }
+.low    { background: var(--success-low);  color: var(--text-dark); }
+.medium { background: var(--success-mid); }
+.high   { background: var(--success-high); }
 
-.none {
-    background: #334155;
-}
-
-.low {
-    background: #bbf7d0;
-    color:#0f172a;
-}
-
-.medium {
-    background: #22c55e;
-}
-
-.high {
-    background: #15803d;
-}
-
-/* Insight */
+/* ---- Smart Insight ---- */
 .insight {
-    background: #1e293b;
+    background: var(--bg-card);
     padding: 20px;
     margin-top: 20px;
-    border-radius: 12px;
-    border-left: 4px solid #38bdf8;
+    border-radius: var(--radius-md);
+    border-left: 4px solid var(--accent);
 }
+
+/* ==========================================
+   Responsive — Dashboard
+   ========================================== */
 @media (max-width: 768px) {
-    body {
-        flex-direction: column;
-    }
-
-    .sidebar {
-        width: 100%;
-        height: auto;
-        padding: 15px 20px;
-    }
-
-    .sidebar ul {
-        display: flex;
-        gap: 15px;
-        overflow-x: auto;
-        white-space: nowrap;
-        margin-top: 10px;
-    }
-
-    .sidebar ul li {
-        padding: 6px 0;
-    }
-
-    .main {
-        padding: 20px;
-    }
-
-    .header {
-        flex-direction: row;
-        align-items: center;
-        justify-content: space-between;
-        margin-bottom: 20px;
-    }
-
     .header h1 {
-        font-size: 28px;
+        font-size: 22px;
     }
 
     .cards {
@@ -237,15 +144,11 @@ body {
 
     .calendar-wrapper {
         margin-top: 20px;
-        width: fit-content;
-    }
-
-    .calendar {
-        justify-content: center;
+        width: 100%;
+        overflow-x: auto;
     }
 
     .insight {
-        width: 100%;
         margin-top: 20px;
     }
 }
