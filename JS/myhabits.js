@@ -1,13 +1,20 @@
 /* ==========================================
    HabitMetric — My Habits Logic (myhabits.js)
    Handles habit CRUD and category management.
-   ==========================================
 
-   BUGS FIXED vs. original inline script:
-   1. habitList was null (no .habit-list element existed in HTML) — fixed in HTML
-   2. New habit checkbox used stale index (savedHabits.length - 1 computed at
-      click time, not add time) — fixed by closing over index at creation time
-      inside addHabitToDOM()
+   DATA MODEL (new):
+   Each habit object looks like this:
+   {
+     id:          "lf2k8r4ab"         ← unique, never changes
+     name:        "Read 20 Pages"
+     category:    "study"
+     createdAt:   "2026-04-01"
+     completions: ["2026-04-08", "2026-04-09"]  ← history lives here
+   }
+
+   WHY this is better than { completed: false }:
+   - completed: false only knows about right now
+   - completions[] remembers every past day → enables heatmap, streaks, analytics
    ========================================== */
 
 
@@ -19,17 +26,54 @@ const addHabitBtn    = document.getElementById("add-habit-btn");
 
 
 /* ==========================================
+   MIGRATION
+   Converts old-format habits ({ completed: bool })
+   to new-format habits ({ completions: [] }).
+   Runs automatically on load — safe to call multiple times.
+   ========================================== */
+
+/**
+ * Takes the habits array from localStorage and upgrades any old-format
+ * habits to the new format. Returns the updated array.
+ *
+ * Old format: { name, completed }
+ * New format: { id, name, category, createdAt, completions[] }
+ *
+ * @param {Array} habits - raw habits array from localStorage
+ * @returns {Array} - migrated habits array
+ */
+function migrateHabitsIfNeeded(habits) {
+    const today = getTodayString(); // from app.js
+
+    return habits.map(function (habit) {
+
+        // If completions array already exists → habit is already new format, skip
+        if (Array.isArray(habit.completions)) return habit;
+
+        // Old format detected → convert it
+        // If completed was true, we give it today's date as its only known completion
+        // If completed was false, the completions array starts empty
+        return {
+            id:          generateId(),         // from app.js
+            name:        habit.name,
+            category:    habit.category || "general",
+            createdAt:   today,
+            completions: habit.completed ? [today] : []
+        };
+    });
+}
+
+
+/* ==========================================
    CATEGORIES
    ========================================== */
 
-// Load any user-created categories saved in localStorage
 let savedCategories = JSON.parse(localStorage.getItem("categories")) || [];
 
 savedCategories.forEach(function (name) {
     addCategoryToDOM(name);
 });
 
-// "Add Category" button click
 addCategoryBtn.addEventListener("click", function () {
     const input = prompt("Enter new category name:");
     if (!input || input.trim() === "") return;
@@ -43,7 +87,7 @@ addCategoryBtn.addEventListener("click", function () {
 
 /**
  * Creates a category button and inserts it before the "+ Add Category" button.
- * @param {string} name - Display text for the category
+ * @param {string} name
  */
 function addCategoryToDOM(name) {
     const btn = document.createElement("button");
@@ -54,66 +98,122 @@ function addCategoryToDOM(name) {
 
 
 /* ==========================================
-   HABITS
+   HABITS — Load + Seed
    ========================================== */
 
-// Load saved habits OR seed defaults on first visit
+// Step 1: Load raw data from localStorage
 let savedHabits = JSON.parse(localStorage.getItem("habits"));
 
+// Step 2: Seed defaults if first time
 if (!savedHabits) {
     savedHabits = [
-        { name: "Morning Run",    completed: false },
-        { name: "Drink 2L Water", completed: false },
-        { name: "Read 20 Pages",  completed: false }
+        {
+            id:          generateId(),
+            name:        "Morning Run",
+            category:    "fitness",
+            createdAt:   getTodayString(),
+            completions: []
+        },
+        {
+            id:          generateId(),
+            name:        "Drink 2L Water",
+            category:    "health",
+            createdAt:   getTodayString(),
+            completions: []
+        },
+        {
+            id:          generateId(),
+            name:        "Read 20 Pages",
+            category:    "study",
+            createdAt:   getTodayString(),
+            completions: []
+        }
     ];
     localStorage.setItem("habits", JSON.stringify(savedHabits));
 }
 
-// Render all existing habits on page load
-savedHabits.forEach(function (habit, index) {
-    addHabitToDOM(habit.name, habit.completed, index);
+// Step 3: Migrate any old-format habits before doing anything else
+// This is safe to run even if all habits are already new format
+savedHabits = migrateHabitsIfNeeded(savedHabits);
+localStorage.setItem("habits", JSON.stringify(savedHabits)); // save migrated version
+
+// Step 4: Render all habits on screen
+savedHabits.forEach(function (habit) {
+    addHabitToDOM(habit);
 });
 
-// "Add Habit" button click
+
+/* ==========================================
+   HABITS — Add New
+   ========================================== */
+
 addHabitBtn.addEventListener("click", function () {
     const input = prompt("Enter new habit name:");
     if (!input || input.trim() === "") return;
 
-    const name = input.trim();
-    const newHabit = { name: name, completed: false };
+    const newHabit = {
+        id:          generateId(),
+        name:        input.trim(),
+        category:    "general",
+        createdAt:   getTodayString(),
+        completions: []           // starts with no history — honest
+    };
 
     savedHabits.push(newHabit);
     localStorage.setItem("habits", JSON.stringify(savedHabits));
 
-    // FIX: Capture index *here* (at push time), not inside the event listener.
-    // The original code computed savedHabits.length - 1 inside the change listener,
-    // which meant it always updated the *last* habit in the array instead of this one.
-    const index = savedHabits.length - 1;
-    addHabitToDOM(name, false, index);
+    addHabitToDOM(newHabit);
 });
 
+
+/* ==========================================
+   HABITS — Render to DOM
+   ========================================== */
+
 /**
- * Creates a habit item and appends it to the habit list.
+ * Creates a single habit card and appends it to the habit list.
  *
- * @param {string}  name      - Display name of the habit
- * @param {boolean} completed - Whether to pre-check the checkbox
- * @param {number}  index     - Index in savedHabits array (closed over for save)
+ * KEY CHANGE from old version:
+ * - Takes a full habit object (not separate name/completed/index params)
+ * - Determines checked state by checking if TODAY is in completions[]
+ * - On checkbox change: ADDS or REMOVES today's date string from completions[]
+ *   instead of setting a boolean
+ * - Finds habit by habit.id — not by array index (much more reliable)
+ *
+ * @param {Object} habit - a full habit object from savedHabits
  */
-function addHabitToDOM(name, completed, index) {
+function addHabitToDOM(habit) {
+    const today       = getTodayString();
+    const isDoneToday = habit.completions.includes(today); // true/false
+
     const item = document.createElement("div");
     item.classList.add("habit-item");
 
     item.innerHTML =
         "<label>" +
-        "  <input type=\"checkbox\" " + (completed ? "checked" : "") + ">" +
-        "  " + name +
+        "  <input type=\"checkbox\" " + (isDoneToday ? "checked" : "") + ">" +
+        "  " + habit.name +
         "</label>";
 
     const checkbox = item.querySelector("input");
 
-    // FIX: 'index' is correctly closed over from the parameter — not recomputed.
     checkbox.addEventListener("change", function () {
-        savedHabits[index].completed = checkbox.checked;
+
+        // Find this habit in the array by its ID — not by index
+        const idx = savedHabits.findIndex(function (h) { return h.id === habit.id; });
+
+        if (checkbox.checked) {
+            // Add today's date to completions (only if not already there)
+            if (!savedHabits[idx].completions.includes(today)) {
+                savedHabits[idx].completions.push(today);
+            }
+        } else {
+            // Remove today's date from completions
+            savedHabits[idx].completions = savedHabits[idx].completions.filter(
+                function (date) { return date !== today; }
+            );
+        }
+
         localStorage.setItem("habits", JSON.stringify(savedHabits));
     });
 

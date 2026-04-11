@@ -57,6 +57,33 @@ function setSidebarActive() {
 }
 
 
+/**
+ * Returns today's date as a string in "YYYY-MM-DD" format.
+ * Example: "2026-04-11"
+ *
+ * WHY this format: It's the ISO standard. It sorts correctly as a string
+ * (alphabetical order = chronological order), which makes streak
+ * and heatmap calculations much simpler.
+ */
+function getTodayString() {
+    return new Date().toISOString().slice(0, 10);
+}
+
+
+/**
+ * Generates a simple unique ID for each habit.
+ * Combines current timestamp (base-36) + random characters.
+ * Example output: "lf2k8r4ab"
+ *
+ * WHY we need this: We now find habits by their ID, not by array index.
+ * Using index was fragile — if habits are reordered or deleted,
+ * the index shifts and points to the wrong habit.
+ */
+function generateId() {
+    return Date.now().toString(36) + Math.random().toString(36).slice(2, 7);
+}
+
+
 // ---- Run on every page load ----
 setGreeting();
 setSidebarActive();
