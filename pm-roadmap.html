@@ -1,0 +1,1118 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>PM Roadmap + Internship Strategy — Harsh | HabitMetric</title>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&family=JetBrains+Mono:wght@400;500&display=swap" rel="stylesheet">
+<style>
+  :root {
+    --bg: #080d17; --surface: #0f1928; --surface2: #162032;
+    --border: #1e3048; --accent: #3b82f6; --accent2: #38bdf8;
+    --success: #10b981; --warning: #f59e0b; --danger: #ef4444;
+    --purple: #8b5cf6; --text: #f1f5f9; --muted: #94a3b8; --dim: #475569;
+  }
+  * { margin:0; padding:0; box-sizing:border-box; }
+  body { background:var(--bg); color:var(--text); font-family:'Inter',sans-serif; font-size:15px; line-height:1.7; }
+
+  /* Print Button */
+  .print-bar { position:fixed; top:20px; right:24px; z-index:999; }
+  .print-btn { background:var(--accent); color:#fff; border:none; padding:10px 22px; border-radius:8px; font-size:14px; font-weight:600; cursor:pointer; font-family:inherit; transition:.2s; }
+  .print-btn:hover { background:var(--accent2); color:#080d17; }
+
+  /* Layout */
+  .page { max-width:900px; margin:0 auto; padding:60px 40px; }
+
+  /* Hero */
+  .hero { text-align:center; padding:60px 0 50px; border-bottom:1px solid var(--border); margin-bottom:60px; }
+  .hero-badge { display:inline-block; background:rgba(59,130,246,.15); border:1px solid rgba(59,130,246,.3); color:var(--accent2); padding:6px 18px; border-radius:20px; font-size:12px; font-weight:600; letter-spacing:1px; text-transform:uppercase; margin-bottom:24px; }
+  .hero h1 { font-size:48px; font-weight:800; line-height:1.15; background:linear-gradient(135deg,#f1f5f9 0%,#38bdf8 50%,#3b82f6 100%); -webkit-background-clip:text; -webkit-text-fill-color:transparent; background-clip:text; margin-bottom:16px; }
+  .hero p { color:var(--muted); font-size:17px; max-width:600px; margin:0 auto 32px; }
+  .hero-meta { display:flex; justify-content:center; gap:32px; }
+  .hero-meta span { color:var(--muted); font-size:13px; }
+  .hero-meta strong { color:var(--accent2); }
+
+  /* Warning Box */
+  .brutal-truth { background:rgba(239,68,68,.08); border:1px solid rgba(239,68,68,.25); border-left:4px solid var(--danger); border-radius:12px; padding:24px 28px; margin-bottom:48px; }
+  .brutal-truth h3 { color:var(--danger); font-size:14px; letter-spacing:.5px; text-transform:uppercase; margin-bottom:12px; }
+  .brutal-truth p { color:#fca5a5; font-size:14px; line-height:1.8; }
+
+  /* Section Headers */
+  .section { margin-bottom:64px; }
+  .section-label { display:flex; align-items:center; gap:12px; margin-bottom:28px; }
+  .section-num { width:36px; height:36px; border-radius:10px; background:var(--accent); display:flex; align-items:center; justify-content:center; font-size:14px; font-weight:700; color:#fff; flex-shrink:0; }
+  .section-label h2 { font-size:26px; font-weight:700; }
+  .section-label p { color:var(--muted); font-size:13px; margin-top:2px; }
+
+  /* Tables */
+  table { width:100%; border-collapse:collapse; margin:20px 0; border-radius:12px; overflow:hidden; }
+  th { background:var(--surface2); color:var(--accent2); font-size:12px; font-weight:600; letter-spacing:.5px; text-transform:uppercase; padding:14px 16px; text-align:left; }
+  td { padding:13px 16px; border-bottom:1px solid var(--border); font-size:14px; color:var(--text); background:var(--surface); vertical-align:top; }
+  tr:last-child td { border-bottom:none; }
+  td:first-child { font-weight:500; color:var(--accent2); }
+
+  /* Cards */
+  .card { background:var(--surface); border:1px solid var(--border); border-radius:14px; padding:24px 28px; margin-bottom:16px; }
+  .card-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0; }
+  .card h4 { font-size:15px; font-weight:600; margin-bottom:8px; }
+  .card p, .card li { font-size:14px; color:var(--muted); line-height:1.8; }
+  .card ul { padding-left:18px; }
+  .card.accent-blue { border-left:3px solid var(--accent); }
+  .card.accent-green { border-left:3px solid var(--success); }
+  .card.accent-yellow { border-left:3px solid var(--warning); }
+  .card.accent-purple { border-left:3px solid var(--purple); }
+
+  /* Phase Cards */
+  .phase { background:var(--surface); border:1px solid var(--border); border-radius:16px; padding:28px; margin-bottom:24px; }
+  .phase-header { display:flex; align-items:center; gap:16px; margin-bottom:20px; }
+  .phase-badge { padding:6px 16px; border-radius:20px; font-size:12px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; }
+  .phase-badge.p0 { background:rgba(139,92,246,.2); color:#c4b5fd; }
+  .phase-badge.p1 { background:rgba(59,130,246,.2); color:#93c5fd; }
+  .phase-badge.p2 { background:rgba(16,185,129,.2); color:#6ee7b7; }
+  .phase-badge.p3 { background:rgba(245,158,11,.2); color:#fcd34d; }
+  .phase-badge.p4 { background:rgba(239,68,68,.2); color:#fca5a5; }
+  .phase h3 { font-size:19px; font-weight:700; }
+  .phase .timeline { font-size:13px; color:var(--muted); }
+
+  /* Week blocks */
+  .week { background:var(--surface2); border-radius:10px; padding:18px 22px; margin-bottom:12px; }
+  .week-label { font-size:12px; font-weight:700; color:var(--accent2); letter-spacing:.5px; text-transform:uppercase; margin-bottom:10px; }
+  .week ul { list-style:none; padding:0; }
+  .week ul li { font-size:14px; color:var(--muted); padding:4px 0; padding-left:18px; position:relative; }
+  .week ul li::before { content:'→'; position:absolute; left:0; color:var(--accent); font-size:12px; }
+
+  /* Checklist */
+  .checklist { list-style:none; padding:0; }
+  .checklist li { display:flex; align-items:flex-start; gap:12px; padding:10px 0; border-bottom:1px solid var(--border); font-size:14px; }
+  .checklist li:last-child { border-bottom:none; }
+  .check { width:20px; height:20px; border:2px solid var(--dim); border-radius:5px; flex-shrink:0; margin-top:2px; }
+  .checklist .tag { font-size:11px; padding:3px 10px; border-radius:10px; font-weight:600; flex-shrink:0; }
+  .tag-m1 { background:rgba(59,130,246,.2); color:#93c5fd; }
+  .tag-m2 { background:rgba(16,185,129,.2); color:#6ee7b7; }
+  .tag-m3 { background:rgba(245,158,11,.2); color:#fcd34d; }
+  .tag-m4 { background:rgba(139,92,246,.2); color:#c4b5fd; }
+
+  /* Comparison */
+  .compare { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0; }
+  .compare-box { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; }
+  .compare-box h5 { font-size:12px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; margin-bottom:14px; }
+  .compare-box.bad h5 { color:#f87171; }
+  .compare-box.good h5 { color:#6ee7b7; }
+  .compare-box p { font-size:13px; color:var(--muted); font-style:italic; background:var(--surface2); padding:12px 14px; border-radius:8px; line-height:1.7; }
+
+  /* Sprint Day */
+  .sprint-day { border-left:2px solid var(--border); padding-left:24px; margin-bottom:28px; position:relative; }
+  .sprint-day::before { content:''; width:12px; height:12px; background:var(--accent); border-radius:50%; position:absolute; left:-7px; top:6px; }
+  .sprint-day h4 { font-size:16px; font-weight:600; margin-bottom:10px; }
+  .sprint-day p { font-size:14px; color:var(--muted); margin-bottom:8px; }
+  .sprint-day ul { padding-left:16px; }
+  .sprint-day ul li { font-size:14px; color:var(--muted); margin-bottom:4px; }
+
+  /* Highlight box */
+  .highlight { background:rgba(59,130,246,.08); border:1px solid rgba(59,130,246,.2); border-radius:12px; padding:20px 24px; margin:20px 0; }
+  .highlight p { font-size:14px; color:#bfdbfe; line-height:1.8; }
+  .highlight strong { color:var(--accent2); }
+
+  /* Big quote */
+  .quote { border-left:3px solid var(--accent); padding:16px 24px; margin:24px 0; }
+  .quote p { font-size:16px; color:var(--text); font-style:italic; line-height:1.8; }
+
+  /* Tool pill */
+  .tools { display:flex; flex-wrap:wrap; gap:8px; margin:12px 0; }
+  .tool { background:var(--surface2); border:1px solid var(--border); color:var(--muted); font-size:12px; font-weight:500; padding:5px 12px; border-radius:20px; font-family:'JetBrains Mono',monospace; }
+
+  /* Role tiers */
+  .tier { display:flex; gap:14px; margin-bottom:14px; align-items:flex-start; }
+  .tier-num { width:28px; height:28px; border-radius:8px; display:flex; align-items:center; justify-content:center; font-size:12px; font-weight:700; flex-shrink:0; }
+  .t1 { background:rgba(16,185,129,.2); color:#6ee7b7; }
+  .t2 { background:rgba(59,130,246,.2); color:#93c5fd; }
+  .t3 { background:rgba(239,68,68,.2); color:#fca5a5; }
+  .tier-content h4 { font-size:15px; font-weight:600; margin-bottom:4px; }
+  .tier-content p { font-size:13px; color:var(--muted); }
+
+  /* Divider */
+  hr { border:none; border-top:1px solid var(--border); margin:48px 0; }
+
+  /* Final advice */
+  .advice-grid { display:grid; grid-template-columns:1fr 1fr; gap:16px; margin:20px 0; }
+  .advice-item { background:var(--surface); border:1px solid var(--border); border-radius:12px; padding:20px; }
+  .advice-item .icon { font-size:24px; margin-bottom:10px; }
+  .advice-item h4 { font-size:14px; font-weight:600; margin-bottom:8px; }
+  .advice-item p { font-size:13px; color:var(--muted); line-height:1.7; }
+
+  /* Footer */
+  footer { text-align:center; padding:48px 0 32px; color:var(--dim); font-size:13px; border-top:1px solid var(--border); margin-top:64px; }
+
+  /* Print */
+  @media print {
+    body { background:#080d17 !important; -webkit-print-color-adjust:exact; print-color-adjust:exact; }
+    .print-bar { display:none !important; }
+    .page { padding:24px; }
+    .phase, .card, .week { break-inside:avoid; }
+    .section { break-inside:avoid; }
+  }
+</style>
+</head>
+<body>
+
+<div class="print-bar">
+  <button class="print-btn" onclick="window.print()">⬇ Save as PDF</button>
+</div>
+
+<div class="page">
+
+  <!-- HERO -->
+  <div class="hero">
+    <div class="hero-badge">Product Management Roadmap 2026</div>
+    <h1>Your PM + Internship<br>Strategy Blueprint</h1>
+    <p>A brutally honest, India-relevant, 3–6 month execution plan for a 3rd-year BTech student — building HabitMetric, preparing for PM roles, <em>and</em> landing internships in parallel.</p>
+    <div class="hero-meta">
+      <span><strong>Duration:</strong> 3–6 Months</span>
+      <span><strong>Target:</strong> PM Intern / Founder's Office / Product Analyst / SDE Intern</span>
+      <span><strong>Mode:</strong> Build + Learn + Apply — simultaneously</span>
+    </div>
+  </div>
+
+  <!-- BRUTAL TRUTH -->
+  <div class="brutal-truth">
+    <h3>⚠ Read This First — Brutal Honest Starting Point</h3>
+    <p>You are not ready for PM internships at Flipkart, Meesho, or Razorpay yet — and that is completely okay. The goal of this roadmap is to make you <strong style="color:#fca5a5">genuinely ready</strong>, not to make your resume look ready while you remain hollow. Indian PM interviewers will destroy a student who has "PM intern" on their resume but cannot do a product teardown. Be patient. Be thorough. Build real skills first.</p>
+  </div>
+
+  <!-- SECTION 1: WHERE YOU STAND -->
+  <div class="section">
+    <div class="section-label">
+      <div class="section-num">1</div>
+      <div>
+        <h2>Where You Actually Stand</h2>
+        <p>Honest assessment before anything else</p>
+      </div>
+    </div>
+    <div class="card-grid">
+      <div class="card accent-green">
+        <h4>✅ Working in Your Favour</h4>
+        <ul>
+          <li>Building a real product (HabitMetric) — most students haven't done this</li>
+          <li>You can code — gives massive credibility for technical PM roles</li>
+          <li>3rd year — 1–2 internship cycles still left</li>
+          <li>Thinking about PM 6–12 months before most students</li>
+        </ul>
+      </div>
+      <div class="card accent-yellow">
+        <h4>⚠ Gaps to Fill</h4>
+        <ul>
+          <li>No structured PM thinking yet (PRDs, metrics, research)</li>
+          <li>No PM internship on resume</li>
+          <li>Portfolio shows dev work, not PM thinking</li>
+          <li>No real user research on HabitMetric yet</li>
+          <li>No clear answer to "Why PM over SDE?"</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- SECTION 2: ROLES TO TARGET -->
+  <div class="section">
+    <div class="section-label">
+      <div class="section-num">2</div>
+      <div>
+        <h2>Realistic Roles to Target — India</h2>
+        <p>In order of realism for your current position</p>
+      </div>
+    </div>
+
+    <div class="tier">
+      <div class="tier-num t1">T1</div>
+      <div class="tier-content">
+        <h4>Most Accessible — Month 3–4</h4>
+        <p>Product Analyst Intern (Juspay, Clevertap, MoEngage, Groww, Cashfree) · Growth Intern · <strong style="color:#6ee7b7">Founder's Office / Chief of Staff Intern</strong> (early-stage startups — highest PM exposure, lowest bar) · Business Analyst Intern (Accenture, Deloitte)</p>
+      </div>
+    </div>
+    <div class="tier">
+      <div class="tier-num t2">T2</div>
+      <div class="tier-content">
+        <h4>Accessible by Month 5–6</h4>
+        <p>Associate PM Intern (Zepto, Slice, Jar, Fi Money, CRED, Juspay) · Product Intern at B2B SaaS (Chargebee, Postman, Leadsquared — technical PM preferred) · Operations + Product Hybrid (Zomato, Swiggy, Porter)</p>
+      </div>
+    </div>
+    <div class="tier">
+      <div class="tier-num t3">T3</div>
+      <div class="tier-content">
+        <h4>Not Realistic This Year — Aim in Final Year</h4>
+        <p>PM Intern at Flipkart, Amazon, Google, Microsoft, Razorpay · APM Programs (Google APM India — &lt;20 spots, Microsoft MACH) · Requires 1–2 prior PM/analyst internships + strong referrals</p>
+      </div>
+    </div>
+
+    <div class="highlight" style="margin-top:20px">
+      <p>💡 <strong>Founder's Office is massively underrated for students.</strong> A 30-person Series A startup will give you more real PM experience in 2 months — feature specs, user calls, customer conversations, dashboard decisions — than a big company gives a PM intern in 6 months.</p>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- SECTION 3: TIME ALLOCATION -->
+  <div class="section">
+    <div class="section-label">
+      <div class="section-num">3</div>
+      <div>
+        <h2>Weekly Time Allocation</h2>
+        <p>Balancing PM with technical growth — the right mental model</p>
+      </div>
+    </div>
+
+    <div class="brutal-truth" style="background:rgba(139,92,246,.08); border-color:rgba(139,92,246,.25); border-left-color:var(--purple);">
+      <h3 style="color:#c4b5fd">⚡ The Trap Most Students Fall Into</h3>
+      <p style="color:#ddd8fe">They discover PM, get excited, stop coding, spend 3 months making Figma frames — and can't build anything anymore. Then they get PM rejections (no experience) and can't get SDE roles (stopped DSA). Think of yourself as a <strong>Technical Product Builder</strong>. Never lose your coding edge.</p>
+    </div>
+
+    <table>
+      <tr><th>Activity</th><th>Hours/Week</th><th>Why It Matters</th></tr>
+      <tr><td>Building HabitMetric (coding + design)</td><td>6–8 hrs</td><td>Your primary proof of work and case study material</td></tr>
+      <tr><td>PM learning and reading</td><td>4–5 hrs</td><td>Mental models, frameworks, vocabulary</td></tr>
+      <tr><td>PM deliverables (PRDs, research, docs)</td><td>3–4 hrs</td><td>Creates your actual portfolio artifacts</td></tr>
+      <tr><td>DSA / placement prep</td><td>3–4 hrs</td><td>Do NOT drop this — your safety net</td></tr>
+    </table>
+  </div>
+
+  <hr>
+
+  <!-- SECTION 4: 5-DAY STARTER SPRINT -->
+  <div class="section">
+    <div class="section-label">
+      <div class="section-num" style="background:var(--warning); color:#080d17">⚡</div>
+      <div>
+        <h2>Phase 0 — 5-Day Starter Sprint</h2>
+        <p>Do this before anything else. If you skip this, the rest of the roadmap won't stick.</p>
+      </div>
+    </div>
+
+    <div class="sprint-day">
+      <h4>Day 1 — Honest Self-Assessment + Setup + Resume Draft</h4>
+      <p>Answer in writing (not in your head): Why PM over SDE? What problem does HabitMetric solve? Name 3 competitor apps.</p>
+      <ul>
+        <li>Create a Notion workspace called "PM Lab"</li>
+        <li>Set up a free Figma account</li>
+        <li>Create a Google Sheet to track learning + deliverables</li>
+        <li>Read 3 blog posts from practicing PMs (not courses)</li>
+      </ul>
+      <div style="background:rgba(59,130,246,.08); border:1px solid rgba(59,130,246,.2); border-left:3px solid var(--accent); border-radius:8px; padding:14px 18px; margin-top:14px;">
+        <div style="font-size:11px; font-weight:700; color:var(--accent2); letter-spacing:.5px; text-transform:uppercase; margin-bottom:8px;">🎯 Internship Task — Day 1</div>
+        <ul style="padding-left:16px; margin:0;">
+          <li style="font-size:13px; color:#bfdbfe; margin-bottom:4px;">Draft your resume today — see Section 12 (Resume Blueprint) for the exact template</li>
+          <li style="font-size:13px; color:#bfdbfe; margin-bottom:4px;">Set up profiles on: <strong>LinkedIn</strong>, <strong>Internshala</strong>, <strong>Unstop</strong>, <strong>Wellfound (AngelList)</strong>, <strong>Weekday.works</strong></li>
+          <li style="font-size:13px; color:#bfdbfe;">Create a tracker spreadsheet: Company | Role | Applied Date | Status | Contact Person | Follow-up Date</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="sprint-day">
+      <h4>Day 2 — Real User Research (Your First PM Skill)</h4>
+      <p>Talk to 5 real people — 2 who tried a habit tracker and quit, 2 who never used one, 1 person 25+ years old.</p>
+      <ul>
+        <li>"Tell me about the last time you tried to build a habit. What happened?"</li>
+        <li>"Have you used an app for this? What made you stop?"</li>
+        <li>"What would make you open a habit app every single day?"</li>
+        <li>Write verbatim quotes in Notion — don't interpret yet</li>
+      </ul>
+      <div style="background:rgba(59,130,246,.08); border:1px solid rgba(59,130,246,.2); border-left:3px solid var(--accent); border-radius:8px; padding:14px 18px; margin-top:14px;">
+        <div style="font-size:11px; font-weight:700; color:var(--accent2); letter-spacing:.5px; text-transform:uppercase; margin-bottom:8px;">🎯 Internship Task — Day 2</div>
+        <ul style="padding-left:16px; margin:0;">
+          <li style="font-size:13px; color:#bfdbfe; margin-bottom:4px;">Search these NOW on Internshala: "Product Intern", "Growth Intern", "Business Analyst Intern", "Founder's Office" — save 10+ listings to your tracker</li>
+          <li style="font-size:13px; color:#bfdbfe;">Search Wellfound for early-stage startups (Seed–Series B) in EdTech, Health, Consumer apps — these are your best shots</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="sprint-day">
+      <h4>Day 3 — Synthesize Research + Write First User Persona</h4>
+      <p>Using yesterday's interviews, write 2 User Personas in Notion in full sentences — not bullet templates.</p>
+      <ul>
+        <li>Persona 1: "The Ambitious Quitter" — motivated starter, chronic stopper</li>
+        <li>Persona 2: "The First Timer" — never seriously tried habit tracking</li>
+        <li>Each persona: situation, pain point (their exact words), what they want, past attempts, biggest fear</li>
+      </ul>
+      <div style="background:rgba(59,130,246,.08); border:1px solid rgba(59,130,246,.2); border-left:3px solid var(--accent); border-radius:8px; padding:14px 18px; margin-top:14px;">
+        <div style="font-size:11px; font-weight:700; color:var(--accent2); letter-spacing:.5px; text-transform:uppercase; margin-bottom:8px;">🎯 Internship Task — Day 3</div>
+        <ul style="padding-left:16px; margin:0;">
+          <li style="font-size:13px; color:#bfdbfe; margin-bottom:4px;">Find 5 founders/PMs at startups on LinkedIn. Send a thoughtful connection request — not "please give me internship", but something specific: "I'm building HabitMetric and studied how Jar handles streak motivation — would love to learn how you think about retention."</li>
+          <li style="font-size:13px; color:#bfdbfe;">Target: founders at companies with 10–100 employees in consumer apps or edtech</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="sprint-day">
+      <h4>Day 4 — Product Teardown (Habitica + One Indian App)</h4>
+      <p>Use each app actively for 30 minutes. Then write a structured analysis in Notion.</p>
+      <ul>
+        <li>What user problem does each primarily solve?</li>
+        <li>What does each do better than HabitMetric?</li>
+        <li>What feature would you cut if you were the PM?</li>
+        <li>Choose one Indian app: CRED, Groww, Jar, or Zepto</li>
+      </ul>
+      <div style="background:rgba(59,130,246,.08); border:1px solid rgba(59,130,246,.2); border-left:3px solid var(--accent); border-radius:8px; padding:14px 18px; margin-top:14px;">
+        <div style="font-size:11px; font-weight:700; color:var(--accent2); letter-spacing:.5px; text-transform:uppercase; margin-bottom:8px;">🎯 Internship Task — Day 4</div>
+        <ul style="padding-left:16px; margin:0;">
+          <li style="font-size:13px; color:#bfdbfe; margin-bottom:4px;">Apply to 2–3 internships TODAY — don't wait for the perfect resume. Applying early = better. Use your draft resume + HabitMetric GitHub link.</li>
+          <li style="font-size:13px; color:#bfdbfe;">Target for today: Internshala listings for "Product Analyst" or "Growth" at companies with &lt;200 employees. These are approachable and reply fast.</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="sprint-day">
+      <h4>Day 5 — Write the HabitMetric Problem Statement + Cover Note Template</h4>
+      <p>400 words in Notion. Structure: The specific problem → Who has it → How people cope today → Your solution hypothesis → 2–3 metrics that prove it's working.</p>
+      <ul>
+        <li>Example North Star hypothesis: "If users understand WHY they fail — not just WHETHER they failed — they stay consistent longer"</li>
+        <li>Define what "working" means in measurable terms before writing code is the PM mindset shift</li>
+      </ul>
+      <div style="background:rgba(59,130,246,.08); border:1px solid rgba(59,130,246,.2); border-left:3px solid var(--accent); border-radius:8px; padding:14px 18px; margin-top:14px;">
+        <div style="font-size:11px; font-weight:700; color:var(--accent2); letter-spacing:.5px; text-transform:uppercase; margin-bottom:8px;">🎯 Internship Task — Day 5</div>
+        <ul style="padding-left:16px; margin:0;">
+          <li style="font-size:13px; color:#bfdbfe; margin-bottom:4px;">Write your master cover note (100–150 words): "I'm a 3rd year BTech student building HabitMetric — a habit tracker that uses drop-risk intelligence to reduce streak abandonment. I have [X] user interviews done, a published PRD, and a deployed product. I'm deeply interested in how [Company] approaches [specific area]. Would love to contribute to [specific team/product problem]."</li>
+          <li style="font-size:13px; color:#bfdbfe;">Customize this template for every application — never send the generic version</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- SECTION 5: PHASE-BY-PHASE ROADMAP -->
+  <div class="section">
+    <div class="section-label">
+      <div class="section-num">4</div>
+      <div>
+        <h2>4-Phase Build Roadmap</h2>
+        <p>Weeks 1–24 broken down by learning, practice, and deliverables</p>
+      </div>
+    </div>
+
+    <!-- Phase 1 -->
+    <div class="phase">
+      <div class="phase-header">
+        <span class="phase-badge p1">Phase 1</span>
+        <div>
+          <h3>Core PM Skills</h3>
+          <p class="timeline">Weeks 1–6 · Foundation skills applied directly to HabitMetric</p>
+        </div>
+      </div>
+
+      <div class="week">
+        <div class="week-label">Weeks 1–2 · User Research + Problem Definition</div>
+        <ul>
+          <li>Read "The Mom Test" by Rob Fitzpatrick (the best book on user interviews — read in one weekend)</li>
+          <li>Conduct 3 more user interviews using Mom Test principles — no leading questions</li>
+          <li>Finalize 2 written personas in Notion (updated from Phase 0)</li>
+          <li>Write a "Jobs To Be Done" statement for HabitMetric</li>
+          <li><strong>Deliverable:</strong> "HabitMetric User Research: Round 1" Notion doc with quotes and themes</li>
+        </ul>
+      </div>
+
+      <div class="week">
+        <div class="week-label">Weeks 3–4 · Feature Prioritization + Roadmap Thinking</div>
+        <ul>
+          <li>Learn 3 frameworks: RICE (Reach × Impact × Confidence ÷ Effort), MoSCoW, Impact vs Effort 2×2</li>
+          <li>Read chapters 1–8 of "Inspired" by Marty Cagan</li>
+          <li>RICE-score 10 HabitMetric features in Google Sheets</li>
+          <li>Write a 1-paragraph justification for your top 3 priorities</li>
+          <li><strong>Deliverable:</strong> HabitMetric Product Roadmap v1 — shareable Google Sheet</li>
+        </ul>
+      </div>
+
+      <div class="week">
+        <div class="week-label">Weeks 5–6 · Metrics Thinking + Success Criteria</div>
+        <ul>
+          <li>Learn: North Star Metric, D1/D7/D30 retention, input vs output metrics, leading vs lagging indicators</li>
+          <li>Read Amplitude's "Product Analytics Playbook" (free PDF)</li>
+          <li>Define HabitMetric's North Star (not "users" or "habits added" — think deeper)</li>
+          <li>Build a metrics tree: North Star → 3 inputs → measurable sub-metrics + 2 guardrail metrics</li>
+          <li><strong>Deliverable:</strong> "HabitMetric Metrics Framework v1" — 1-page Notion doc</li>
+        </ul>
+      </div>
+
+      <div class="tools">
+        <span class="tool">Notion</span><span class="tool">Google Sheets</span><span class="tool">Otter.ai</span><span class="tool">Amplitude (free demo)</span>
+      </div>
+    </div>
+
+    <!-- Phase 2 -->
+    <div class="phase">
+      <div class="phase-header">
+        <span class="phase-badge p2">Phase 2</span>
+        <div>
+          <h3>Visible PM Deliverables</h3>
+          <p class="timeline">Weeks 7–12 · Portfolio artifacts that are actually impressive</p>
+        </div>
+      </div>
+
+      <div class="week">
+        <div class="week-label">Weeks 7–8 · Write Your First PRD</div>
+        <ul>
+          <li>Read 3 real PRDs (Lenny's Newsletter has shared PRDs from Notion and Figma)</li>
+          <li>Choose one HabitMetric feature: "Drop-Risk Warning System" or "Identity Statement Onboarding"</li>
+          <li>Write a full PRD: Background → Goals → Non-Goals → User Stories → Requirements → Edge Cases → Metrics → Open Questions</li>
+          <li><strong>Deliverable:</strong> A 3–4 page PRD in Notion, shareable via link</li>
+        </ul>
+      </div>
+
+      <div class="week">
+        <div class="week-label">Weeks 9–10 · Wireframing in Figma</div>
+        <ul>
+          <li>Watch "Figma for PMs" — 2–3 hours total. Learn: frames, shapes, text, prototyping only</li>
+          <li>Wireframe 3 HabitMetric screens: (1) Identity Selection onboarding, (2) Today Dashboard with completion ring, (3) Drop-Risk warning state</li>
+          <li>Black and white boxes are fine — labels matter more than visual design</li>
+          <li><strong>Deliverable:</strong> Figma file with 3 wireframed screens + clickable prototype link</li>
+        </ul>
+      </div>
+
+      <div class="week">
+        <div class="week-label">Weeks 11–12 · Product Case Document (Portfolio Centrepiece)</div>
+        <ul>
+          <li>Write 1,200+ word HabitMetric case study in Notion</li>
+          <li>Structure: Problem → Users (real quotes) → Market → 3 specific Product Decisions → Feature Prioritization → Metrics → What I'd Do Differently → Next Steps</li>
+          <li>"What I'd Do Differently" section = what separates you from students who pretend to be infallible</li>
+          <li><strong>Deliverable:</strong> Shareable Notion page — "HabitMetric Product Case Study"</li>
+        </ul>
+      </div>
+
+      <div class="tools">
+        <span class="tool">Figma</span><span class="tool">Notion</span><span class="tool">Lenny's Newsletter</span><span class="tool">Linear (free)</span>
+      </div>
+    </div>
+
+    <!-- Phase 3 -->
+    <div class="phase">
+      <div class="phase-header">
+        <span class="phase-badge p3">Phase 3</span>
+        <div>
+          <h3>PM Interview Preparation</h3>
+          <p class="timeline">Months 4–6 · Practice, teardowns, and applying</p>
+        </div>
+      </div>
+
+      <div class="week">
+        <div class="week-label">Product Design Questions — Practice Method</div>
+        <ul>
+          <li>Use CIRCLES framework: Comprehend → Identify → Report → Cut → List → Evaluate → Summarize</li>
+          <li>Practice OUT LOUD — not in your head. Record yourself once a week.</li>
+          <li>Sample: "Design a habit-tracking app for senior citizens" · "What feature would you add to Spotify to build habits?"</li>
+        </ul>
+      </div>
+
+      <div class="week">
+        <div class="week-label">Metrics + Estimation Questions</div>
+        <ul>
+          <li>"HabitMetric's D7 retention drops from 45% to 28% in Week 3. How do you investigate?" — Define → Diagnose → Hypothesize → Prioritize</li>
+          <li>"How many people use habit-tracking apps in India?" — Always segment, never guess randomly</li>
+          <li>Do one product teardown per week (Indian apps: CRED, Groww, PhonePe, Zepto, Jar, Rapido, Slice)</li>
+        </ul>
+      </div>
+
+      <div class="week">
+        <div class="week-label">Your Real PM Stories (from HabitMetric)</div>
+        <ul>
+          <li>"Tell me about a product decision you made and later changed" → localStorage vs backend decision</li>
+          <li>"Walk me through a technical trade-off" → Habit Score design vs simple streak counter</li>
+          <li>"How did you decide what to build first?" → Your RICE prioritization exercise</li>
+          <li>You have real stories. The trick is translating dev decisions into PM language.</li>
+        </ul>
+      </div>
+
+      <div class="tools">
+        <span class="tool">Exponent.fm (PM prep)</span><span class="tool">Shreyas Doshi (Twitter)</span><span class="tool">Lenny's Podcast</span><span class="tool">Jira (free tier)</span>
+      </div>
+    </div>
+
+    <!-- Phase 4 -->
+    <div class="phase">
+      <div class="phase-header">
+        <span class="phase-badge p4">Phase 4</span>
+        <div>
+          <h3>Portfolio + LinkedIn Polish</h3>
+          <p class="timeline">Month 5–6 · The version you show in interviews</p>
+        </div>
+      </div>
+      <div class="week">
+        <div class="week-label">Non-Negotiable Checklist Before Applying</div>
+        <ul>
+          <li>HabitMetric deployed — no fake/random data anywhere. Every number earned.</li>
+          <li>Case study on Notion, shareable link, 1,200+ words</li>
+          <li>5 product teardowns (Indian apps) in Notion portfolio</li>
+          <li>Figma wireframes linked from your PRD</li>
+          <li>LinkedIn updated (see Section 7)</li>
+          <li>"View as guest / demo mode" on HabitMetric — so recruiters can explore without signing up</li>
+        </ul>
+      </div>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- SECTION 4B: INTERNSHIP APPLICATION STRATEGY -->
+  <div class="section">
+    <div class="section-label">
+      <div class="section-num" style="background:linear-gradient(135deg,#8b5cf6,#3b82f6);">🚀</div>
+      <div>
+        <h2>Parallel Internship Strategy — Apply While You Build</h2>
+        <p>You don't wait 6 months to start applying. You apply now, improve as you go, and land one by Month 3–4.</p>
+      </div>
+    </div>
+
+    <div class="brutal-truth" style="background:rgba(16,185,129,.08); border-color:rgba(16,185,129,.25); border-left-color:var(--success);">
+      <h3 style="color:#6ee7b7;">✅ The Mindset Shift — Apply NOW, Not After</h3>
+      <p style="color:#a7f3d0;">Most students think: "I'll apply once I'm ready." Reality: <strong>You get ready faster by applying.</strong> Rejections teach you what's missing. Interviews reveal your blind spots. Your resume improves 10x faster when real companies review it. Start applying in Week 1 — with what you have — and iterate every week.</p>
+    </div>
+
+    <div class="section-label" style="margin-top:32px; margin-bottom:16px;">
+      <div style="">
+        <h3 style="font-size:20px; font-weight:700;">Where to Apply — Platforms (India)</h3>
+      </div>
+    </div>
+
+    <table>
+      <tr><th>Platform</th><th>Best For</th><th>How to Use It</th><th>Priority</th></tr>
+      <tr><td>Internshala</td><td>SMEs, startups, product/growth/BA roles</td><td>Apply to 3–5 roles daily. Filter: Product, Growth, Business Analyst. Premium (₹600) shows contact emails — worth it.</td><td style="color:#6ee7b7;">🔥 Start Day 1</td></tr>
+      <tr><td>LinkedIn Jobs</td><td>Funded startups, Series A/B, mid-size companies</td><td>Turn on "Open to Work" (visible only to recruiters). Apply via Easy Apply + always add a custom note. Message the hiring manager separately.</td><td style="color:#6ee7b7;">🔥 Start Day 1</td></tr>
+      <tr><td>Wellfound (AngelList)</td><td>Early-stage startups, Founders' Offices, seed-stage</td><td>Best for Founder's Office roles. Direct founder contact. Set availability to "immediately". Write a custom pitch — founders read these.</td><td style="color:#6ee7b7;">🔥 Start Day 1</td></tr>
+      <tr><td>Unstop</td><td>Campus competitions, hackathons, brand challenges</td><td>Join 1–2 product case competitions per month. Winning or top-3 placements are resume gold. CRED, Zepto, Meesho often run these.</td><td style="color:#fcd34d;">⭐ Week 2</td></tr>
+      <tr><td>Weekday.works</td><td>Pre-vetted startup roles, India focus</td><td>Curated quality over quantity. Fewer jobs but better fit. Good for technical PM and growth roles.</td><td style="color:#fcd34d;">⭐ Week 2</td></tr>
+      <tr><td>Company Careers Pages</td><td>Direct applications, higher response rate</td><td>Target 10–15 companies manually. Bookmark their careers page. Apply directly — avoids resume black holes on job portals.</td><td style="color:#fb923c;">Month 2</td></tr>
+      <tr><td>Twitter / X (DMs)</td><td>Founder outreach, PM mentors, referrals</td><td>Follow and engage with PMs and founders. After 2–3 genuine interactions, DM: "Been following your product thinking on [X]. Would love to learn from you — open to a 15-min chat?"</td><td style="color:#fb923c;">Month 2</td></tr>
+    </table>
+
+    <div class="section-label" style="margin-top:40px; margin-bottom:16px;">
+      <div>
+        <h3 style="font-size:20px; font-weight:700;">What Roles to Apply For — Tiered by Realism</h3>
+      </div>
+    </div>
+
+    <div class="phase" style="border-left:3px solid var(--success);">
+      <div class="phase-header">
+        <span class="phase-badge p2">NOW — Month 1–2</span>
+        <div>
+          <h3>Apply Immediately — High Volume, Low Selectivity</h3>
+          <p class="timeline">These don't require PM experience. Your HabitMetric + coding background already qualifies you.</p>
+        </div>
+      </div>
+      <table>
+        <tr><th>Role</th><th>Where to Find</th><th>Why You Qualify Now</th><th>Target Companies</th></tr>
+        <tr><td>Founder's Office / Chief of Staff Intern</td><td>Wellfound, LinkedIn, company sites</td><td>They want smart generalists who can figure things out. HabitMetric proves you build independently.</td><td>Any 10–100 person startup (EdTech, FinTech, Consumer)</td></tr>
+        <tr><td>Product Analyst Intern</td><td>Internshala, LinkedIn</td><td>You can code + understand data — rare combo. Most applicants can't build. You can.</td><td>Juspay, Clevertap, MoEngage, Cashfree, Setu</td></tr>
+        <tr><td>Growth / Marketing Tech Intern</td><td>Internshala, Wellfound</td><td>A/B testing, user funnel thinking — you've thought about this for HabitMetric.</td><td>D2C startups, EdTech companies</td></tr>
+        <tr><td>SDE Intern (your fallback, not lesser)</td><td>LeetCode Jobs, LinkedIn, Internshala</td><td>Your coding skills are real. SDE intern at a product company = PM exposure + income + resume credibility.</td><td>Any product-focused startup or mid-size tech company</td></tr>
+        <tr><td>Business Analyst Intern</td><td>LinkedIn, company sites</td><td>SQL + data thinking + communication. You can learn SQL in 2 weeks (HackerRank SQL track).</td><td>Accenture, Deloitte, EY (campus portals too)</td></tr>
+      </table>
+    </div>
+
+    <div class="phase" style="border-left:3px solid var(--accent); margin-top:16px;">
+      <div class="phase-header">
+        <span class="phase-badge p1">Month 3–4 — After Building Portfolio</span>
+        <div>
+          <h3>Target These Once You Have Deliverables</h3>
+          <p class="timeline">PRD + case study + Figma wireframes = you now stand out in applicant pools</p>
+        </div>
+      </div>
+      <table>
+        <tr><th>Role</th><th>Where to Find</th><th>What You'll Have By Then</th><th>Target Companies</th></tr>
+        <tr><td>Associate PM / Product Intern</td><td>LinkedIn, Wellfound, company sites</td><td>HabitMetric case study, PRD, user research done, deployed product</td><td>Zepto, Slice, Jar, Fi Money, CRED, Juspay, Razorpay</td></tr>
+        <tr><td>Product Intern at B2B SaaS</td><td>LinkedIn, Weekday.works</td><td>Technical understanding + PM deliverables = ideal technical PM candidate</td><td>Chargebee, Postman, Leadsquared, Freshworks</td></tr>
+        <tr><td>Operations + Product Hybrid</td><td>Company career pages</td><td>Data thinking + user empathy + execution mindset</td><td>Zomato, Swiggy, Porter, Dunzo, Delhivery</td></tr>
+      </table>
+    </div>
+
+    <div class="section-label" style="margin-top:40px; margin-bottom:16px;">
+      <div>
+        <h3 style="font-size:20px; font-weight:700;">How to Apply — The Right Method</h3>
+      </div>
+    </div>
+
+    <div class="card-grid">
+      <div class="card accent-green">
+        <h4>📩 The Outreach Formula That Works</h4>
+        <ul>
+          <li>Find the hiring manager or founder on LinkedIn</li>
+          <li>Like/comment on 1–2 of their posts first (genuine, not sycophantic)</li>
+          <li>Then send a connection request with a personalized note</li>
+          <li>After connecting, send a 3-sentence DM: (1) Who you are + what you build, (2) Why specifically their company, (3) One specific ask</li>
+          <li>Attach your resume + Notion case study link in every DM</li>
+        </ul>
+      </div>
+      <div class="card accent-blue">
+        <h4>🎯 Cold Email Template (for companies with no open posting)</h4>
+        <ul>
+          <li>Subject: "BTech student building HabitMetric — interested in contributing to [Company] product team"</li>
+          <li>Para 1: What you're building + one specific insight about their product</li>
+          <li>Para 2: One specific way you can help (not generic)</li>
+          <li>Para 3: "I've attached my resume and a link to my case study. Happy to jump on a 15-min call if it makes sense."</li>
+          <li>Keep it under 150 words. Long emails don't get read.</li>
+        </ul>
+      </div>
+      <div class="card accent-purple">
+        <h4>🏆 Competitions = Fast Resume Builders</h4>
+        <ul>
+          <li>Unstop product case competitions — join 1–2 per month</li>
+          <li>IIM Ahmedabad case competitions (open to BTech students)</li>
+          <li>Meesho, CRED, Zepto brand challenges — companies recruit directly from winners</li>
+          <li>Even top-3 placement in a small competition is worth adding to resume</li>
+          <li>These force you to do structured PM thinking — great practice</li>
+        </ul>
+      </div>
+      <div class="card accent-yellow">
+        <h4>⚡ Volume vs Quality — The Right Balance</h4>
+        <ul>
+          <li>Month 1: 3–5 applications/week (volume, any relevant role)</li>
+          <li>Month 2–3: 5–8/week (volume + targeted outreach)</li>
+          <li>Month 4+: 8–10/week + active referral asks</li>
+          <li>Rule: Never send a generic cover note. Customize every single one.</li>
+          <li>Track everything in your spreadsheet — patterns will emerge</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="section-label" style="margin-top:40px; margin-bottom:16px;">
+      <div>
+        <h3 style="font-size:20px; font-weight:700;">Weekly Internship Application Routine</h3>
+      </div>
+    </div>
+
+    <table>
+      <tr><th>Day</th><th>Task</th><th>Time</th></tr>
+      <tr><td>Monday</td><td>Browse new listings on Internshala + Wellfound + LinkedIn. Add to tracker.</td><td>30 min</td></tr>
+      <tr><td>Tuesday</td><td>Apply to 2–3 roles. Write customized cover notes. Send LinkedIn DMs.</td><td>60 min</td></tr>
+      <tr><td>Wednesday</td><td>Follow up on applications sent 7 days ago (polite nudge, not desperate).</td><td>20 min</td></tr>
+      <tr><td>Thursday</td><td>Engage with content on LinkedIn — comment on PM/founder posts authentically.</td><td>15 min</td></tr>
+      <tr><td>Friday</td><td>Review one job description you're interested in. Map your resume bullet points to their requirements.</td><td>30 min</td></tr>
+      <tr><td>Weekend</td><td>Update tracker. Reflect: what's not getting responses? Adjust resume/cover note. Continue building HabitMetric.</td><td>20 min</td></tr>
+    </table>
+
+    <div class="highlight" style="margin-top:24px;">
+      <p>💡 <strong>The Referral Hack:</strong> If you see a job at a company, look on LinkedIn for any alumni from your college working there. A cold message to a senior from your college with: "Hi [Name], I'm a 3rd year [college] student applying to [role] at [company]. Would really appreciate any tips or if you'd be willing to refer me." — This works 30–40% of the time. Alumni almost always want to help juniors.</p>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- SECTION 12: RESUME BLUEPRINT -->
+  <div class="section">
+    <div class="section-label">
+      <div class="section-num" style="background:linear-gradient(135deg,#10b981,#3b82f6);">📄</div>
+      <div>
+        <h2>Your Resume Blueprint — PM + SDE Internship Ready</h2>
+        <p>A ready-to-use resume structure built specifically for Harsh. Plug in your actual details.</p>
+      </div>
+    </div>
+
+    <div class="brutal-truth" style="background:rgba(245,158,11,.06); border-color:rgba(245,158,11,.25); border-left-color:var(--warning);">
+      <h3 style="color:#fcd34d;">⚠ Resume Rules Before You Read This</h3>
+      <p style="color:#fde68a;">1 page only. ATS-safe format (no tables, no columns, no graphics in the actual .docx file). Metrics in every bullet. PDF when submitting. Update it every 2 weeks as you make progress on HabitMetric and PM deliverables. Use a clean template from <strong>Overleaf (LaTeX)</strong> or <strong>Resume.io</strong> — not Word's default.</p>
+    </div>
+
+    <div class="card" style="background:var(--surface2); margin-top:24px; font-family:'JetBrains Mono',monospace; font-size:13px; line-height:1.9;">
+      <div style="color:var(--accent2); font-family:'Inter',sans-serif; font-size:12px; font-weight:700; letter-spacing:.5px; text-transform:uppercase; margin-bottom:16px;">Resume Structure — Copy This Exactly</div>
+
+      <div style="border-bottom:1px solid var(--border); padding-bottom:16px; margin-bottom:16px;">
+        <div style="font-size:18px; font-weight:700; color:var(--text); font-family:'Inter',sans-serif;">HARSH [LAST NAME]</div>
+        <div style="font-size:13px; color:var(--muted); font-family:'Inter',sans-serif; margin-top:4px;">[City, India] · [Phone] · [email@domain.com] · <span style="color:var(--accent2);">linkedin.com/in/harsh-xxx</span> · <span style="color:var(--accent2);">github.com/harsh-xxx</span></div>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <div style="font-size:13px; font-weight:700; color:var(--accent2); letter-spacing:.5px; text-transform:uppercase; border-bottom:1px solid var(--border); padding-bottom:6px; margin-bottom:12px; font-family:'Inter',sans-serif;">EDUCATION</div>
+        <div style="color:var(--text); font-family:'Inter',sans-serif;">
+          <strong>B.Tech, [Your Branch]</strong> — [Your College Name], [City] &nbsp;&nbsp;|&nbsp;&nbsp; <span style="color:var(--muted);">Expected May 2027</span><br>
+          <span style="color:var(--muted); font-size:12px;">CGPA: [X.X]/10 &nbsp;·&nbsp; Relevant Coursework: Data Structures, DBMS, Software Engineering, Statistics</span>
+        </div>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <div style="font-size:13px; font-weight:700; color:var(--accent2); letter-spacing:.5px; text-transform:uppercase; border-bottom:1px solid var(--border); padding-bottom:6px; margin-bottom:12px; font-family:'Inter',sans-serif;">PROJECTS &nbsp;<span style="color:var(--dim); font-size:10px; font-weight:400; text-transform:none; letter-spacing:0;">← Your most important section</span></div>
+        <div style="color:var(--text); font-family:'Inter',sans-serif;">
+          <div style="display:flex; justify-content:space-between; align-items:baseline;">
+            <strong>HabitMetric — Habit Intelligence Platform</strong>
+            <span style="font-size:11px; color:var(--accent2);">Jan 2026 – Present</span>
+          </div>
+          <div style="font-size:12px; color:var(--muted); margin-bottom:6px; font-family:'JetBrains Mono',monospace;">HTML · CSS · JavaScript · localStorage · Figma</div>
+          <ul style="padding-left:18px; color:var(--muted); font-size:13px; font-family:'Inter',sans-serif;">
+            <li>Built a full-stack habit tracking product from scratch after conducting 8 user interviews to validate the "streak-shame dropout" problem</li>
+            <li>Designed drop-risk intelligence system that detects behavioral patterns 48 hrs before streak failure — a feature not present in top 5 competitor apps</li>
+            <li>Authored a complete PRD, RICE prioritization framework, and metrics framework (North Star: % of users who complete 21-day milestone)</li>
+            <li>Deployed on [GitHub Pages/Vercel] — live product with 0 fake/hardcoded data · <span style="color:var(--accent2);">Case study: [notion-link]</span></li>
+          </ul>
+        </div>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <div style="font-size:13px; font-weight:700; color:var(--accent2); letter-spacing:.5px; text-transform:uppercase; border-bottom:1px solid var(--border); padding-bottom:6px; margin-bottom:12px; font-family:'Inter',sans-serif;">PRODUCT WORK &nbsp;<span style="color:var(--dim); font-size:10px; font-weight:400; text-transform:none; letter-spacing:0;">← Add this section once deliverables exist</span></div>
+        <div style="color:var(--text); font-family:'Inter',sans-serif;">
+          <div><strong>Product Teardown — [Indian App Name]</strong> &nbsp;·&nbsp; <span style="font-size:12px; color:var(--accent2);">Notion: [link]</span></div>
+          <div style="color:var(--muted); font-size:13px;">Analyzed [app's] retention funnel, identified 3 friction points in onboarding, and wrote a prioritized feature recommendation with RICE scores and success metrics.</div>
+          <div style="margin-top:10px;"><strong>PRD: Drop-Risk Warning System — HabitMetric</strong> &nbsp;·&nbsp; <span style="font-size:12px; color:var(--accent2);">Notion: [link]</span></div>
+          <div style="color:var(--muted); font-size:13px;">Wrote a full PRD covering background, user stories, requirements, edge cases, metrics, and open questions for a predictive habit drop-off feature.</div>
+        </div>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <div style="font-size:13px; font-weight:700; color:var(--accent2); letter-spacing:.5px; text-transform:uppercase; border-bottom:1px solid var(--border); padding-bottom:6px; margin-bottom:12px; font-family:'Inter',sans-serif;">SKILLS</div>
+        <div style="font-family:'Inter',sans-serif; color:var(--muted); font-size:13px; line-height:2;">
+          <strong style="color:var(--text);">Product:</strong> User Research · PRD Writing · RICE Prioritization · Product Teardowns · Metrics Frameworks · CIRCLES Framework<br>
+          <strong style="color:var(--text);">Technical:</strong> HTML · CSS · JavaScript · DOM · localStorage · REST APIs · Git · GitHub<br>
+          <strong style="color:var(--text);">Tools:</strong> Figma (wireframing) · Notion (PRDs + docs) · Amplitude (analytics) · Google Sheets (RICE scoring) · Jira (user stories)
+        </div>
+      </div>
+
+      <div style="margin-bottom:20px;">
+        <div style="font-size:13px; font-weight:700; color:var(--accent2); letter-spacing:.5px; text-transform:uppercase; border-bottom:1px solid var(--border); padding-bottom:6px; margin-bottom:12px; font-family:'Inter',sans-serif;">ACHIEVEMENTS &nbsp;<span style="color:var(--dim); font-size:10px; font-weight:400; text-transform:none; letter-spacing:0;">← Only impactful ones</span></div>
+        <div style="font-family:'Inter',sans-serif; color:var(--muted); font-size:13px; line-height:2;">
+          · [Any hackathon result — especially product/design ones] — "Finalist at [Hackathon], built [solution], team of [N]"<br>
+          · [Any competition, position of responsibility, club role relevant to product/tech/leadership]<br>
+          · [Optional: GPA mention if 8.0+, or rank in class/college]
+        </div>
+      </div>
+    </div>
+
+    <div class="card-grid" style="margin-top:24px;">
+      <div class="card accent-green">
+        <h4>✅ Bullet Writing Rules</h4>
+        <ul>
+          <li><strong>Format:</strong> [Action verb] + [what you did] + [measurable result or scope]</li>
+          <li><em>Bad:</em> "Built a habit tracker using JavaScript"</li>
+          <li><em>Good:</em> "Designed habit drop-risk detection after 8 user interviews — catches 80% of at-risk users 48 hrs before streak fails"</li>
+          <li>PM bullets: start with Designed, Identified, Analyzed, Synthesized, Wrote, Prioritized, Defined</li>
+          <li>Dev bullets: start with Built, Implemented, Refactored, Architected, Migrated</li>
+        </ul>
+      </div>
+      <div class="card accent-blue">
+        <h4>🔄 Resume Versions to Maintain</h4>
+        <ul>
+          <li><strong>Version A (PM-first):</strong> Lead with HabitMetric, put Product Work section, skills list PM tools first — for product/growth/analyst roles</li>
+          <li><strong>Version B (SDE-first):</strong> Lead with technical projects, skills list languages first, drop the PRD section — for SDE intern roles</li>
+          <li>Never send Version A to a SDE role or Version B to a PM role</li>
+          <li>Update both every 2 weeks as you complete PM deliverables</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="quote" style="margin-top:24px; border-left-color:var(--success);">
+      <p>Your current most powerful resume line is: <strong style="color:#6ee7b7;">"Built HabitMetric from scratch after 8 user interviews — deployed product with drop-risk intelligence that detects failure 48 hrs before streak breaks."</strong> — That one line beats 90% of student resumes applying for product roles in India. Make it true first. Then write it.</p>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- SECTION 6: COMPLETE DELIVERABLES -->
+  <div class="section">
+    <div class="section-label">
+      <div class="section-num">5</div>
+      <div>
+        <h2>Complete Deliverables Tracker</h2>
+        <p>Your full portfolio by Month 6</p>
+      </div>
+    </div>
+
+    <table>
+      <tr><th>Deliverable</th><th>Tool</th><th>Target</th><th>Phase</th></tr>
+      <tr><td>8+ User Interviews documented</td><td>Notion</td><td>Real quotes, real themes</td><td><span class="tag tag-m1">Month 1</span></td></tr>
+      <tr><td>2 User Personas (written prose)</td><td>Notion</td><td>No templates with cartoon faces</td><td><span class="tag tag-m1">Month 1</span></td></tr>
+      <tr><td>Problem Statement (400 words)</td><td>Notion</td><td>Clear problem + hypothesis</td><td><span class="tag tag-m1">Month 1</span></td></tr>
+      <tr><td>2 Product Teardowns</td><td>Notion</td><td>300–400 words each</td><td><span class="tag tag-m1">Month 1</span></td></tr>
+      <tr><td>Metrics Framework</td><td>Notion</td><td>North Star + 4 supporting metrics</td><td><span class="tag tag-m1">Month 1</span></td></tr>
+      <tr><td>RICE Feature Prioritization</td><td>Google Sheets</td><td>10+ features scored</td><td><span class="tag tag-m2">Month 2</span></td></tr>
+      <tr><td>Product Roadmap v1</td><td>Google Sheets</td><td>Phase 1/2/3 with rationale</td><td><span class="tag tag-m2">Month 2</span></td></tr>
+      <tr><td>First PRD (one feature)</td><td>Notion</td><td>3–4 pages, full structure</td><td><span class="tag tag-m2">Month 2</span></td></tr>
+      <tr><td>Figma Wireframes (3 screens)</td><td>Figma</td><td>Prototype linked from PRD</td><td><span class="tag tag-m3">Month 3</span></td></tr>
+      <tr><td>HabitMetric deployed (real data)</td><td>GitHub Pages/Vercel</td><td>Zero fake data, zero random values</td><td><span class="tag tag-m3">Month 3</span></td></tr>
+      <tr><td>HabitMetric Case Study</td><td>Notion</td><td>1,200+ words, shareable link</td><td><span class="tag tag-m3">Month 3</span></td></tr>
+      <tr><td>5 Product Teardowns total</td><td>Notion</td><td>Indian apps focus</td><td><span class="tag tag-m4">Month 4</span></td></tr>
+      <tr><td>10+ Mock PM Questions (recorded)</td><td>Any recorder</td><td>Practice OUT LOUD</td><td><span class="tag tag-m4">Month 4</span></td></tr>
+      <tr><td>LinkedIn profile updated</td><td>LinkedIn</td><td>PM framing, case study link featured</td><td><span class="tag tag-m4">Month 4</span></td></tr>
+    </table>
+  </div>
+
+  <hr>
+
+  <!-- SECTION 7: WHAT RECRUITERS SEE -->
+  <div class="section">
+    <div class="section-label">
+      <div class="section-num">6</div>
+      <div>
+        <h2>What Recruiters Actually Look At</h2>
+        <p>The 6-second scan — and what survives it</p>
+      </div>
+    </div>
+
+    <div class="card" style="margin-bottom:24px; background:var(--surface2); font-family:'JetBrains Mono',monospace; font-size:13px; line-height:2;">
+      <div style="color:var(--dim); margin-bottom:8px; font-family:'Inter',sans-serif; font-size:12px; font-weight:600; letter-spacing:.5px; text-transform:uppercase;">The 6-Second Scan</div>
+      1. College name &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; → 1 second<br>
+      2. Company names &nbsp;&nbsp;&nbsp; → 1 second<br>
+      3. Bold keywords &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; → 1 second<br>
+      4. Project names &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; → 1 second<br>
+      5. Anything stand out? → 2 seconds<br>
+      <span style="color:var(--accent2)">→ Read further OR reject</span>
+    </div>
+
+    <div class="compare">
+      <div class="compare-box bad">
+        <h5>❌ What Gets Rejected</h5>
+        <p>"Worked on product roadmap and collaborated with cross-functional teams to deliver features aligned with business goals."</p>
+      </div>
+      <div class="compare-box good">
+        <h5>✅ What Gets Read</h5>
+        <p>"Identified a drop-off pattern through 8 user interviews, redesigned onboarding flow, and reduced Day-1 abandonment from 67% to 34%."</p>
+      </div>
+    </div>
+
+    <table>
+      <tr><th>Resume Section</th><th>Importance</th><th>What to Include</th></tr>
+      <tr><td>Projects</td><td style="color:#6ee7b7">🔴 Highest</td><td>HabitMetric with metrics + case study link — this section is your resume</td></tr>
+      <tr><td>Experience</td><td style="color:#6ee7b7">🔴 Highest</td><td>Any internship or real work — even if unrelated</td></tr>
+      <tr><td>Skills</td><td style="color:#fcd34d">🟡 Medium</td><td>Figma, Notion, Amplitude — tools you've actually used, not just listed</td></tr>
+      <tr><td>Education</td><td style="color:#fcd34d">🟡 Medium</td><td>GPA only if above 8.0, college name prominently</td></tr>
+      <tr><td>Achievements</td><td style="color:#fb923c">🟠 Low–Medium</td><td>Hackathons only if product-related, not competitive coding</td></tr>
+      <tr><td>Certifications</td><td style="color:var(--dim)">⚪ Negligible</td><td>Almost never read at serious companies — skip Google PM cert</td></tr>
+    </table>
+
+    <div class="quote">
+      <p>"A PM resume without a portfolio link is a developer resume with 'interested in PM' in the bio."</p>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- SECTION 8: TOOLS -->
+  <div class="section">
+    <div class="section-label">
+      <div class="section-num">7</div>
+      <div>
+        <h2>PM Tools — Honest Priority Order</h2>
+        <p>What to learn, when to learn it, and why Jira isn't first</p>
+      </div>
+    </div>
+
+    <div class="highlight">
+      <p>💡 <strong>Jira was deliberately excluded from Phase 1.</strong> Jira is a workflow management tool — it doesn't teach you PM thinking, it teaches you how to use Jira. You learn Jira in 2 days on your first internship. Every company configures it differently anyway. What ranges early in the roadmap are tools that create real PM output.</p>
+    </div>
+
+    <table>
+      <tr><th>Priority</th><th>Tool</th><th>When to Learn</th><th>Why</th></tr>
+      <tr><td>1 — Now</td><td>Notion</td><td>Immediately</td><td>Where all PM thinking lives — PRDs, research, case study</td></tr>
+      <tr><td>2 — Now</td><td>Google Sheets</td><td>Immediately</td><td>RICE scoring, roadmaps, metrics dashboards</td></tr>
+      <tr><td>3 — Month 2</td><td>Figma</td><td>Phase 2</td><td>Real PM deliverable — wireframes and prototypes</td></tr>
+      <tr><td>4 — Month 2</td><td>FigJam</td><td>Phase 2</td><td>User journey maps, flowcharts — visual PM thinking</td></tr>
+      <tr><td>5 — Month 3</td><td>Amplitude / Mixpanel</td><td>Phase 3</td><td>Metrics thinking — interviewers love this on a resume</td></tr>
+      <tr><td>6 — Month 4</td><td>Linear or Jira (free)</td><td>Phase 3</td><td>Practice writing epics + user stories for HabitMetric</td></tr>
+      <tr><td>7 — On the job</td><td>Confluence, Jira fully</td><td>First internship</td><td>Company-specific; you'll learn it in 2 days</td></tr>
+    </table>
+
+    <div class="card accent-blue" style="margin-top:20px">
+      <h4>🎯 Jira Practice Exercise (Month 4)</h4>
+      <p>Go to jira.atlassian.com (free). Create a project. Make an Epic: "Identity-Based Onboarding". Write 4 User Stories under it from your PRD. Write Acceptance Criteria for each. This gives you: genuine Jira experience + practice writing "from PRD to tickets" — a core PM skill.</p>
+    </div>
+
+    <div style="margin-top:20px">
+      <div class="week-label" style="font-size:12px; font-weight:700; color:var(--accent2); letter-spacing:.5px; text-transform:uppercase; margin-bottom:12px;">What to Put on Resume Under Tools</div>
+      <div class="tools">
+        <span class="tool">Figma (wireframing)</span>
+        <span class="tool">Notion (PRDs + research)</span>
+        <span class="tool">Amplitude (product analytics)</span>
+        <span class="tool">Google Sheets (RICE + roadmapping)</span>
+        <span class="tool">Jira (user story writing)</span>
+      </div>
+      <p style="font-size:13px; color:var(--muted); margin-top:10px">Do NOT list: Trello, Asana, Monday.com — these signal to-do list management, not PM work.</p>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- SECTION 9: LINKEDIN -->
+  <div class="section">
+    <div class="section-label">
+      <div class="section-num">8</div>
+      <div>
+        <h2>LinkedIn + Portfolio Strategy</h2>
+        <p>How to tell a coherent story as a Technical Product Builder</p>
+      </div>
+    </div>
+
+    <div class="compare">
+      <div class="compare-box bad">
+        <h5>❌ Don't Use This Headline</h5>
+        <p>"Aspiring Product Manager | Computer Science Student | Open to Opportunities"</p>
+      </div>
+      <div class="compare-box good">
+        <h5>✅ Use This Instead</h5>
+        <p>"Building HabitMetric | Frontend Dev + Product Thinking | 3rd Year @ [College]"</p>
+      </div>
+    </div>
+
+    <div class="card accent-purple" style="margin-top:16px">
+      <h4>📌 Project Description (PM Language, Not Dev Language)</h4>
+      <p style="margin-top:8px; color:var(--muted)"><strong style="color:#c4b5fd">Don't write:</strong> "Built with HTML, CSS, and JavaScript. Implemented localStorage."</p>
+      <p style="margin-top:8px; color:var(--muted)"><strong style="color:#6ee7b7">Write:</strong> "Designed and built habit-tracking product from scratch after conducting user research with 8 users. Implemented drop-risk intelligence and identity-based onboarding to address the streak-shame dropout pattern identified in interviews. See product case study: [link]"</p>
+    </div>
+
+    <table style="margin-top:20px">
+      <tr><th>LinkedIn Section</th><th>What It Should Show</th></tr>
+      <tr><td>Headline</td><td>Builder + product thinker framing — not "aspiring PM"</td></tr>
+      <tr><td>About</td><td>What you build → your technical background → what you're exploring → case study link</td></tr>
+      <tr><td>Projects</td><td>HabitMetric described in PM language with measurable outcomes</td></tr>
+      <tr><td>Featured</td><td>HabitMetric Notion case study · PRD · one strong teardown</td></tr>
+      <tr><td>Skills</td><td>Product Thinking, User Research, Figma, Notion — not just programming languages</td></tr>
+    </table>
+  </div>
+
+  <hr>
+
+  <!-- SECTION 10: LEARNING RESOURCES -->
+  <div class="section">
+    <div class="section-label">
+      <div class="section-num">9</div>
+      <div>
+        <h2>Learning Resources — Honest Ranking</h2>
+        <p>What to read, what to avoid, and what's just cert farming</p>
+      </div>
+    </div>
+
+    <div class="card-grid">
+      <div class="card accent-green">
+        <h4>✅ Free, High Quality</h4>
+        <ul>
+          <li><strong>Lenny's Newsletter</strong> — best PM content in English, free articles</li>
+          <li><strong>Shreyas Doshi</strong> on Twitter/X — frameworks explained clearly</li>
+          <li><strong>Exponent.fm</strong> on YouTube — structured PM interview prep</li>
+          <li><strong>Sachin Rekhi's blog</strong> — practical PM thinking</li>
+          <li><strong>"The Mom Test"</strong> by Rob Fitzpatrick — read this first</li>
+        </ul>
+      </div>
+      <div class="card accent-blue">
+        <h4>💰 Paid, Worth It</h4>
+        <ul>
+          <li><strong>Exponent PM Course</strong> (~₹1,000/mo, cancel after 2 months) — real mock interview recordings</li>
+          <li><strong>"Inspired"</strong> by Marty Cagan — buy the book (₹500–800 on Amazon India), read all of it</li>
+          <li><strong>Amplitude Playbook</strong> — free PDF, better than most paid courses</li>
+        </ul>
+      </div>
+    </div>
+
+    <div class="card accent-yellow" style="margin-top:4px">
+      <h4>❌ Avoid These</h4>
+      <ul>
+        <li>PM bootcamps costing ₹30,000–₹80,000 promising placement — they teach templates, not thinking</li>
+        <li>Most Indian YouTube PM channels — surface-level case templates, no real depth</li>
+        <li>Any course that gives a certificate before you've made a real product decision</li>
+        <li>Collecting certificates instead of building deliverables</li>
+      </ul>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- SECTION 11: COMMON MISTAKES -->
+  <div class="section">
+    <div class="section-label">
+      <div class="section-num">10</div>
+      <div>
+        <h2>Mistakes Beginners Make — Avoid All of These</h2>
+        <p>The patterns that waste months of effort</p>
+      </div>
+    </div>
+
+    <div class="card accent-yellow">
+      <h4>Mistake 1: Collecting Certificates Instead of Building Skills</h4>
+      <p>PM certificates from Coursera or LinkedIn Learning mean nothing in isolation. What matters is whether you can do a teardown, write a PRD, and defend your decisions. The only way to learn that is by practicing — not watching videos.</p>
+    </div>
+    <div class="card accent-yellow">
+      <h4>Mistake 2: Treating Case Studies as Templates to Fill</h4>
+      <p>Interviewers have seen 500 templated case studies. They want your specific reasoning — not a filled template. Your HabitMetric decisions (localStorage vs backend, Habit Score vs streak counter) are more valuable than a formatted "Zomato redesign" deck.</p>
+    </div>
+    <div class="card accent-yellow">
+      <h4>Mistake 3: Cold Applying Without a Portfolio</h4>
+      <p>Sending a resume to Swiggy PM intern with no deliverables is noise. They receive 3,000+ applications. Without a referral or portfolio link, you are competing purely on college name.</p>
+    </div>
+    <div class="card accent-yellow">
+      <h4>Mistake 4: Can't Explain Technical Work in PM Language</h4>
+      <p>You built localStorage sync. A PM answer is: "I evaluated localStorage vs a backend database and chose localStorage initially because cross-device sync wasn't a Day-1 user need, and the engineering cost of a backend would have delayed core feature validation by 3 weeks." That sentence gets you hired. "I used localStorage" doesn't.</p>
+    </div>
+    <div class="card accent-yellow">
+      <h4>Mistake 5: LinkedIn That Looks Like an SDE Profile with "Interested in PM"</h4>
+      <p>This communicates confusion. Your LinkedIn must tell one coherent story: builder who thinks in products. Remove the contradiction.</p>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- SECTION 12: FINAL ADVICE -->
+  <div class="section">
+    <div class="section-label">
+      <div class="section-num">11</div>
+      <div>
+        <h2>Final Brutally Honest Advice</h2>
+        <p>What separates a portfolio project from proof of genuine PM thinking</p>
+      </div>
+    </div>
+
+    <div class="advice-grid">
+      <div class="advice-item">
+        <div class="icon">💪</div>
+        <h4>Genuinely Strong Ideas in HabitMetric</h4>
+        <p>Identity-based framing (no mainstream app does this well) · Drop-risk intelligence (unique, genuinely useful) · Habit Score vs streak (solves a real emotional problem) · Habit Stacking Builder (doesn't exist well in any major app)</p>
+      </div>
+      <div class="advice-item">
+        <div class="icon">⚠️</div>
+        <h4>What's Risky or Unnecessary</h4>
+        <p>Social features — a full product in themselves, massively underestimated effort · AI chat — if poorly implemented, feels worse than no AI · Multiple themes — one great theme beats three mediocre ones every time</p>
+      </div>
+      <div class="advice-item">
+        <div class="icon">🎯</div>
+        <h4>The 3-Second Self-Test for Every Feature</h4>
+        <p>Ask: "Does this help a user build habits better?" If no, cut it. Ask: "Would I explain this in an interview?" If yes, keep it. The identity onboarding is an interview story. A 3D spinning stats card is not.</p>
+      </div>
+      <div class="advice-item">
+        <div class="icon">📱</div>
+        <h4>Mobile is Non-Negotiable</h4>
+        <p>Recruiters use phones to demo your projects at lunch. If HabitMetric breaks at 375px width, they assume you didn't care. Mobile responsiveness is not optional for a portfolio project in 2026.</p>
+      </div>
+    </div>
+
+    <div class="quote" style="margin-top:32px; border-left-color:var(--success)">
+      <p>The gap between good students and good engineers is not skill — it is intentionality. The students who break into PM roles in India without prior experience all have one thing in common: they have something <strong style="color:#6ee7b7">concrete to show that demonstrates thinking</strong>, not just credentials. Your HabitMetric case study — with real user interviews, a real PRD, real prioritization, and a deployed product — is that thing. Use it.</p>
+    </div>
+
+    <div class="brutal-truth" style="margin-top:32px; background:rgba(59,130,246,.08); border-color:rgba(59,130,246,.25); border-left-color:var(--accent)">
+      <h3 style="color:var(--accent2)">📌 The Single Most Important Action Right Now</h3>
+      <p style="color:#bfdbfe">Your heatmap currently uses <code style="background:var(--surface2); padding:2px 6px; border-radius:4px; font-family:'JetBrains Mono',monospace">Math.random()</code> — that is fake data. The moment a recruiter demos your app and realizes data is fabricated, they lose trust in everything else. Fix the heatmap to use real localStorage data before doing any other improvement to HabitMetric. Real data first. Everything else second.</p>
+    </div>
+  </div>
+
+  <hr>
+
+  <!-- TIMELINE VISUAL -->
+  <div class="section">
+    <div class="section-label">
+      <div class="section-num">📅</div>
+      <div>
+        <h2>6-Month Timeline at a Glance</h2>
+      </div>
+    </div>
+
+    <table>
+      <tr><th>Month</th><th>Primary Focus</th><th>Key Deliverable</th><th>Apply To (This Month)</th><th>Applications Target</th></tr>
+      <tr><td>Month 1</td><td>User research, problem definition, teardowns + resume draft</td><td>User Research doc + 2 Personas + Metrics Framework + Resume v1</td><td>Founder's Office (Wellfound) · Growth Intern (Internshala) · SDE Intern anywhere</td><td>10–15 applications sent</td></tr>
+      <tr><td>Month 2</td><td>Feature prioritization, roadmap, PRD writing + active outreach</td><td>RICE Sheet + Product Roadmap v1 + First PRD</td><td>Product Analyst Intern · BA Intern (Accenture, Deloitte) · Founder's Office</td><td>20–25 sent, 2–3 product competitions</td></tr>
+      <tr><td>Month 3</td><td>Figma wireframing, real heatmap data, case study + interviews</td><td>Figma prototype + HabitMetric Case Study (Notion)</td><td>APM Intern (Jar, Zepto, Slice, Fi Money) · Product Intern at B2B SaaS</td><td>25–30 sent, targeted referral asks</td></tr>
+      <tr><td>Month 4</td><td>Interview prep, teardowns, LinkedIn polish + follow-ups</td><td>10 mock questions practiced + LinkedIn updated + Resume v3</td><td>All Tier 1 + Tier 2 targets with full portfolio linked</td><td>30–35 sent, 5+ referrals requested</td></tr>
+      <tr><td>Month 5</td><td>Active applying, negotiating, Jira practice</td><td>Live internship OR 3+ active processes running</td><td>APM Intern at funded startups + Razorpay, CRED if referral available</td><td>Focused 10–15, quality over volume</td></tr>
+      <tr><td>Month 6</td><td>Interview execution, portfolio refinement, convert offers</td><td>Full portfolio live + deployed HabitMetric + internship confirmed</td><td>Stretch: Amazon, Flipkart, Google (if referral)</td><td>Selective — only best-fit roles</td></tr>
+    </table>
+  </div>
+
+  <footer>
+    <p style="color:var(--accent2); font-weight:600; margin-bottom:8px">HabitMetric PM + Internship Roadmap — Built for Harsh</p>
+    <p>You don't choose between building and applying. You do both. The roadmap is here. The intentionality is yours to execute.</p>
+    <p style="margin-top:16px; font-size:12px; color:var(--dim)">Updated with Antigravity · April 2026 · Open in Chrome → File → Print → Save as PDF</p>
+  </footer>
+
+</div>
+
+</body>
+</html>
