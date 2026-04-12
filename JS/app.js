@@ -84,6 +84,45 @@ function generateId() {
 }
 
 
+/**
+ * Returns the user object from localStorage.
+ * If it doesn't exist yet (first visit), creates a default one and saves it.
+ *
+ * Structure:
+ * {
+ *   name:           "Jiyuu"           ← set during onboarding
+ *   identities:     ["Reader", ...]   ← chosen during onboarding
+ *   dailyResetHour: 5                 ← when a new habit-day begins (5am default)
+ * }
+ *
+ * WHY dailyResetHour: If you complete a habit at 2am, it should count for
+ * "yesterday" not "today". The reset hour defines that boundary.
+ */
+function getUser() {
+    let user = JSON.parse(localStorage.getItem("user"));
+
+    if (!user) {
+        // First visit — create default user object
+        user = {
+            name:           "Friend",
+            identities:     [],
+            dailyResetHour: 5
+        };
+        localStorage.setItem("user", JSON.stringify(user));
+    }
+
+    return user;
+}
+
+/**
+ * Saves an updated user object back to localStorage.
+ * @param {Object} updatedUser
+ */
+function saveUser(updatedUser) {
+    localStorage.setItem("user", JSON.stringify(updatedUser));
+}
+
+
 // ---- Run on every page load ----
 setGreeting();
 setSidebarActive();
