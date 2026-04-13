@@ -1,7 +1,96 @@
 /* ==========================================
    HabitMetric — Dashboard Logic (dashboard.js)
-   Handles the real heatmap calendar.
+   Handles the real heatmap + streak + risk + consistency stats.
+
+   ALL values on this page come from real localStorage data.
+   No hardcoded numbers. Every stat is earned.
    ========================================== */
+
+
+/* ==========================================
+   STREAK CALCULATIONS
+   ========================================== */
+
+/**
+ * Collects every unique date that had at least one habit completion.
+ * Returns a sorted array of unique "YYYY-MM-DD" strings.
+ *
+ * WHY unique: multiple habits done on the same day = ONE active day.
+ * Set removes duplicates automatically.
+ */
+function getAllActiveDates() {
+    const habits = JSON.parse(localStorage.getItem("habits")) || [];
+    const dateSet = new Set();
+
+    habits.forEach(function (habit) {
+        if (habit.completions) {
+            habit.completions.forEach(function (date) {
+                dateSet.add(date);
+            });
+        }
+    });
+
+    return Array.from(dateSet).sort(); // ISO format sorts chronologically as strings
+}
+
+
+/* ==========================================
+   UPDATE THE STAT CARDS
+   ========================================== */
+
+function updateStreakCard() {
+    const activeDates = getAllActiveDates();
+    const streak  = calculateStreak(activeDates);
+    const longest = getLongestStreak(activeDates);
+    const el      = document.getElementById("streak-value");
+    const bestEl  = document.getElementById("longest-streak");
+    if (!el) return;
+
+    el.textContent = streak + (streak === 1 ? " Day" : " Days");
+    if (longest > 1) bestEl.textContent = "Best: " + longest + " days";
+}
+
+
+/**
+ * Drop risk uses research-backed thresholds.
+ * Days 7–10 are the peak dropout window — motivation fades, habit not automatic yet.
+ * Adds/removes class="warning" to trigger amber CSS style.
+ */
+function updateRiskCard() {
+    const activeDates = getAllActiveDates();
+    const streak     = calculateStreak(activeDates);
+    const riskCard   = document.getElementById("risk-card");
+    const riskValue  = document.getElementById("risk-value");
+    const riskReason = document.getElementById("risk-reason");
+    if (!riskCard) return;
+
+    if (streak === 0) {
+        riskValue.textContent  = "—";
+        riskReason.textContent = "Start your first habit";
+        riskCard.classList.remove("warning");
+    } else if (streak >= 7 && streak <= 10) {
+        riskValue.textContent  = "High";
+        riskReason.textContent = "Day " + streak + " — historically risky. Check in today.";
+        riskCard.classList.add("warning");
+    } else if (streak >= 3 && streak <= 6) {
+        riskValue.textContent  = "Medium";
+        riskReason.textContent = "Building momentum. Stay consistent.";
+        riskCard.classList.remove("warning");
+    } else {
+        riskValue.textContent  = "Low";
+        riskReason.textContent = "You're in a strong rhythm. 🔥";
+        riskCard.classList.remove("warning");
+    }
+}
+
+
+function updateConsistencyCard() {
+    const el = document.getElementById("consistency-value");
+    if (!el) return;
+    const activeDates = getAllActiveDates();
+    el.textContent = getConsistency30Days(activeDates) + "%";
+}
+
 
 
 const calendarEl  = document.getElementById("calendar");
@@ -26,17 +115,15 @@ let currentDate = new Date();
  * 5. Map the percentage to a color level
  *
  * @param {string} dateString - date in "YYYY-MM-DD" format e.g. "2026-04-11"
- * @returns {string} - "none" | "low" | "medium" | "high"
+ * @returns {Object} - { level: "none"|"low"|"medium"|"high", count: Number, total: Number }
  */
 function getLevelForDate(dateString) {
     const habits = JSON.parse(localStorage.getItem("habits")) || [];
 
     // Edge case: no habits added yet → show nothing
-    if (habits.length === 0) return "none";
+    if (habits.length === 0) return { level: "none", count: 0, total: 0 };
 
     // Count how many habits have this date in their completions array
-    // habit.completions.includes(dateString) returns true/false
-    // We add up all the true values (true = 1, false = 0 in JS math)
     let completedCount = 0;
     habits.forEach(function (habit) {
         if (habit.completions && habit.completions.includes(dateString)) {
@@ -44,15 +131,15 @@ function getLevelForDate(dateString) {
         }
     });
 
-    // Calculate the completion rate as a percentage
-    const rate = completedCount / habits.length; // e.g. 2/3 = 0.666...
+    const total = habits.length;
+    const rate = completedCount / total;
 
-    // Map the rate to a visual level
-    // These thresholds can be tuned later
-    if (rate === 0)       return "none";
-    if (rate <= 0.40)     return "low";
-    if (rate <= 0.70)     return "medium";
-    return "high";
+    let level = "high";
+    if (rate === 0)       level = "none";
+    else if (rate <= 0.40) level = "low";
+    else if (rate <= 0.70) level = "medium";
+
+    return { level: level, count: completedCount, total: total };
 }
 
 
@@ -104,6 +191,15 @@ function renderCalendar(date) {
     monthYearEl.textContent =
         date.toLocaleString("default", { month: "long" }) + " " + year;
 
+    // Add day-of-week headers (S M T W T F S)
+    const weekdays = ['S', 'M', 'T', 'W', 'T', 'F', 'S'];
+    weekdays.forEach(function(day) {
+        const header = document.createElement("div");
+        header.classList.add("weekday");
+        header.textContent = day;
+        calendarEl.appendChild(header);
+    });
+
     // Add blank spacers so Day 1 lands under the correct weekday column
     for (let i = 0; i < firstDay; i++) {
         const blank = document.createElement("div");
@@ -117,17 +213,17 @@ function renderCalendar(date) {
         // Build "YYYY-MM-DD" for this specific day
         const dateString = buildDateString(year, month, day);
 
-        // Get the real completion level for this date from localStorage
-        const level = getLevelForDate(dateString); // "none"|"low"|"medium"|"high"
+        // Get the real completion stats for this date from localStorage
+        const stats = getLevelForDate(dateString);
 
         // Build the day cell
         const dayBox = document.createElement("div");
-        dayBox.classList.add("day", level); // both classes applied at once
+        dayBox.classList.add("day", stats.level); // both classes applied at once
 
         dayBox.textContent = day;
 
-        // Hover tooltip — shows real info, not fake
-        dayBox.setAttribute("title", dateString + " — " + level + " activity");
+        // Hover tooltip — shows real info, including numerical count
+        dayBox.setAttribute("title", dateString + " — " + stats.count + "/" + stats.total + " habits completed (" + stats.level + ")");
 
         calendarEl.appendChild(dayBox);
     }
@@ -148,3 +244,45 @@ document.getElementById("nextMonth").addEventListener("click", function () {
 
 // ---- Initial Render on page load ----
 renderCalendar(currentDate);
+
+/* ==========================================
+   SVG PROGRESS RING
+   ========================================== */
+function updateProgressRing() {
+    const today = getTodayString();
+    const stats = getLevelForDate(today);
+
+    const ringText = document.getElementById("today-progress-text");
+    const circle = document.querySelector(".progress-ring__circle");
+    
+    if (!ringText || !circle) return;
+
+    if (stats.total === 0) {
+        ringText.textContent = "0/0";
+        circle.style.strokeDasharray = "314 314";
+        circle.style.strokeDashoffset = "314";
+        return;
+    }
+
+    ringText.textContent = stats.count + "/" + stats.total;
+
+    const radius = circle.r.baseVal.value;
+    const circumference = radius * 2 * Math.PI;
+
+    circle.style.strokeDasharray = `${circumference} ${circumference}`;
+    
+    const rate = stats.count / stats.total;
+    const offset = circumference - (rate * circumference);
+
+    circle.style.strokeDashoffset = offset;
+}
+
+// ---- Update real stat cards on page load ----
+updateStreakCard();
+updateRiskCard();
+updateConsistencyCard();
+
+// Small delay to ensure CSS transition fires on load
+setTimeout(() => {
+    updateProgressRing();
+}, 100);

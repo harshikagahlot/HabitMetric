@@ -123,6 +123,85 @@ function saveUser(updatedUser) {
 }
 
 
+/* ==========================================
+   SHARED STREAK & STATS UTILITIES
+   Takes an array of date strings ["YYYY-MM-DD", ...]
+   Works for both global stats and individual habits.
+   ========================================== */
+
+/**
+ * Calculates the current streak — consecutive days ending today or yesterday.
+ */
+function calculateStreak(datesArray) {
+    if (!datesArray || datesArray.length === 0) return 0;
+
+    const activeSet = new Set(datesArray);
+    let streak = 0;
+    const today = new Date();
+
+    for (let i = 0; i < 365; i++) {
+        const checkDate = new Date(today);
+        checkDate.setDate(today.getDate() - i);
+        const dateStr = checkDate.toISOString().slice(0, 10);
+
+        if (activeSet.has(dateStr)) {
+            streak++;
+        } else if (i === 0) {
+            continue; // today not done yet — check yesterday before stopping
+        } else {
+            break;    // gap found — streak ends
+        }
+    }
+
+    return streak;
+}
+
+/**
+ * Finds the longest streak ever achieved across history.
+ */
+function getLongestStreak(datesArray) {
+    if (!datesArray || datesArray.length === 0) return 0;
+
+    const sortedDates = [...new Set(datesArray)].sort();
+    let longest = 1;
+    let current = 1;
+
+    for (let i = 1; i < sortedDates.length; i++) {
+        const prev    = new Date(sortedDates[i - 1]);
+        const curr    = new Date(sortedDates[i]);
+        const diffDays = Math.round((curr - prev) / (1000 * 60 * 60 * 24)); // handle DST
+
+        if (diffDays === 1) {
+            current++;
+            longest = Math.max(longest, current);
+        } else {
+            current = 1; // gap — reset
+        }
+    }
+
+    return longest;
+}
+
+/**
+ * 30-day consistency: what % of the last 30 days had any activity.
+ */
+function getConsistency30Days(datesArray) {
+    if (!datesArray) return 0;
+    const activeSet = new Set(datesArray);
+    let activeDayCount = 0;
+    const today = new Date();
+
+    for (let i = 0; i < 30; i++) {
+        const checkDate = new Date(today);
+        checkDate.setDate(today.getDate() - i);
+        const dateStr = checkDate.toISOString().slice(0, 10);
+        if (activeSet.has(dateStr)) activeDayCount++;
+    }
+
+    return Math.round((activeDayCount / 30) * 100);
+}
+
+
 // ---- Run on every page load ----
 setGreeting();
 setSidebarActive();

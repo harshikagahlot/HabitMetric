@@ -39,20 +39,38 @@
         </div>
 
         <div class="cards">
-            <div class="card">
-                <h3>Current Streak</h3>
-                <p class="big">12 Days</p>
+            
+            <!-- Progress Ring Card -->
+            <div class="card" id="progress-card" style="text-align: center;">
+                <h3>Today</h3>
+                <div class="progress-ring-container">
+                    <svg class="progress-ring" width="120" height="120">
+                        <circle class="progress-ring__circle-bg" stroke="var(--bg-hover)" stroke-width="10" fill="transparent" r="50" cx="60" cy="60"/>
+                        <circle class="progress-ring__circle" stroke="var(--accent)" stroke-width="10" fill="transparent" r="50" cx="60" cy="60"/>
+                    </svg>
+                    <div class="progress-ring__text" id="today-progress-text">0/0</div>
+                </div>
             </div>
 
-            <div class="card warning">
+            <div class="card" id="streak-card">
+                <h3>Current Streak</h3>
+                <!-- id="streak-value" updated by dashboard.js -->
+                <p class="big" id="streak-value">0 Days</p>
+                <!-- id="longest-streak" shows personal best in muted text -->
+                <small id="longest-streak"></small>
+            </div>
+
+            <!-- id="risk-card" — dashboard.js adds/removes class="warning" -->
+            <div class="card" id="risk-card">
                 <h3>Drop Risk</h3>
-                <p class="big">Medium</p>
-                <small>Day 8–10 historically risky</small>
+                <p class="big" id="risk-value">Low</p>
+                <small id="risk-reason">Keep going</small>
             </div>
 
             <div class="card">
                 <h3>Consistency Score</h3>
-                <p class="big">78%</p>
+                <!-- 30-day completion rate updated by dashboard.js -->
+                <p class="big" id="consistency-value">–</p>
             </div>
         </div>
 

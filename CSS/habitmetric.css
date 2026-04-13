@@ -110,11 +110,47 @@
     height: 30px;
 }
 
+.weekday {
+    width: 30px;
+    height: 30px;
+    font-size: 14px;
+    font-weight: bold;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    color: var(--text-muted, #888);
+}
+
 /* ---- Heatmap Levels ---- */
 .none   { background: var(--bg-hover); }
 .low    { background: var(--success-low);  color: var(--text-dark); }
 .medium { background: var(--success-mid); }
 .high   { background: var(--success-high); }
+
+/* ---- Progress Ring ---- */
+.progress-ring-container {
+    position: relative;
+    width: 120px;
+    height: 120px;
+    margin: 15px auto 0;
+}
+
+.progress-ring__circle {
+    transition: stroke-dashoffset 0.8s ease-in-out;
+    transform: rotate(-90deg);
+    transform-origin: 50% 50%;
+    stroke-linecap: round;
+}
+
+.progress-ring__text {
+    position: absolute;
+    top: 50%;
+    left: 50%;
+    transform: translate(-50%, -50%);
+    font-size: 20px;
+    font-weight: bold;
+    color: var(--text-dark);
+}
 
 /* ---- Smart Insight ---- */
 .insight {
