@@ -22,12 +22,15 @@ function setGreeting() {
     const hour = new Date().getHours();
     let timeOfDay;
 
+    const user = getUser();
+    const name = user && user.name ? user.name : "Friend";
+
     if (hour >= 5  && hour < 12) timeOfDay = "Good Morning";
     else if (hour >= 12 && hour < 17) timeOfDay = "Good Afternoon";
     else if (hour >= 17 && hour < 21) timeOfDay = "Good Evening";
     else                               timeOfDay = "Good Night";
 
-    greetingEl.textContent = timeOfDay + ", Jiyuu 👋";
+    greetingEl.textContent = timeOfDay + ", " + name + " 👋";
 }
 
 
@@ -97,21 +100,8 @@ function generateId() {
  *
  * WHY dailyResetHour: If you complete a habit at 2am, it should count for
  * "yesterday" not "today". The reset hour defines that boundary.
- */
 function getUser() {
-    let user = JSON.parse(localStorage.getItem("user"));
-
-    if (!user) {
-        // First visit — create default user object
-        user = {
-            name:           "Friend",
-            identities:     [],
-            dailyResetHour: 5
-        };
-        localStorage.setItem("user", JSON.stringify(user));
-    }
-
-    return user;
+    return JSON.parse(localStorage.getItem("user"));
 }
 
 /**
@@ -202,6 +192,32 @@ function getConsistency30Days(datesArray) {
 }
 
 
+/**
+ * Ensures new users are redirected to the onboarding flow
+ * if they haven't completed it yet.
+ */
+function enforceOnboarding() {
+    const user = localStorage.getItem("user");
+    const isCurrentlyOnboarding = window.location.pathname.includes("onboarding.html");
+    
+    // If no user exists and they aren't already on the onboarding page, redirect them.
+    if (!user && !isCurrentlyOnboarding) {
+        window.location.href = "onboarding.html";
+    }
+    // If a user exists and they try to go back to onboarding, send them to dashboard.
+    if (user && isCurrentlyOnboarding) {
+        window.location.href = "index.html";
+    }
+}
+
 // ---- Run on every page load ----
-setGreeting();
-setSidebarActive();
+enforceOnboarding();
+
+// Only run these if we aren't redirecting
+const user = localStorage.getItem("user");
+const isCurrentlyOnboarding = window.location.pathname.includes("onboarding.html");
+
+if (user || isCurrentlyOnboarding) {
+    setGreeting();
+    setSidebarActive();
+}

@@ -1,0 +1,181 @@
+/* ==========================================
+   HabitMetric — Onboarding Styles
+   ========================================== */
+
+.onboarding-body {
+    background: var(--bg-dark);
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 100vh;
+    margin: 0;
+    padding: 20px;
+}
+
+.onboarding-container {
+    background: var(--bg-card);
+    width: 100%;
+    max-width: 500px;
+    padding: 40px;
+    border-radius: var(--radius-lg);
+    box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    text-align: center;
+    position: relative;
+    overflow: hidden;
+    min-height: 350px;
+}
+
+.step-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: center;
+    opacity: 0;
+    visibility: hidden;
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    padding: 40px;
+    transition: opacity 0.4s ease, transform 0.4s ease;
+    transform: translateX(50px);
+}
+
+.step-card.active {
+    opacity: 1;
+    visibility: visible;
+    transform: translateX(0);
+    position: relative;
+}
+
+.step-card h2 {
+    font-size: 28px;
+    margin-bottom: 10px;
+    color: var(--text-light);
+}
+
+.step-card p {
+    color: var(--text-muted);
+    line-height: 1.5;
+    margin-bottom: 30px;
+}
+
+/* Inputs */
+input[type="text"], input[type="number"] {
+    width: 100%;
+    padding: 15px;
+    background: var(--bg-dark);
+    border: 2px solid var(--bg-hover);
+    border-radius: var(--radius-sm);
+    color: var(--text-light);
+    font-size: 16px;
+    margin-bottom: 25px;
+    transition: border-color var(--transition);
+}
+
+input[type="text"]:focus, input[type="number"]:focus {
+    border-color: var(--accent);
+    outline: none;
+}
+
+/* Identity Grid */
+.identity-grid {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 10px;
+    justify-content: center;
+    margin-bottom: 30px;
+}
+
+.id-btn {
+    background: var(--bg-dark);
+    border: 2px solid var(--bg-hover);
+    color: var(--text-light);
+    padding: 10px 20px;
+    border-radius: 20px;
+    cursor: pointer;
+    font-size: 14px;
+    transition: all var(--transition);
+}
+
+.id-btn:hover {
+    border-color: var(--accent);
+}
+
+.id-btn.selected {
+    background: var(--accent);
+    border-color: var(--accent);
+    color: var(--text-dark);
+    font-weight: bold;
+}
+
+/* Buttons */
+.btn-group {
+    display: flex;
+    gap: 15px;
+    width: 100%;
+    justify-content: center;
+    margin-top: auto;
+}
+
+.next-btn, .finish-btn {
+    background: var(--accent);
+    color: var(--text-dark);
+    padding: 12px 30px;
+    border: none;
+    border-radius: var(--radius-sm);
+    font-size: 16px;
+    font-weight: bold;
+    cursor: pointer;
+    transition: opacity var(--transition);
+}
+
+.next-btn:disabled {
+    background: var(--bg-hover, #333);
+    color: var(--text-muted, #888);
+    cursor: not-allowed;
+}
+
+.next-btn:not(:disabled):hover, .finish-btn:hover {
+    opacity: 0.9;
+}
+
+.back-btn {
+    background: transparent;
+    color: var(--text-muted);
+    padding: 12px 20px;
+    border: 2px solid var(--bg-hover);
+    border-radius: var(--radius-sm);
+    font-size: 16px;
+    cursor: pointer;
+    transition: all var(--transition);
+}
+
+.back-btn:hover {
+    color: var(--text-light);
+    border-color: var(--text-muted);
+}
+
+/* Time Selector */
+.time-selector {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 10px;
+    font-size: 24px;
+    font-weight: bold;
+}
+
+.time-selector input {
+    width: 80px;
+    text-align: center;
+    font-size: 24px;
+    margin-bottom: 0;
+}
+
+.caption {
+    font-size: 12px !important;
+    margin-top: 10px;
+    color: var(--text-muted);
+}
