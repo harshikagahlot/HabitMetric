@@ -99,6 +99,7 @@ function generateId() {
  *
  * WHY dailyResetHour: If you complete a habit at 2am, it should count for
  * "yesterday" not "today". The reset hour defines that boundary.
+ */
 function getUser() {
     return JSON.parse(localStorage.getItem("user"));
 }
