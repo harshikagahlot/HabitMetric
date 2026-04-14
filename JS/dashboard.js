@@ -281,8 +281,35 @@ function updateProgressRing() {
 updateStreakCard();
 updateRiskCard();
 updateConsistencyCard();
+updateIdentityStatement();
 
 // Small delay to ensure CSS transition fires on load
 setTimeout(() => {
     updateProgressRing();
 }, 100);
+
+/* ==========================================
+   IDENTITY STATEMENT (Step 6)
+   ========================================== */
+function updateIdentityStatement() {
+    const user = JSON.parse(localStorage.getItem("user"));
+    const statementEl = document.getElementById("identity-statement");
+    
+    if (!statementEl) return;
+    
+    if (!user || !user.identities || user.identities.length === 0) {
+        statementEl.style.display = "none";
+        return;
+    }
+    
+    // Rotate identity based on day of year
+    const now = new Date();
+    const start = new Date(now.getFullYear(), 0, 0);
+    const diff = now - start;
+    const dayOfYear = Math.floor(diff / (1000 * 60 * 60 * 24));
+    
+    const index = dayOfYear % user.identities.length;
+    const identity = user.identities[index];
+    
+    statementEl.textContent = `Today you are building: ${identity} 📖`;
+}

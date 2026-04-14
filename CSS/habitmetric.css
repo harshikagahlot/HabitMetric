@@ -12,6 +12,18 @@
     margin-bottom: 30px;
 }
 
+.header-titles {
+    display: flex;
+    flex-direction: column;
+}
+
+.identity-subtitle {
+    font-size: 15px;
+    color: var(--text-muted, #888);
+    margin-top: 5px;
+    font-style: italic;
+}
+
 .profile {
     background: var(--accent);
     color: var(--text-dark);

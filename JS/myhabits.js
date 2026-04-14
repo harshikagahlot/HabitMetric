@@ -184,15 +184,45 @@ addHabitBtn.addEventListener("click", function () {
  */
 function addHabitToDOM(habit) {
     const today       = getTodayString();
-    const isDoneToday = habit.completions.includes(today); // true/false
+    const isDoneToday = habit.completions.includes(today);
+
+    // Calculate Streak for this specific habit using shared utility
+    const streak = calculateStreak(habit.completions);
+
+    // Check "Never Miss Twice" (did they miss exactly yesterday?)
+    const yesterday = new Date();
+    yesterday.setDate(yesterday.getDate() - 1);
+    const yesterdayStr = yesterday.toISOString().slice(0, 10);
+    const missedYesterday = !habit.completions.includes(yesterdayStr);
+    
+    // Only show warning if they missed yesterday, haven't done it today, and aren't a brand new habit
+    const showWarning = missedYesterday && !isDoneToday && habit.completions.length > 0;
+
+    // Pick emoji based on category
+    let emoji = "🔹"; 
+    const cat = habit.category ? habit.category.toLowerCase() : "";
+    if (cat.includes("fitness") || cat.includes("run")) emoji = "🏃";
+    else if (cat.includes("study") || cat.includes("read")) emoji = "📚";
+    else if (cat.includes("health") || cat.includes("water")) emoji = "💧";
+    else if (cat.includes("mindfulness")) emoji = "🧠";
+    else if (cat.includes("productivity")) emoji = "💻";
 
     const item = document.createElement("div");
     item.classList.add("habit-item");
+    if (isDoneToday) item.classList.add("done");
+    if (showWarning) item.classList.add("warning-border");
 
     item.innerHTML =
-        "<label>" +
-        "  <input type=\"checkbox\" " + (isDoneToday ? "checked" : "") + ">" +
-        "  " + habit.name +
+        "<label class=\"smart-habit-card\">" +
+        "  <div class=\"habit-left\">" +
+        "    <input type=\"checkbox\" " + (isDoneToday ? "checked" : "") + ">" +
+        "    <div class=\"custom-checkbox\"></div>" +
+        "    <div class=\"habit-info\">" +
+        "      <span class=\"habit-name\">" + emoji + " " + habit.name + "</span>" +
+        (streak > 0 ? "      <span class=\"habit-streak\">🔥 " + streak + " Day Streak</span>" : "") +
+        "    </div>" +
+        "  </div>" +
+        (showWarning ? "  <div class=\"warning-dot\" title=\"Never Miss Twice: You missed this yesterday!\"></div>" : "") +
         "</label>";
 
     const checkbox = item.querySelector("input");
