@@ -18,6 +18,7 @@ h1 {
     padding: 30px;
     border-radius: var(--radius-lg);
     border: 1px solid var(--bg-hover);
+    margin-bottom: 30px; /* Space between settings blocks */
 }
 
 .section-header {
@@ -105,4 +106,134 @@ h1 {
     color: var(--text-light);
     font-size: 15px;
     font-family: inherit;
+}
+
+/* ---- Forms & Profile ---- */
+.settings-card {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+.form-group {
+    display: flex;
+    flex-direction: column;
+    gap: 8px;
+}
+
+.form-group label {
+    color: var(--text-light);
+    font-size: 14px;
+    font-weight: 500;
+    letter-spacing: 0.3px;
+}
+
+.form-group input {
+    background: var(--bg-hover);
+    border: 1px solid var(--bg-hover-2);
+    color: var(--text-light);
+    padding: 12px 15px;
+    border-radius: var(--radius-sm);
+    font-size: 15px;
+    font-family: inherit;
+    transition: all var(--transition);
+}
+
+.form-group input:focus {
+    outline: none;
+    border-color: var(--accent);
+    background: transparent;
+}
+
+.form-actions {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    margin-top: 5px;
+}
+
+.status-msg {
+    font-size: 14px;
+    color: var(--success-mid);
+    opacity: 0;
+    transition: opacity 0.3s;
+}
+.status-msg.show { opacity: 1; }
+
+/* ---- Buttons ---- */
+.btn {
+    padding: 12px 24px;
+    border-radius: 50px;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    border: none;
+    transition: all 0.2s ease;
+    font-family: inherit;
+    width: fit-content;
+}
+
+.primary-btn {
+    background: var(--accent);
+    color: var(--cta-text, var(--text-dark));
+}
+
+.primary-btn:hover {
+    filter: brightness(1.1);
+    transform: translateY(-2px);
+}
+
+.secondary-btn {
+    background: var(--bg-hover-2);
+    color: var(--text-light);
+}
+
+.secondary-btn:hover {
+    background: var(--text-muted);
+    color: var(--bg-dark);
+}
+
+.danger-btn {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+    border: 1px solid rgba(239, 68, 68, 0.2);
+}
+
+.danger-btn:hover {
+    background: #ef4444;
+    color: #ffffff;
+}
+
+/* ---- Data Management ---- */
+.data-actions {
+    gap: 30px;
+}
+
+.data-block {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+    padding-bottom: 25px;
+    border-bottom: 1px solid var(--bg-hover);
+}
+.data-block:last-child {
+    border-bottom: none;
+    padding-bottom: 0;
+}
+
+.data-block h4 {
+    color: var(--text-light);
+    font-size: 16px;
+    font-weight: 500;
+}
+
+.data-desc {
+    color: var(--text-muted);
+    font-size: 14px;
+    line-height: 1.5;
+    margin-bottom: 5px;
+}
+
+.danger-text {
+    color: #ef4444 !important;
 }

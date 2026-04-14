@@ -30,6 +30,27 @@
 
         <section class="settings-section">
             <div class="section-header">
+                <h3>User Profile</h3>
+                <p>Define your identity and personalize your tracker.</p>
+            </div>
+            <div class="settings-card">
+                <div class="form-group">
+                    <label for="profile-name">Display Name</label>
+                    <input type="text" id="profile-name" placeholder="Leave blank for Default User">
+                </div>
+                <div class="form-group">
+                    <label for="profile-identity">Identity Statement</label>
+                    <input type="text" id="profile-identity" placeholder="e.g. I am an athlete building consistency">
+                </div>
+                <div class="form-actions">
+                    <button id="save-profile-btn" class="btn primary-btn">Save Profile</button>
+                    <span id="profile-save-status" class="status-msg"></span>
+                </div>
+            </div>
+        </section>
+
+        <section class="settings-section">
+            <div class="section-header">
                 <h3>Appearance & Themes</h3>
                 <p>Choose a color palette that motivates you.</p>
             </div>
@@ -74,6 +95,25 @@
                     </div>
                     <span class="theme-name">Midnight Focus</span>
                 </button>
+            </div>
+        </section>
+
+        <section class="settings-section">
+            <div class="section-header">
+                <h3>Data Management</h3>
+                <p>Export a backup or wipe your habit history.</p>
+            </div>
+            <div class="settings-card data-actions">
+                <div class="data-block">
+                    <h4>Export Backup</h4>
+                    <p class="data-desc">Download your habits, streaks, and completions as a JSON file.</p>
+                    <button id="export-data-btn" class="btn secondary-btn">Generate Backup</button>
+                </div>
+                <div class="data-block danger-zone">
+                    <h4 class="danger-text">Danger Zone</h4>
+                    <p class="data-desc">Permanently erase all your habits, stats, and configurations. This cannot be undone.</p>
+                    <button id="erase-data-btn" class="btn danger-btn">Erase Everything</button>
+                </div>
             </div>
         </section>
 
