@@ -154,15 +154,53 @@ body {
     transition: color var(--transition);
 }
 
+/* ---- Micro Interactions & Buttons ---- */
+button:active, .btn:active {
+    transform: scale(0.97) !important;
+}
+
 .sidebar ul li a {
     text-decoration: none;
     color: var(--text-muted);
-    transition: color var(--transition);
+    transition: all var(--transition);
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.sidebar ul li a::after {
+    content: '';
+    position: absolute;
+    bottom: -4px;
+    left: 0;
+    width: 0;
+    height: 2px;
+    background: var(--accent);
+    transition: width var(--transition);
+}
+
+.sidebar ul li a:hover::after,
+.sidebar ul li.active a::after {
+    width: 100%;
 }
 
 .sidebar ul li a:hover,
 .sidebar ul li.active a {
-    color: var(--accent);
+    color: var(--text-light); /* Better contrast than accent for text */
+}
+
+.sidebar ul li a:hover .lucide,
+.sidebar ul li.active a .lucide {
+    stroke: var(--accent);
+}
+
+/* Lucide Icon Base Styling */
+.lucide {
+    width: 20px;
+    height: 20px;
+    stroke-width: 2.5;
+    transition: stroke var(--transition);
 }
 
 /* ---- 5. Main Content Area ---- */
