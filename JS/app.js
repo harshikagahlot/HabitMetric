@@ -56,6 +56,18 @@ document.addEventListener("DOMContentLoaded", function () {
     if (typeof lucide !== "undefined") {
         lucide.createIcons();
     }
+
+    // Update the avatar circle with real user initials
+    // "Harsh Gahlot" → "HG", "Harsh" → "H", no name → "?"
+    const avatarEl = document.getElementById("user-avatar");
+    if (avatarEl) {
+        const user = getUser();
+        const name = (user && user.name) ? user.name.trim() : "";
+        const initials = name
+            ? name.split(/\s+/).map(function(w) { return w[0]; }).join("").toUpperCase().slice(0, 2)
+            : "?";
+        avatarEl.textContent = initials;
+    }
 });
 
 

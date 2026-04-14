@@ -213,6 +213,32 @@ button:active, .btn:active {
 }
 
 /* ==========================================
+   Page Transitions (View Transitions API)
+   Gives smooth fade when navigating between pages.
+   Only activates in browsers that support it (Chrome 111+, Edge 111+).
+   ========================================== */
+@view-transition {
+    navigation: auto;
+}
+
+::view-transition-old(root) {
+    animation: 0.15s ease both vt-fade-out;
+}
+
+::view-transition-new(root) {
+    animation: 0.25s ease both vt-fade-in;
+}
+
+@keyframes vt-fade-out {
+    to { opacity: 0; transform: translateY(-4px); }
+}
+
+@keyframes vt-fade-in {
+    from { opacity: 0; transform: translateY(4px); }
+}
+
+
+/* ==========================================
    Responsive — Shared
    ========================================== */
 @media (max-width: 768px) {
@@ -220,26 +246,80 @@ button:active, .btn:active {
         flex-direction: column;
     }
 
+    /* Sidebar becomes a compact top bar on mobile */
     .sidebar {
         width: 100%;
         height: auto;
-        padding: 15px 20px;
+        padding: 12px 16px;
         position: static;
+        display: flex;
+        align-items: center;
+        gap: 16px;
+    }
+
+    .sidebar h2 {
+        font-size: 16px;
+        margin-bottom: 0;
+        white-space: nowrap;
+        flex-shrink: 0;
     }
 
     .sidebar ul {
         display: flex;
-        gap: 15px;
+        gap: 4px;
         overflow-x: auto;
         white-space: nowrap;
-        margin-top: 10px;
+        margin-top: 0;
+        padding-bottom: 2px; /* prevents scrollbar clipping */
+        -ms-overflow-style: none;  /* hide scrollbar IE */
+        scrollbar-width: none;     /* hide scrollbar Firefox */
+    }
+
+    .sidebar ul::-webkit-scrollbar {
+        display: none; /* hide scrollbar Chrome/Safari */
     }
 
     .sidebar ul li {
-        padding: 6px 0;
+        padding: 4px 0;
+    }
+
+    .sidebar ul li a {
+        font-size: 13px;
+        gap: 6px;
+        padding: 6px 10px;
+        border-radius: var(--radius-sm);
+        background: var(--bg-hover);
+    }
+
+    /* Active nav pill on mobile */
+    .sidebar ul li.active a {
+        background: var(--accent);
+        color: var(--text-dark);
+    }
+
+    .sidebar ul li a::after {
+        display: none; /* hide underline animation on mobile — use pill instead */
+    }
+
+    .lucide {
+        width: 16px;
+        height: 16px;
     }
 
     .main {
-        padding: 20px;
+        padding: 20px 16px;
     }
 }
+
+/* Extra small phones (iPhone SE = 375px) */
+@media (max-width: 400px) {
+    .sidebar ul li a {
+        font-size: 12px;
+        padding: 5px 8px;
+    }
+
+    .sidebar h2 {
+        font-size: 14px;
+    }
+}
+
