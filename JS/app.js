@@ -210,7 +210,22 @@ function enforceOnboarding() {
     }
 }
 
+/**
+ * Loads the saved theme from localStorage and applies it to the HTML root immediately.
+ * This runs on every single page load before the body renders.
+ */
+function applySavedTheme() {
+    const savedTheme = localStorage.getItem("theme") || "lavender-aura";
+    
+    if (savedTheme !== "lavender-aura") {
+        document.documentElement.setAttribute("data-theme", savedTheme);
+    } else {
+        document.documentElement.removeAttribute("data-theme");
+    }
+}
+
 // ---- Run on every page load ----
+applySavedTheme();
 enforceOnboarding();
 
 // Only run these if we aren't redirecting

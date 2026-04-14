@@ -120,7 +120,7 @@ h1 {
 
 .smart-habit-card input[type="checkbox"]:checked + .custom-checkbox::after {
     content: "✓";
-    color: var(--text-dark);
+    color: var(--cta-text, #ffffff);
     font-weight: bold;
     font-size: 14px;
     animation: popIn 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
@@ -171,24 +171,27 @@ h1 {
 #add-habit-btn {
     display: inline-flex;
     align-items: center;
+    justify-content: center;
     gap: 8px;
-    background: var(--accent-dark);
-    color: var(--text-light);
+    background: var(--cta-bg, var(--accent));
+    color: var(--cta-text, var(--text-dark));
     border: none;
-    padding: 12px 20px;
-    border-radius: var(--radius-sm);
+    padding: 14px 28px;
+    border-radius: 50px; /* Premium Pill Shape */
     cursor: pointer;
-    font-size: 15px;
-    font-weight: 500;
+    font-size: 16px;
+    font-weight: 600;
     font-family: inherit;
-    margin-top: 16px;
-    transition: background var(--transition), transform var(--transition);
+    margin-top: 20px;
+    box-shadow: var(--cta-shadow, 0 4px 10px rgba(0,0,0,0.1));
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    width: fit-content; /* Ensure it stays balanced and doesn't stretch */
 }
 
 #add-habit-btn:hover {
-    background: var(--accent);
-    color: var(--text-dark);
-    transform: translateY(-2px);
+    transform: translateY(-3px);
+    box-shadow: 0 6px 20px rgba(0,0,0,0.15); /* Lifted shadow */
+    filter: brightness(1.05);
 }
 
 /* ==========================================

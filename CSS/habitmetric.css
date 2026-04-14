@@ -26,7 +26,7 @@
 
 .profile {
     background: var(--accent);
-    color: var(--text-dark);
+    color: var(--cta-text, #ffffff);
     padding: 10px 15px;
     border-radius: 50%;
     font-weight: bold;
@@ -109,6 +109,7 @@
     align-items: center;
     justify-content: center;
     cursor: pointer;
+    color: var(--text-light); /* ensure default day number is visible */
     transition: transform var(--transition);
 }
 
@@ -130,14 +131,14 @@
     display: flex;
     align-items: center;
     justify-content: center;
-    color: var(--text-muted, #888);
+    color: var(--text-muted);
 }
 
 /* ---- Heatmap Levels ---- */
 .none   { background: var(--bg-hover); }
-.low    { background: var(--success-low);  color: var(--text-dark); }
-.medium { background: var(--success-mid); }
-.high   { background: var(--success-high); }
+.low    { background: var(--success-low);  color: #0f172a !important; }
+.medium { background: var(--success-mid);  color: #ffffff !important; }
+.high   { background: var(--success-high); color: #ffffff !important; }
 
 /* ---- Progress Ring ---- */
 .progress-ring-container {
@@ -161,7 +162,7 @@
     transform: translate(-50%, -50%);
     font-size: 20px;
     font-weight: bold;
-    color: var(--text-dark);
+    color: var(--text-light);
 }
 
 /* ---- Smart Insight ---- */

@@ -3,13 +3,13 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <meta name="description" content="HabitMetric Settings — Customize your experience coming soon.">
+    <meta name="description" content="HabitMetric Settings — Customize your experience.">
     <title>Settings — HabitMetric</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;500;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="CSS/base.css">
-    <link rel="stylesheet" href="CSS/placeholder.css">
+    <link rel="stylesheet" href="CSS/settings.css">
 </head>
 <body>
 
@@ -25,16 +25,61 @@
     </div>
 
     <div class="main">
-        <div class="coming-soon">
-            <div class="coming-soon-icon">⚙️</div>
-            <span class="badge">COMING SOON</span>
-            <h1>Settings</h1>
-            <p>Personalize your name, set notification preferences,
-               choose a theme, and manage your habit data — all here.</p>
-            <a href="index.html" class="back-link">← Back to Dashboard</a>
-        </div>
+        <h1>Settings</h1>
+        <p class="subtitle">Personalize your HabitMetric experience.</p>
+
+        <section class="settings-section">
+            <div class="section-header">
+                <h3>Appearance & Themes</h3>
+                <p>Choose a color palette that motivates you.</p>
+            </div>
+            
+            <div class="theme-grid" id="theme-grid">
+                <!-- Theme 1 -->
+                <button class="theme-card" data-theme-value="lavender-aura">
+                    <div class="theme-preview" style="background: #f9f7fb;">
+                        <div class="preview-card" style="background: #ffffff; border: 1px solid #e2e8f0;">
+                            <div class="preview-accent" style="background: #a78bfa;"></div>
+                        </div>
+                    </div>
+                    <span class="theme-name">Lavender Aura</span>
+                </button>
+
+                <!-- Theme 2 -->
+                <button class="theme-card" data-theme-value="ivory-focus">
+                    <div class="theme-preview" style="background: #f8fafc;">
+                        <div class="preview-card" style="background: #ffffff; border: 1px solid #e2e8f0;">
+                            <div class="preview-accent" style="background: #1e3a8a;"></div>
+                        </div>
+                    </div>
+                    <span class="theme-name">Ivory Focus</span>
+                </button>
+
+                <!-- Theme 3 -->
+                <button class="theme-card" data-theme-value="sage-flow">
+                    <div class="theme-preview" style="background: #f4f7f4;">
+                        <div class="preview-card" style="background: #ffffff; border: 1px solid #e2e8f0;">
+                            <div class="preview-accent" style="background: #86a789;"></div>
+                        </div>
+                    </div>
+                    <span class="theme-name">Sage Flow</span>
+                </button>
+
+                <!-- Theme 4 -->
+                <button class="theme-card" data-theme-value="midnight-focus">
+                    <div class="theme-preview" style="background: #0b132b;">
+                        <div class="preview-card" style="background: #1c2541;">
+                            <div class="preview-accent" style="background: #fbbf24;"></div>
+                        </div>
+                    </div>
+                    <span class="theme-name">Midnight Focus</span>
+                </button>
+            </div>
+        </section>
+
     </div>
 
     <script src="JS/app.js"></script>
+    <script src="JS/settings.js"></script>
 </body>
 </html>
