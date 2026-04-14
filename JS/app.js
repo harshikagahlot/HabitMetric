@@ -41,23 +41,22 @@ function setGreeting() {
  * Example: if the URL ends in "myhabits.html", the <li> wrapping
  * <a href="myhabits.html"> gets class="active" automatically.
  */
-function setSidebarActive() {
-    // Get just the filename, e.g. "myhabits.html" or "index.html"
-    const currentPage = window.location.pathname.split("/").pop() || "index.html";
-
+document.addEventListener("DOMContentLoaded", function () {
+    // Determine the current page for sidebar highlighting
+    const currentPath = window.location.pathname;
     const navLinks = document.querySelectorAll(".sidebar ul li a");
-
+    
     navLinks.forEach(function (link) {
-        const linkPage = link.getAttribute("href");
-        const parentLi = link.parentElement;
-
-        if (linkPage === currentPage) {
-            parentLi.classList.add("active");
-        } else {
-            parentLi.classList.remove("active");
+        if (link.getAttribute("href") && currentPath.endsWith(link.getAttribute("href"))) {
+            link.parentElement.classList.add("active");
         }
     });
-}
+
+    // Render Lucide SVG icons if the script is loaded
+    if (typeof lucide !== "undefined") {
+        lucide.createIcons();
+    }
+});
 
 
 /**
@@ -234,5 +233,4 @@ const isCurrentlyOnboarding = window.location.pathname.includes("onboarding.html
 
 if (user || isCurrentlyOnboarding) {
     setGreeting();
-    setSidebarActive();
 }
