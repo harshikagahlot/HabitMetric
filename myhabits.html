@@ -32,28 +32,54 @@
     <!-- Main Content -->
     <div class="main">
 
-        <h1>My Habits</h1>
-
-        <!-- Category Selector -->
-        <div class="habit-categories">
-            <h2>Choose Habit Category</h2>
-            <div class="category-grid">
-                <button class="category">🏃 Fitness</button>
-                <button class="category">📚 Study</button>
-                <button class="category">🧠 Mindfulness</button>
-                <button class="category">💧 Health</button>
-                <button class="category">💻 Productivity</button>
-                <!-- This button MUST stay last — JS inserts new categories before it -->
-                <button class="category add">+ Add Category</button>
+        <div class="habits-container">
+            <div class="page-header">
+                <h1>My Habits</h1>
+                <p class="page-subtitle">Build consistency one day at a time</p>
             </div>
+
+            <!-- Category Selector -->
+            <div class="habit-categories">
+                <h2>Choose Habit Category</h2>
+                <div class="category-grid">
+                    <!-- This button MUST stay last — JS inserts new categories before it -->
+                    <button class="category add">+ Add Category</button>
+                </div>
+            </div>
+
+            <!-- Habit List — populated by myhabits.js -->
+            <div class="habit-list"></div>
+
+            <!-- Add Habit — changed from <div> to <button> for accessibility -->
+            <button id="add-habit-btn">+ Add New Habit</button>
         </div>
 
-        <!-- Habit List — populated by myhabits.js -->
-        <div class="habit-list"></div>
+    </div>
 
-        <!-- Add Habit — changed from <div> to <button> for accessibility -->
-        <button id="add-habit-btn">+ Add New Habit</button>
-
+    <!-- Custom Emoji Picker Modal -->
+    <div id="emoji-modal" class="modal-backdrop">
+        <div class="modal-content emoji-picker-content">
+            <h3>Choose an Icon</h3>
+            <div class="emoji-grid-selection">
+                <button class="emoji-option">🏃</button>
+                <button class="emoji-option">📚</button>
+                <button class="emoji-option">💧</button>
+                <button class="emoji-option">🧠</button>
+                <button class="emoji-option">💻</button>
+                <button class="emoji-option">🧘</button>
+                <button class="emoji-option">🍳</button>
+                <button class="emoji-option">🛌</button>
+                <button class="emoji-option">💸</button>
+                <button class="emoji-option">📝</button>
+                <button class="emoji-option">🎨</button>
+                <button class="emoji-option">🏋️</button>
+                <button class="emoji-option">💊</button>
+                <button class="emoji-option">🧹</button>
+                <button class="emoji-option">🌱</button>
+                <button class="emoji-option remove-emoji">❌ None</button>
+            </div>
+            <button id="close-emoji-modal" class="modal-close-btn">Cancel</button>
+        </div>
     </div>
 
     <!-- Scripts: shared logic first, then page-specific -->

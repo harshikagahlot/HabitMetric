@@ -1,104 +1,186 @@
 /* ==========================================
-   HabitMetric — My Habits Styles
-   Page-specific only. base.css handles reset,
-   variables, body, and sidebar.
+   HabitMetric — My Habits Premium UI 
    ========================================== */
 
-/* ---- Page Title ---- */
+/* ---- Structural Container ---- */
+.habits-container {
+    max-width: 900px;
+    margin: 0 auto;
+    width: 100%;
+}
+
+/* ---- Page Header ---- */
+.page-header {
+    margin-bottom: 35px;
+}
+
 h1 {
     color: var(--accent);
-    margin-bottom: 10px;
+    margin-bottom: 5px;
+    font-size: 32px;
+}
+
+.page-subtitle {
+    color: var(--text-muted);
+    font-size: 16px;
+    letter-spacing: 0.2px;
+}
+
+/* ---- Fixed Accessible Focus Styles ---- */
+/* Completely removes the ugly default browser orange focus ring */
+:focus-visible {
+    outline: 2px solid var(--accent);
+    outline-offset: 2px;
 }
 
 /* ---- Habit Categories ---- */
 .habit-categories {
-    margin-top: 30px;
+    margin-bottom: 40px;
 }
 
 .habit-categories h2 {
     margin-bottom: 15px;
     color: var(--text-light);
+    font-size: 18px;
+    font-weight: 500;
 }
 
 .category-grid {
-    display: grid;
-    grid-template-columns: repeat(4, 1fr);
-    gap: 15px;
-    margin-top: 15px;
+    display: flex;
+    flex-wrap: wrap;
+    gap: 12px;
 }
 
+/* Category Pill */
 .category {
-    padding: 16px;
-    border-radius: var(--radius-sm);
+    position: relative;
+    padding: 10px 18px;
+    border-radius: 50px;
     background: var(--bg-card);
     color: var(--text-light);
-    border: none;
+    border: 1px solid var(--bg-hover);
     cursor: pointer;
     font-size: 14px;
     font-family: inherit;
-    transition: background var(--transition);
+    transition: all var(--transition);
+    display: inline-flex;
+    align-items: center;
+    gap: 6px;
+    box-shadow: 0 2px 5px rgba(0,0,0,0.02);
 }
 
 .category:hover {
     background: var(--bg-hover);
+    transform: translateY(-1px);
 }
 
-/* "Add Category" button gets a distinct look */
+/* "Add Category" distinct look */
 .category.add {
     border: 1px dashed var(--text-muted);
     background: transparent;
     color: var(--text-muted);
+    box-shadow: none;
 }
 
 .category.add:hover {
     border-color: var(--accent);
     color: var(--accent);
-    background: transparent;
 }
 
-/* ---- Habit List ---- */
+/* Category Action Dropdowns */
+.cat-actions-wrapper {
+    position: relative;
+    display: inline-flex;
+    align-items: center;
+}
+
+.cat-action-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 16px;
+    cursor: pointer;
+    margin-left: 4px;
+    border-radius: 50%;
+    width: 24px;
+    height: 24px;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    transition: background 0.2s, color 0.2s;
+}
+
+.cat-action-btn:hover {
+    background: var(--bg-hover-2);
+    color: var(--text-light);
+}
+
+/* ---- Habit List & Cards ---- */
 .habit-list {
-    margin-top: 40px;
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 12px;
 }
 
 .habit-item {
     background: var(--bg-card);
-    border-radius: var(--radius-sm);
+    border-radius: var(--radius-md);
     color: var(--text-light);
     transition: all 0.3s ease;
-    border: 1px solid transparent;
+    border: 1px solid var(--bg-hover);
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.03);
+    position: relative;
+    display: flex;
+    align-items: center;
+    padding-right: 15px; /* Space for the 3-dots */
+}
+
+/* Fixes stacking context bug where top dropdown hides behind bottom habit */
+.habit-item.z-elevate {
+    z-index: 50;
+}
+
+.habit-item:hover {
+    box-shadow: 0 6px 15px rgba(0, 0, 0, 0.05);
 }
 
 .habit-item.done {
-    box-shadow: 0 0 15px rgba(0, 255, 136, 0.2);
-    border-color: rgba(0, 255, 136, 0.4);
+    opacity: 0.85;
 }
 
-.habit-item.warning-border {
-    border: 1px solid var(--warning);
-}
-
+/* Smart Habit Card Inner layout */
 .smart-habit-card {
     display: flex;
-    justify-content: space-between;
     align-items: center;
-    padding: 14px 18px;
+    padding: 16px 20px;
     cursor: pointer;
-    width: 100%;
+    flex: 1; /* Fill all available space except actions */
+    justify-content: space-between;
 }
 
+/* Left Section: Checkbox + Name */
 .habit-left {
     display: flex;
     align-items: center;
-    gap: 15px;
+    gap: 16px;
 }
 
-/* Custom Checkbox */
+/* Right Section: Badges */
+.habit-right {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+}
+
+.habit-name {
+    font-size: 16px;
+    font-weight: 500;
+}
+
+
+/* ---- Custom Checkbox ---- */
 .smart-habit-card input[type="checkbox"] {
-    display: none; /* hide native */
+    display: none;
 }
 
 .custom-checkbox {
@@ -111,6 +193,7 @@ h1 {
     display: flex;
     align-items: center;
     justify-content: center;
+    flex-shrink: 0;
 }
 
 .smart-habit-card input[type="checkbox"]:checked + .custom-checkbox {
@@ -131,41 +214,100 @@ h1 {
     100% { transform: scale(1); opacity: 1; }
 }
 
-.habit-info {
-    display: flex;
-    flex-direction: column;
-    gap: 4px;
-}
-
-.habit-name {
-    font-size: 16px;
-    font-weight: 500;
-}
-
-.habit-streak {
+/* ---- Badges & Chips ---- */
+.badge {
+    padding: 4px 10px;
+    border-radius: 50px;
     font-size: 12px;
-    color: var(--accent);
-    background: rgba(0, 255, 136, 0.1);
-    padding: 2px 6px;
-    border-radius: 4px;
-    width: fit-content;
+    font-weight: 500;
+    white-space: nowrap;
 }
 
-/* Never Miss Twice Dot */
-.warning-dot {
-    width: 12px;
-    height: 12px;
-    background: var(--warning);
+.streak-chip {
+    background: rgba(0, 200, 83, 0.1);
+    color: var(--success-high);
+}
+
+[data-theme="midnight-focus"] .streak-chip {
+    background: rgba(0, 255, 136, 0.15);
+    color: #4ade80;
+}
+
+.warning-chip {
+    background: rgba(251, 191, 36, 0.15);
+    color: #d97706;
+}
+
+[data-theme="midnight-focus"] .warning-chip {
+    color: #fbbf24;
+}
+
+/* ---- Action Menu (3-dots) ---- */
+.habit-actions-wrapper {
+    position: relative;
+}
+
+.action-btn {
+    background: transparent;
+    border: none;
+    color: var(--text-muted);
+    font-size: 20px;
+    cursor: pointer;
+    width: 32px;
+    height: 32px;
     border-radius: 50%;
-    box-shadow: 0 0 8px var(--warning);
-    animation: pulse 2s infinite;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, color 0.2s;
+    line-height: 1;
 }
 
-@keyframes pulse {
-    0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 165, 0, 0.7); }
-    70% { transform: scale(1); box-shadow: 0 0 0 6px rgba(255, 165, 0, 0); }
-    100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(255, 165, 0, 0); }
+.action-btn:hover {
+    background: var(--bg-hover-2);
+    color: var(--text-light);
 }
+
+.dropdown-menu {
+    position: absolute;
+    right: 0;
+    top: 40px;
+    background: var(--bg-card);
+    border: 1px solid var(--bg-hover-2);
+    border-radius: var(--radius-sm);
+    box-shadow: 0 4px 20px rgba(0,0,0,0.1);
+    padding: 8px 0;
+    min-width: 140px;
+    z-index: 100;
+    opacity: 0;
+    visibility: hidden;
+    transform: translateY(-10px);
+    transition: all 0.2s ease;
+}
+
+.dropdown-menu.show {
+    opacity: 1;
+    visibility: visible;
+    transform: translateY(0);
+}
+
+.dropdown-item {
+    padding: 10px 16px;
+    font-size: 14px;
+    color: var(--text-light);
+    cursor: pointer;
+    transition: background 0.2s;
+}
+
+.dropdown-item:hover {
+    background: var(--bg-hover);
+}
+
+.dropdown-item.danger:hover {
+    background: rgba(239, 68, 68, 0.1);
+    color: #ef4444;
+}
+
 
 /* ---- Add Habit Button ---- */
 #add-habit-btn {
@@ -182,10 +324,10 @@ h1 {
     font-size: 16px;
     font-weight: 600;
     font-family: inherit;
-    margin-top: 20px;
+    margin-top: 24px;
     box-shadow: var(--cta-shadow, 0 4px 10px rgba(0,0,0,0.1));
     transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-    width: fit-content; /* Ensure it stays balanced and doesn't stretch */
+    width: fit-content;
 }
 
 #add-habit-btn:hover {
@@ -194,26 +336,129 @@ h1 {
     filter: brightness(1.05);
 }
 
+/* ---- Custom Modal ---- */
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal-backdrop.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: var(--bg-card);
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 320px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    transform: translateY(20px);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.modal-backdrop.show .modal-content {
+    transform: translateY(0);
+}
+
+.modal-content h3 {
+    color: var(--text-light);
+    margin-bottom: 20px;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.emoji-grid-selection {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.emoji-option {
+    background: var(--bg-hover);
+    border: none;
+    font-size: 24px;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.emoji-option:hover {
+    background: var(--bg-hover-2);
+    transform: scale(1.15);
+}
+
+.emoji-option.remove-emoji {
+    grid-column: span 5;
+    background: transparent;
+    border: 1px solid var(--bg-hover-2);
+    color: var(--text-muted);
+    font-size: 14px;
+    height: 36px;
+}
+
+.emoji-option.remove-emoji:hover {
+    background: rgba(239, 68, 68, 0.05);
+    color: #ef4444;
+    border-color: #ef4444;
+}
+
+.modal-close-btn {
+    background: transparent;
+    color: var(--text-muted);
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s;
+}
+
+.modal-close-btn:hover {
+    background: var(--bg-hover);
+    color: var(--text-light);
+}
+
 /* ==========================================
-   Responsive — My Habits
+   Responsive
    ========================================== */
 @media (max-width: 768px) {
     h1 {
-        font-size: 26px;
-        margin-bottom: 20px;
+        font-size: 28px;
     }
 
-    .category-grid {
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
+    .smart-habit-card {
+        padding: 12px 16px;
+    }
+    
+    .habit-right {
+        gap: 8px;
     }
 
-    .category {
-        padding: 14px;
-        font-size: 13px;
-    }
-
-    .habit-list {
-        margin-top: 30px;
+    .action-btn {
+        width: 28px;
+        height: 28px;
     }
 }
