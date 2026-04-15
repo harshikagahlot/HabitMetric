@@ -323,3 +323,205 @@ button:active, .btn:active {
     }
 }
 
+
+/* ==========================================
+   Global Modal Styles
+   Used on any page that hosts a modal.
+   Kept here so modals work even when myhabits.css is not loaded.
+   ========================================== */
+
+.modal-backdrop {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100vw;
+    height: 100vh;
+    background: rgba(0, 0, 0, 0.4);
+    backdrop-filter: blur(4px);
+    z-index: 1000;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    opacity: 0;
+    visibility: hidden;
+    transition: all 0.3s ease;
+}
+
+.modal-backdrop.show {
+    opacity: 1;
+    visibility: visible;
+}
+
+.modal-content {
+    background: var(--bg-card);
+    padding: 24px;
+    border-radius: var(--radius-lg);
+    width: 90%;
+    max-width: 320px;
+    box-shadow: 0 10px 40px rgba(0, 0, 0, 0.15);
+    transform: translateY(20px);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.modal-backdrop.show .modal-content {
+    transform: translateY(0);
+}
+
+.modal-content h3 {
+    color: var(--text-light);
+    margin-bottom: 20px;
+    font-size: 18px;
+    font-weight: 500;
+}
+
+.modal-close-btn {
+    background: transparent;
+    color: var(--text-muted);
+    border: none;
+    font-size: 14px;
+    cursor: pointer;
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    transition: all 0.2s;
+}
+
+.modal-close-btn:hover {
+    background: var(--bg-hover);
+    color: var(--text-light);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    justify-content: flex-end;
+}
+
+.commit-btn {
+    background: var(--cta-bg);
+    color: var(--cta-text);
+    padding: 12px 24px;
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--cta-shadow);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.commit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+    filter: brightness(1.1);
+}
+
+.intention-modal-content { max-width: 400px; }
+.category-modal-content  { max-width: 350px; }
+
+.intention-subtitle {
+    font-size: 14px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 24px;
+    line-height: 1.4;
+}
+
+.intention-subtitle strong {
+    color: var(--accent);
+}
+
+.intention-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.form-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg-hover);
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    transition: border-color 0.2s;
+}
+
+.form-row:focus-within {
+    border-color: var(--accent);
+    background: var(--bg-card);
+}
+
+.intention-label {
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 500;
+    min-width: 40px;
+}
+
+.form-row input {
+    background: transparent;
+    border: none;
+    color: var(--text-light);
+    font-size: 16px;
+    font-family: inherit;
+    flex: 1;
+    width: 100%;
+    outline: none;
+}
+
+.form-row input::placeholder {
+    color: var(--text-muted);
+    opacity: 0.5;
+}
+
+.form-row input[type="time"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(0.5);
+}
+
+.emoji-grid-selection {
+    display: grid;
+    grid-template-columns: repeat(5, 1fr);
+    gap: 12px;
+    margin-bottom: 20px;
+}
+
+.emoji-option {
+    background: var(--bg-hover);
+    border: none;
+    font-size: 24px;
+    width: 40px;
+    height: 40px;
+    border-radius: 8px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.emoji-option:hover {
+    background: var(--bg-hover-2);
+    transform: scale(1.15);
+}
+
+.emoji-option.remove-emoji {
+    grid-column: span 5;
+    background: transparent;
+    border: 1px solid var(--bg-hover-2);
+    color: var(--text-muted);
+    font-size: 14px;
+    height: 36px;
+}
+
+.emoji-option.remove-emoji:hover {
+    background: rgba(239, 68, 68, 0.05);
+    color: #ef4444;
+    border-color: #ef4444;
+}

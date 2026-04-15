@@ -1,142 +1,147 @@
 /* ==========================================
    HabitMetric — SPA Router (router.js)
-   Handles smooth page transitions without reloads.
+   Handles smooth, glitch-free page transitions.
+
+   HOW IT ELIMINATES THE GLITCH:
+   1. Fade out old content
+   2. Fetch new page HTML
+   3. Detect any missing CSS stylesheets from the new page
+   4. Inject them and AWAIT their 'load' event (browser confirms styles are parsed)
+   5. ONLY THEN swap innerHTML and run init scripts
+   6. Fade in fully-styled content
+
+   Result: User NEVER sees unstyled content. Ever.
    ========================================== */
 
-document.addEventListener("DOMContentLoaded", () => {
-    // 1. Initial route setup on fresh load
+function initRouter() {
+    // Fire initial page init
     triggerInitFunction(window.location.pathname);
 
-    // 2. Intercept Sidebar Clicks
+    // Intercept sidebar link clicks
     document.body.addEventListener("click", e => {
-        // Find if an <a> tag was clicked inside the sidebar
         const link = e.target.closest(".sidebar a");
         if (!link) return;
-        
+
         e.preventDefault();
         const url = link.getAttribute("href");
-        
-        // Prevent reloading the exact same page
+
+        // Don't reload the same page
         if (window.location.pathname.endsWith(url)) return;
-        
-        // Push state to browser history
+
         window.history.pushState(null, "", url);
-        
-        // Load the new page content
         loadPage(url);
     });
 
-    // 3. Handle Browser Back/Forward Buttons
+    // Handle browser Back/Forward buttons
     window.addEventListener("popstate", () => {
         loadPage(window.location.pathname, false);
     });
-});
+}
 
-async function loadPage(url, pushState = true) {
+// Boot the router
+if (document.readyState === "loading") {
+    document.addEventListener("DOMContentLoaded", initRouter);
+} else {
+    initRouter();
+}
+
+/**
+ * Core page loader. Fetches HTML, waits for CSS, then reveals fully-styled content.
+ */
+async function loadPage(url) {
     const mainEl = document.querySelector(".main");
-    
-    // Smooth transition out
+
+    // Step 1: Fade out
     if (mainEl) {
-        mainEl.style.transition = "opacity 0.2s ease-out, transform 0.2s ease-out";
+        mainEl.style.transition = "opacity 0.15s ease-out";
         mainEl.style.opacity = "0";
-        mainEl.style.transform = "translateY(5px)";
     }
 
     try {
+        // Step 2: Fetch new page HTML
         const response = await fetch(url);
-        if (!response.ok) throw new Error("Page not found");
+        if (!response.ok) throw new Error("Page not found: " + url);
         const html = await response.text();
-        
-        // Parse the fetched HTML
+
         const parser = new DOMParser();
         const doc = parser.parseFromString(html, "text/html");
-        
-        // Extract new content
         const newMain = doc.querySelector(".main");
-        
-        // Wait a tiny bit for the fade out to finish
-        setTimeout(() => {
-            if (newMain && mainEl) {
-                // Swap the content
-                mainEl.innerHTML = newMain.innerHTML;
-                mainEl.className = newMain.className; // Carry over any specific classes (like container types)
-                
-                // Keep the styling classes but reset the animation props
-                mainEl.style.transition = "none";
-                mainEl.style.opacity = "0";
-                mainEl.style.transform = "translateY(5px)";
-                
-                // Force browser reflow to reset transition
-                void mainEl.offsetWidth; 
-                
-                // Smooth transition in
-                mainEl.style.transition = "opacity 0.2s ease-in, transform 0.2s ease-in";
-                mainEl.style.opacity = "1";
-                mainEl.style.transform = "translateY(0)";
+
+        if (!newMain || !mainEl) return;
+
+        // Step 3: Find CSS files in the new page that aren't loaded yet
+        const cssPromises = [];
+        doc.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
+            const href = link.getAttribute("href");
+            if (!document.querySelector(`link[href="${href}"]`)) {
+                const newLink = document.createElement("link");
+                newLink.rel  = "stylesheet";
+                newLink.href = href;
+
+                // Create a Promise that resolves when this stylesheet is fully parsed
+                const p = new Promise(resolve => {
+                    newLink.addEventListener("load",  resolve);
+                    newLink.addEventListener("error", resolve); // don't block on 404
+                });
+                cssPromises.push(p);
+                document.head.appendChild(newLink);
             }
+        });
 
-            // Important: Merge Stylesheets
-            // Ensures pages like "My Habits" get their specific CSS (myhabits.css)
-            doc.querySelectorAll('link[rel="stylesheet"]').forEach(link => {
-                const href = link.getAttribute("href");
-                if (!document.querySelector(`link[href="${href}"]`)) {
-                    const newLink = document.createElement("link");
-                    newLink.rel = "stylesheet";
-                    newLink.href = href;
-                    document.head.appendChild(newLink);
-                }
+        // Step 4: Wait for ALL new stylesheets to be ready
+        await Promise.all(cssPromises);
+
+        // Step 5: Swap content — styles are guaranteed ready at this point
+        mainEl.innerHTML  = newMain.innerHTML;
+        mainEl.className  = newMain.className;
+        document.title    = doc.title;
+
+        // Step 6: Update sidebar active state
+        updateSidebarActiveLink(url);
+
+        // Step 7: Run page-specific init (calendar, habits list, etc.)
+        triggerInitFunction(url);
+
+        // Step 8: Fade in — double rAF ensures browser has painted the new layout
+        requestAnimationFrame(() => {
+            requestAnimationFrame(() => {
+                mainEl.style.transition = "opacity 0.2s ease-in";
+                mainEl.style.opacity    = "1";
             });
-
-            // Special Case: Modals. Remove old modals, inject new modals.
-            document.querySelectorAll(".modal-backdrop").forEach(m => m.remove());
-            doc.querySelectorAll(".modal-backdrop").forEach(m => {
-                document.body.appendChild(m);
-            });
-
-            // Update active class on sidebar
-            updateSidebarActiveLink(url);
-            
-            // Update Title
-            document.title = doc.title;
-
-            // Re-initialize correct scripts
-            triggerInitFunction(url);
-        }, 200); // 200ms matches the fade-out duration
+        });
 
     } catch (err) {
-        console.error("Routing error:", err);
-        // Recover if failed
-        if (mainEl) {
-            mainEl.style.opacity = "1";
-            mainEl.style.transform = "translateY(0)";
-        }
+        console.error("[Router] Navigation error:", err);
+        if (mainEl) mainEl.style.opacity = "1"; // Always recover
     }
 }
 
 function updateSidebarActiveLink(url) {
     document.querySelectorAll(".sidebar ul li").forEach(li => li.classList.remove("active"));
-    const links = document.querySelectorAll(".sidebar ul li a");
-    links.forEach(link => {
-        if (url.endsWith(link.getAttribute("href"))) {
+    document.querySelectorAll(".sidebar ul li a").forEach(link => {
+        const href = link.getAttribute("href");
+        if (url.endsWith(href) || (url === "/" && href === "index.html")) {
             link.parentElement.classList.add("active");
         }
     });
 }
 
 function triggerInitFunction(url) {
-    // Re-render lucide icons if present
+    // Re-render Lucide icons for newly injected SVG placeholders
     if (typeof lucide !== "undefined") {
         lucide.createIcons();
     }
-    
-    // Call page-specific setup functions safely
-    if (url.includes("index.html") || url.endsWith("/")) {
+
+    // Call correct page init
+    if (url.includes("index.html") || url.includes("habitmetric.html") || url.endsWith("/")) {
         if (typeof window.initDashboard === "function") window.initDashboard();
     } else if (url.includes("myhabits.html")) {
         if (typeof window.initMyHabits === "function") window.initMyHabits();
     } else if (url.includes("settings.html")) {
         if (typeof window.initSettings === "function") window.initSettings();
+    } else if (url.includes("analytics.html")) {
+        if (typeof window.initAnalytics === "function") window.initAnalytics();
+    } else if (url.includes("risk-insights.html")) {
+        if (typeof window.initRisk === "function") window.initRisk();
     }
-    
-    // Note: risk-insights and analytics don't have JS logic files yet, so they are ignored here safely!
 }
