@@ -1,18 +1,106 @@
-<!-- habitmetric.html — Redirects to index.html (the new dashboard entry point)
-
-     Why this file exists:
-     The dashboard was originally at habitmetric.html. It has been moved to
-     index.html as per web standards (servers serve index.html by default).
-     This file redirects any old links so nothing breaks.
--->
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
-    <meta http-equiv="refresh" content="0; url=index.html">
-    <title>Redirecting — HabitMetric</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="view-transition" content="same-origin">
+    <meta name="description" content="HabitMetric — An elegant, psychology-driven habit tracker focused on building consistency.">
+    <title>Dashboard — HabitMetric</title>
+
+    <!-- Fonts -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+
+    <!-- Styles: base + page-specific only. Router handles loading subpage CSS. -->
+    <link rel="stylesheet" href="CSS/base.css">
+    <link rel="stylesheet" href="CSS/habitmetric.css">
 </head>
 <body>
-    <p>Redirecting to <a href="index.html">Dashboard</a>…</p>
+
+    <!-- Sidebar -->
+    <div class="sidebar">
+        <h2>🧠 HabitMetric</h2>
+        <ul>
+            <li class="active"><a href="index.html"><i data-lucide="layout-dashboard"></i> Dashboard</a></li>
+            <li><a href="myhabits.html"><i data-lucide="check-circle"></i> My Habits</a></li>
+            <li><a href="analytics.html"><i data-lucide="bar-chart-2"></i> Analytics</a></li>
+            <li><a href="risk-insights.html"><i data-lucide="alert-triangle"></i> Risk Insights</a></li>
+            <li><a href="settings.html"><i data-lucide="settings"></i> Settings</a></li>
+        </ul>
+    </div>
+
+    <!-- Main Content -->
+    <div class="main">
+
+        <div class="header">
+            <!-- id="greeting" is updated dynamically by app.js -->
+            <div class="header-titles">
+                <h1 id="greeting">Good Evening, Jiyuu 👋</h1>
+                <p id="identity-statement" class="identity-subtitle"></p>
+            </div>
+            <div class="profile" id="user-avatar">JD</div>
+        </div>
+
+        <div class="cards">
+            
+            <!-- Progress Ring Card -->
+            <div class="card" id="progress-card" style="text-align: center;">
+                <h3>Today</h3>
+                <div class="progress-ring-container">
+                    <svg class="progress-ring" width="120" height="120">
+                        <circle class="progress-ring__circle-bg" stroke="var(--bg-hover)" stroke-width="10" fill="transparent" r="50" cx="60" cy="60"/>
+                        <circle class="progress-ring__circle" stroke="var(--accent)" stroke-width="10" fill="transparent" r="50" cx="60" cy="60"/>
+                    </svg>
+                    <div class="progress-ring__text" id="today-progress-text">0/0</div>
+                </div>
+            </div>
+
+            <div class="card" id="streak-card">
+                <h3>Current Streak</h3>
+                <!-- id="streak-value" updated by dashboard.js -->
+                <p class="big" id="streak-value">0 Days</p>
+                <!-- id="longest-streak" shows personal best in muted text -->
+                <small id="longest-streak"></small>
+            </div>
+
+            <!-- id="risk-card" — dashboard.js adds/removes class="warning" -->
+            <div class="card" id="risk-card">
+                <h3>Drop Risk</h3>
+                <p class="big" id="risk-value">Low</p>
+                <small id="risk-reason">Keep going</small>
+            </div>
+
+            <div class="card">
+                <h3>Consistency Score</h3>
+                <!-- 30-day completion rate updated by dashboard.js -->
+                <p class="big" id="consistency-value">–</p>
+            </div>
+        </div>
+
+        <div class="calendar-wrapper">
+            <div class="calendar-header">
+                <button id="prevMonth">←</button>
+                <h2 id="monthYear"></h2>
+                <button id="nextMonth">→</button>
+            </div>
+            <div class="calendar" id="calendar"></div>
+        </div>
+
+        <div class="insight">
+            <h2>Smart Insight</h2>
+            <p>You tend to miss habits after 2 low-energy days.
+               Consider switching to "Light Mode" tomorrow.</p>
+        </div>
+
+    </div>
+
+    <!-- SPA Scripts: ALL logic files must be loaded on the shell -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="JS/app.js"></script>
+    <script src="JS/dashboard.js"></script>
+    <script src="JS/myhabits.js"></script>
+    <script src="JS/settings.js"></script>
+    <script src="JS/router.js"></script>
 </body>
 </html>

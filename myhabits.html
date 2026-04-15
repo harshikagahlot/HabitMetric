@@ -55,9 +55,7 @@
             <button id="add-habit-btn">+ Add New Habit</button>
         </div>
 
-    </div>
-
-    <!-- Custom Emoji Picker Modal -->
+    <!-- Emoji Picker Modal -->
     <div id="emoji-modal" class="modal-backdrop">
         <div class="modal-content emoji-picker-content">
             <h3>Choose an Icon</h3>
@@ -83,12 +81,11 @@
         </div>
     </div>
 
-    <!-- Atomic Habits Intention Modal -->
+    <!-- Add Habit Modal -->
     <div id="add-habit-modal" class="modal-backdrop">
         <div class="modal-content intention-modal-content">
             <h3>Create a New Habit</h3>
             <p class="intention-subtitle">Vague goals fail. Use an <strong>Implementation Intention</strong> to make it stick.</p>
-            
             <div class="intention-form">
                 <div class="form-row">
                     <span class="intention-label">I will</span>
@@ -103,10 +100,9 @@
                     <input type="text" id="habit-location" placeholder="e.g. the living room" autocomplete="off">
                 </div>
             </div>
-
             <div class="modal-actions">
                 <button id="close-habit-modal" class="btn modal-close-btn">Cancel</button>
-                <button id="save-habit-btn" class="btn primary-btn commit-btn">Commit Habit</button>
+                <button id="save-habit-btn" class="btn commit-btn">Commit Habit</button>
             </div>
         </div>
     </div>
@@ -114,19 +110,17 @@
     <!-- Add Category Modal -->
     <div id="add-category-modal" class="modal-backdrop">
         <div class="modal-content category-modal-content">
-            <h3>New Category</h3>
-            <p class="intention-subtitle">Group your habits to stay organized.</p>
-            
+            <h3>Organize Your Habits</h3>
+            <p class="intention-subtitle">Group your routines into meaningful categories.</p>
             <div class="intention-form">
                 <div class="form-row">
-                    <span class="intention-label">Name</span>
+                    <span class="intention-label">Title</span>
                     <input type="text" id="category-name-input" placeholder="e.g. 🧘 Wellness" autocomplete="off">
                 </div>
             </div>
-
             <div class="modal-actions">
                 <button id="close-category-modal" class="btn modal-close-btn">Cancel</button>
-                <button id="save-category-btn" class="btn primary-btn">Create Category</button>
+                <button id="save-category-btn" class="btn commit-btn">Create Category</button>
             </div>
         </div>
     </div>
