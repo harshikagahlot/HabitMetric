@@ -2,7 +2,7 @@
    HabitMetric — Settings Interactivity
    ========================================== */
 
-document.addEventListener("DOMContentLoaded", () => {
+window.initSettings = function() {
     
     // Grab all theme cards from the UI
     const themeCards = document.querySelectorAll(".theme-card");
@@ -105,4 +105,4 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     });
 
-});
+}; // End of initSettings()

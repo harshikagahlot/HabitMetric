@@ -7,6 +7,7 @@
    ========================================== */
 
 
+window.initDashboard = function() {
 /* ==========================================
    STREAK CALCULATIONS
    ========================================== */
@@ -313,3 +314,5 @@ function updateIdentityStatement() {
     
     statementEl.textContent = `Today you are building: ${identity} 📖`;
 }
+
+}; // End of initDashboard()
