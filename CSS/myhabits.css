@@ -441,6 +441,126 @@ h1 {
     color: var(--text-light);
 }
 
+/* ---- Intention Modal Specifics ---- */
+.intention-modal-content {
+    max-width: 400px;
+}
+
+.intention-subtitle {
+    font-size: 14px;
+    color: var(--text-muted);
+    text-align: center;
+    margin-bottom: 24px;
+    line-height: 1.4;
+}
+
+.intention-subtitle strong {
+    color: var(--accent);
+}
+
+.intention-form {
+    width: 100%;
+    display: flex;
+    flex-direction: column;
+    gap: 16px;
+    margin-bottom: 24px;
+}
+
+.form-row {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    background: var(--bg-hover);
+    padding: 8px 16px;
+    border-radius: var(--radius-sm);
+    border: 1px solid transparent;
+    transition: border-color 0.2s;
+}
+
+.form-row:focus-within {
+    border-color: var(--accent);
+    background: var(--bg-card);
+}
+
+.intention-label {
+    color: var(--text-muted);
+    font-size: 14px;
+    font-weight: 500;
+    min-width: 40px;
+}
+
+.form-row input {
+    background: transparent;
+    border: none;
+    color: var(--text-light);
+    font-size: 16px;
+    font-family: inherit;
+    flex: 1;
+    width: 100%;
+    outline: none;
+}
+
+.form-row input::placeholder {
+    color: var(--text-muted);
+    opacity: 0.5;
+}
+
+/* Chrome/Safari removing clock icon from time input if desired */
+.form-row input[type="time"]::-webkit-calendar-picker-indicator {
+    cursor: pointer;
+    filter: invert(0.5);
+}
+
+[data-theme="ivory-focus"] .form-row input[type="time"]::-webkit-calendar-picker-indicator {
+    filter: invert(0);
+}
+
+.modal-actions {
+    display: flex;
+    gap: 12px;
+    width: 100%;
+    justify-content: flex-end;
+}
+
+.commit-btn {
+    background: var(--cta-bg);
+    color: var(--cta-text);
+    padding: 12px 24px;
+    border: none;
+    border-radius: var(--radius-md);
+    font-weight: 600;
+    cursor: pointer;
+    box-shadow: var(--cta-shadow);
+    transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+}
+
+.commit-btn:hover {
+    transform: translateY(-2px);
+    box-shadow: 0 8px 20px rgba(139, 92, 246, 0.4);
+    filter: brightness(1.1);
+}
+
+.category-modal-content {
+    max-width: 350px;
+}
+
+/* Enhancing the time input for better AM/PM visibility */
+.form-row input[type="time"] {
+    position: relative;
+    padding-right: 30px;
+}
+
+.form-row input[type="time"]::after {
+    content: "🕒";
+    position: absolute;
+    right: 10px;
+    top: 50%;
+    transform: translateY(-50%);
+    pointer-events: none;
+    font-size: 14px;
+    opacity: 0.6;
+}
+
 /* ==========================================
    Responsive
    ========================================== */

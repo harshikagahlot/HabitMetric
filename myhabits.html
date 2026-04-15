@@ -83,9 +83,60 @@
         </div>
     </div>
 
-    <!-- Scripts: shared logic first, then page-specific -->
+    <!-- Atomic Habits Intention Modal -->
+    <div id="add-habit-modal" class="modal-backdrop">
+        <div class="modal-content intention-modal-content">
+            <h3>Create a New Habit</h3>
+            <p class="intention-subtitle">Vague goals fail. Use an <strong>Implementation Intention</strong> to make it stick.</p>
+            
+            <div class="intention-form">
+                <div class="form-row">
+                    <span class="intention-label">I will</span>
+                    <input type="text" id="habit-action" placeholder="e.g. read 20 pages" autocomplete="off">
+                </div>
+                <div class="form-row">
+                    <span class="intention-label">at</span>
+                    <input type="time" id="habit-time">
+                </div>
+                <div class="form-row">
+                    <span class="intention-label">in</span>
+                    <input type="text" id="habit-location" placeholder="e.g. the living room" autocomplete="off">
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button id="close-habit-modal" class="btn modal-close-btn">Cancel</button>
+                <button id="save-habit-btn" class="btn primary-btn commit-btn">Commit Habit</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- Add Category Modal -->
+    <div id="add-category-modal" class="modal-backdrop">
+        <div class="modal-content category-modal-content">
+            <h3>New Category</h3>
+            <p class="intention-subtitle">Group your habits to stay organized.</p>
+            
+            <div class="intention-form">
+                <div class="form-row">
+                    <span class="intention-label">Name</span>
+                    <input type="text" id="category-name-input" placeholder="e.g. 🧘 Wellness" autocomplete="off">
+                </div>
+            </div>
+
+            <div class="modal-actions">
+                <button id="close-category-modal" class="btn modal-close-btn">Cancel</button>
+                <button id="save-category-btn" class="btn primary-btn">Create Category</button>
+            </div>
+        </div>
+    </div>
+
+    <!-- SPA Scripts: ALL logic files must be loaded on the shell -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="JS/app.js"></script>
+    <script src="JS/dashboard.js"></script>
     <script src="JS/myhabits.js"></script>
+    <script src="JS/settings.js"></script>
+    <script src="JS/router.js"></script>
 </body>
 </html>

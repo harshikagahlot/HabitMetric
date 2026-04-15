@@ -3,6 +3,7 @@
    Handles habit CRUD and category management.
    ========================================== */
 
+window.initMyHabits = function() {
 // ---- DOM References ----
 const categoryGrid   = document.querySelector(".category-grid");
 const addCategoryBtn = document.querySelector(".category.add");
@@ -19,7 +20,10 @@ function closeAllDropdowns() {
     document.querySelectorAll(".dropdown-menu.show").forEach(m => m.classList.remove("show"));
     document.querySelectorAll(".habit-item.z-elevate").forEach(i => i.classList.remove("z-elevate"));
 }
-document.addEventListener("click", closeAllDropdowns);
+if (!window._habitsListenerAttached) {
+    document.addEventListener("click", closeAllDropdowns);
+    window._habitsListenerAttached = true;
+}
 
 // ---- Global Emoji Modal Logic ----
 const emojiModal = document.getElementById("emoji-modal");
@@ -27,11 +31,14 @@ const closeEmojiBtn = document.getElementById("close-emoji-modal");
 let currentHabitForEmoji = null;
 let currentHabitDOMElement = null;
 
-closeEmojiBtn.addEventListener("click", () => {
-    emojiModal.classList.remove("show");
-    currentHabitForEmoji = null;
-    currentHabitDOMElement = null;
-});
+if (!window._emojiListenerAttached) {
+    closeEmojiBtn.addEventListener("click", () => {
+        emojiModal.classList.remove("show");
+        currentHabitForEmoji = null;
+        currentHabitDOMElement = null;
+    });
+    window._emojiListenerAttached = true;
+}
 
 document.querySelectorAll(".emoji-option").forEach(btn => {
     btn.addEventListener("click", function() {
@@ -93,16 +100,39 @@ savedCategories.forEach(function (name) {
     addCategoryToDOM(name);
 });
 
-addCategoryBtn.addEventListener("click", function () {
-    const input = prompt("Enter new category name (use an emoji if you want!):");
-    if (!input || input.trim() === "") return;
+const addCategoryModal = document.getElementById("add-category-modal");
+const closeCategoryBtn = document.getElementById("close-category-modal");
+const saveCategoryBtn  = document.getElementById("save-category-btn");
+const categoryNameInput = document.getElementById("category-name-input");
 
-    const name = input.trim();
-    addCategoryToDOM(name);
+if (!window._categoryModalAttached) {
+    addCategoryBtn.addEventListener("click", function () {
+        addCategoryModal.classList.add("show");
+        categoryNameInput.focus();
+    });
 
-    savedCategories.push(name);
-    localStorage.setItem("categories", JSON.stringify(savedCategories));
-});
+    closeCategoryBtn.addEventListener("click", function () {
+        addCategoryModal.classList.remove("show");
+        categoryNameInput.value = "";
+    });
+
+    saveCategoryBtn.addEventListener("click", function () {
+        const name = categoryNameInput.value.trim();
+        if (!name) {
+            categoryNameInput.style.borderBottom = "2px solid #ef4444";
+            return;
+        }
+
+        addCategoryToDOM(name);
+        savedCategories.push(name);
+        localStorage.setItem("categories", JSON.stringify(savedCategories));
+
+        addCategoryModal.classList.remove("show");
+        categoryNameInput.value = "";
+        categoryNameInput.style.borderBottom = "none";
+    });
+    window._categoryModalAttached = true;
+}
 
 function addCategoryToDOM(name) {
     const wrapper = document.createElement("div");
@@ -204,25 +234,85 @@ savedHabits.forEach(function (habit) {
 
 
 /* ==========================================
-   HABITS — Add New
+   HABITS — Add New (Atomic Habits Intention)
    ========================================== */
 
-addHabitBtn.addEventListener("click", function () {
-    const input = prompt("Enter new habit name:");
-    if (!input || input.trim() === "") return;
+const addHabitModal = document.getElementById("add-habit-modal");
+const closeHabitBtn = document.getElementById("close-habit-modal");
+const saveHabitBtn  = document.getElementById("save-habit-btn");
 
-    const newHabit = {
-        id:          generateId(),
-        name:        input.trim(),
-        category:    "general",
-        createdAt:   getTodayString(),
-        completions: []
-    };
+const habitActionInput   = document.getElementById("habit-action");
+const habitTimeInput     = document.getElementById("habit-time");
+const habitLocationInput = document.getElementById("habit-location");
 
-    savedHabits.push(newHabit);
-    localStorage.setItem("habits", JSON.stringify(savedHabits));
-    addHabitToDOM(newHabit);
-});
+if (!window._addHabitListenerAttached) {
+    // Open Modal
+    addHabitBtn.addEventListener("click", function () {
+        addHabitModal.classList.add("show");
+        habitActionInput.focus();
+    });
+
+    // Close Modal
+    closeHabitBtn.addEventListener("click", function () {
+        addHabitModal.classList.remove("show");
+        habitActionInput.value = "";
+        habitTimeInput.value = "";
+        habitLocationInput.value = "";
+    });
+
+    // Save Habit
+    saveHabitBtn.addEventListener("click", function () {
+        const action = habitActionInput.value.trim();
+        const time = habitTimeInput.value;
+        const location = habitLocationInput.value.trim();
+        
+        // Ensure action is provided at minimum
+        if (!action) {
+            habitActionInput.style.borderBottom = "2px solid #ef4444";
+            return;
+        }
+
+        // Format the "Implementation Intention" string
+        let formattedTime = time;
+        if (time) {
+            const [hours, minutes] = time.split(':');
+            const h = parseInt(hours);
+            const ampm = h >= 12 ? 'PM' : 'AM';
+            const h12 = h % 12 || 12;
+            formattedTime = `${h12}:${minutes} ${ampm}`;
+        }
+
+        let intentionString = action;
+        if (time || location) {
+            intentionString += " (";
+            if (time) intentionString += `at ${formattedTime}`;
+            if (time && location) intentionString += " ";
+            if (location) intentionString += `in ${location}`;
+            intentionString += ")";
+        }
+
+        const newHabit = {
+            id:          generateId(),
+            name:        intentionString,
+            category:    "general",
+            createdAt:   getTodayString(),
+            completions: []
+        };
+
+        savedHabits.push(newHabit);
+        localStorage.setItem("habits", JSON.stringify(savedHabits));
+        addHabitToDOM(newHabit);
+
+        // Reset and close
+        addHabitModal.classList.remove("show");
+        habitActionInput.style.borderBottom = "none";
+        habitActionInput.value = "";
+        habitTimeInput.value = "";
+        habitLocationInput.value = "";
+    });
+
+    window._addHabitListenerAttached = true;
+}
 
 
 /* ==========================================
@@ -354,3 +444,5 @@ function addHabitToDOM(habit) {
 
     habitList.appendChild(item);
 }
+
+}; // End of initMyHabits()
