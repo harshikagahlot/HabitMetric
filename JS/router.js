@@ -75,12 +75,12 @@ async function loadPage(url) {
             const href = link.getAttribute("href");
             if (!document.querySelector(`link[href="${href}"]`)) {
                 const newLink = document.createElement("link");
-                newLink.rel  = "stylesheet";
+                newLink.rel = "stylesheet";
                 newLink.href = href;
 
                 // Create a Promise that resolves when this stylesheet is fully parsed
                 const p = new Promise(resolve => {
-                    newLink.addEventListener("load",  resolve);
+                    newLink.addEventListener("load", resolve);
                     newLink.addEventListener("error", resolve); // don't block on 404
                 });
                 cssPromises.push(p);
@@ -92,9 +92,9 @@ async function loadPage(url) {
         await Promise.all(cssPromises);
 
         // Step 5: Swap content — styles are guaranteed ready at this point
-        mainEl.innerHTML  = newMain.innerHTML;
-        mainEl.className  = newMain.className;
-        document.title    = doc.title;
+        mainEl.innerHTML = newMain.innerHTML;
+        mainEl.className = newMain.className;
+        document.title = doc.title;
 
         // Step 6: Update sidebar active state
         updateSidebarActiveLink(url);
@@ -106,7 +106,7 @@ async function loadPage(url) {
         requestAnimationFrame(() => {
             requestAnimationFrame(() => {
                 mainEl.style.transition = "opacity 0.2s ease-in";
-                mainEl.style.opacity    = "1";
+                mainEl.style.opacity = "1";
             });
         });
 
@@ -141,7 +141,7 @@ function triggerInitFunction(url) {
         if (typeof window.initSettings === "function") window.initSettings();
     } else if (url.includes("analytics.html")) {
         if (typeof window.initAnalytics === "function") window.initAnalytics();
-    } else if (url.includes("risk-insights.html")) {
-        if (typeof window.initRisk === "function") window.initRisk();
+    } else if (url.includes("habit-lab.html")) {
+        if (typeof window.initHabitLab === "function") window.initHabitLab();
     }
 }

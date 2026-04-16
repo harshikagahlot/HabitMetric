@@ -1,0 +1,100 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="view-transition" content="same-origin">
+    <meta name="description" content="Habit Lab — Experiment with your habit identity and stacking strategies.">
+    <title>Habit Lab — HabitMetric</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="CSS/base.css">
+    <link rel="stylesheet" href="CSS/habit-lab.css">
+</head>
+<body>
+
+    <div class="sidebar">
+        <h2>🧠 HabitMetric</h2>
+        <ul>
+            <li><a href="index.html"><i data-lucide="layout-dashboard"></i> Dashboard</a></li>
+            <li><a href="myhabits.html"><i data-lucide="check-circle"></i> My Habits</a></li>
+            <li><a href="analytics.html"><i data-lucide="bar-chart-2"></i> Analytics</a></li>
+            <li class="active"><a href="habit-lab.html"><i data-lucide="flask-conical"></i> Habit Lab</a></li>
+            <li><a href="settings.html"><i data-lucide="settings"></i> Settings</a></li>
+        </ul>
+    </div>
+
+    <div class="main">
+        <div class="lab-container">
+            <div class="page-header">
+                <h1>The Habit Lab</h1>
+                <p class="page-subtitle">Experiment with your identity and build robust habit architectures.</p>
+            </div>
+
+            <div class="lab-grid">
+                <!-- Module 1: Identity Voting -->
+                <section class="lab-card identity-voting">
+                    <div class="card-header">
+                        <i data-lucide="fingerprint"></i>
+                        <h2>Identity Voting</h2>
+                    </div>
+                    <p class="card-desc">"Every action you take is a vote for the person you wish to become." — James Clear</p>
+                    <div id="identity-votes-list" class="votes-list">
+                        <!-- Populated by habit-lab.js -->
+                    </div>
+                </section>
+
+                <!-- Module 2: The Stacking Station -->
+                <section class="lab-card stacking-station">
+                    <div class="card-header">
+                        <i data-lucide="layers"></i>
+                        <h2>Stacking Station</h2>
+                    </div>
+                    <p class="card-desc">Build robust habit stacks using the <strong>If-Then</strong> formula.</p>
+                    
+                    <div class="stack-builder">
+                        <div class="formula">
+                            <span class="keyword">After I</span>
+                            <input type="text" id="stack-trigger" placeholder="Current Habit (e.g. pour coffee)">
+                            <span class="keyword">, I will</span>
+                            <input type="text" id="stack-action" placeholder="New Habit (e.g. meditate)">
+                            <button id="add-stack-btn">Build Stack</button>
+                        </div>
+                    </div>
+
+                    <div id="saved-stacks" class="stacks-display">
+                        <!-- Populated by habit-lab.js -->
+                    </div>
+                </section>
+
+                <!-- Module 3: Potential Plateau -->
+                <section class="lab-card plateau-visual">
+                    <div class="card-header">
+                        <i data-lucide="trending-up"></i>
+                        <h2>Plateau of Latent Potential</h2>
+                    </div>
+                    <p class="card-desc">Your results are often delayed. Keep casting votes even when you don't see the change yet.</p>
+                    <div class="graph-container">
+                        <svg viewBox="0 0 400 200" class="plateau-svg">
+                            <path class="expectation-line" d="M0,200 L400,0" />
+                            <path class="reality-curve" d="M0,200 Q100,200 400,50" />
+                            <text x="10" y="180" class="label">Time</text>
+                            <text x="320" y="40" class="label">Results</text>
+                        </svg>
+                        <div class="valley-label">The Valley of Disappointment</div>
+                    </div>
+                </section>
+            </div>
+        </div>
+    </div>
+
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <script src="JS/app.js"></script>
+    <script src="JS/dashboard.js"></script>
+    <script src="JS/myhabits.js"></script>
+    <script src="JS/settings.js"></script>
+    <script src="JS/router.js"></script>
+    <script src="JS/habit-lab.js"></script>
+</body>
+</html>
