@@ -4,16 +4,21 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="view-transition" content="same-origin">
-    <meta name="description" content="HabitMetric Risk Insights — Identify habits falling behind.">
+    <meta name="description" content="HabitMetric Risk Insights — AI-powered behavioral coaching.">
     <title>Risk Insights — HabitMetric</title>
+    
+    <!-- Fonts -->
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
+    
+    <!-- Styles: base + master shell logic -->
     <link rel="stylesheet" href="CSS/base.css">
-    <link rel="stylesheet" href="CSS/placeholder.css">
+    <link rel="stylesheet" href="CSS/risk.css">
 </head>
 <body>
 
+    <!-- Sidebar (Shell Placeholder) -->
     <div class="sidebar">
         <h2>🧠 HabitMetric</h2>
         <ul>
@@ -25,14 +30,27 @@
         </ul>
     </div>
 
+    <!-- Main Content -->
     <div class="main">
-        <div class="coming-soon">
-            <div class="coming-soon-icon">⚠️</div>
-            <span class="badge">COMING SOON</span>
-            <h1>Risk Insights</h1>
-            <p>AI-powered predictions that flag when you're likely to break a streak —
-               before it happens — so you can take action early.</p>
-            <a href="index.html" class="back-link">← Back to Dashboard</a>
+        <div class="risk-container">
+            <div class="page-header">
+                <h1>Risk Insights</h1>
+                <p class="page-subtitle">Behavioral psychology coaching for your neural habit loops.</p>
+            </div>
+
+            <!-- AI Coach Section -->
+            <div id="coach-container">
+                <!-- Populated by risk.js -->
+                <div class="coach-bubble loading">
+                    <p>Coach is analyzing your patterns...</p>
+                </div>
+            </div>
+
+            <!-- Detailed Metrics Section -->
+            <div id="risk-metrics-container">
+                <!-- Populated by risk.js -->
+            </div>
+
         </div>
     </div>
 
@@ -43,5 +61,6 @@
     <script src="JS/myhabits.js"></script>
     <script src="JS/settings.js"></script>
     <script src="JS/router.js"></script>
+    <script src="JS/risk.js"></script>
 </body>
 </html>
