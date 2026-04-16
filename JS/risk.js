@@ -26,7 +26,7 @@ function analyzeHabits() {
     // 1. Never Miss Twice Check
     const yesterday = new Date();
     yesterday.setDate(yesterday.getDate() - 1);
-    const yesterdayStr = yesterday.toISOString().slice(0, 10);
+    const yesterdayStr = formatLocalDate(yesterday);
 
     const missedYesterday = habits.filter(h =>
         h.completions && !h.completions.includes(yesterdayStr) && h.completions.length > 0
@@ -103,6 +103,3 @@ function renderMetrics(container, insights) {
     `;
 }
 
-function getTodayString() {
-    return new Date().toISOString().slice(0, 10);
-}

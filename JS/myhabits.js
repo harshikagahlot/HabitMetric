@@ -411,7 +411,7 @@ window.initMyHabits = function () {
         const isDoneToday    = habit.completions.includes(today);
         const streak         = calculateStreak(habit.completions);
         const yesterday      = new Date(); yesterday.setDate(yesterday.getDate() - 1);
-        const yesterdayStr   = yesterday.toISOString().slice(0, 10);
+        const yesterdayStr   = formatLocalDate(yesterday);
         const missedYesterday= !habit.completions.includes(yesterdayStr);
         const showWarning    = missedYesterday && !isDoneToday && habit.completions.length > 0;
 

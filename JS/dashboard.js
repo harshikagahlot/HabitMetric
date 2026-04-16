@@ -126,11 +126,9 @@ window.initDashboard = function () {
 
         if (contextData[today]) {
             const d = contextData[today];
-            const emojis = ["🌑", "☁️", "✨", "🌟", "🌀"];
-            const labels = ["Drained", "Low", "Neutral", "Good", "Peak"];
-            
-            emojiEl.textContent = emojis[d.mood - 1];
-            labelEl.textContent = labels[d.mood - 1];
+            // Use saved values directly for perfect sync
+            emojiEl.textContent = d.moodEmoji || "✨";
+            labelEl.textContent = d.moodLabel || "Logged";
             
         } else {
             emojiEl.textContent = "✨";

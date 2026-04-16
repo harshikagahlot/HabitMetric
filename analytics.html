@@ -38,12 +38,12 @@
                 <section class="context-card mood-card">
                     <h3>Current Mood</h3>
                     <p class="card-desc">How are you feeling right now?</p>
-                    <div class="mood-selector">
-                        <button class="mood-btn" data-mood="1" title="Drained">🌑</button>
-                        <button class="mood-btn" data-mood="2" title="Low">☁️</button>
-                        <button class="mood-btn" data-mood="3" title="Neutral">✨</button>
-                        <button class="mood-btn" data-mood="4" title="Good">🌟</button>
-                        <button class="mood-btn" data-mood="5" title="Peak">🌀</button>
+                    <div class="mood-selector" id="mood-selector">
+                        <button class="mood-btn" data-mood="5" data-label="Great">🌟</button>
+                        <button class="mood-btn" data-mood="4" data-label="Good">😊</button>
+                        <button class="mood-btn" data-mood="3" data-label="Neutral">😐</button>
+                        <button class="mood-btn" data-mood="2" data-label="Tired">🥱</button>
+                        <button class="mood-btn" data-mood="1" data-label="Stressed">😫</button>
                     </div>
                     <div id="mood-label" class="context-status">Neutral</div>
                 </section>
@@ -51,8 +51,14 @@
                 <!-- Interference Log -->
                 <section class="context-card interference-card">
                     <h3>Interference & Energy</h3>
-                    <p class="card-desc">Logging emergencies drops "Probability of Success" by 30%.</p>
-                    <textarea id="daily-note" placeholder="Any emergencies, time lack, or extra work?"></textarea>
+                    <p class="card-desc">How much time or focus are you losing to emergencies today?</p>
+                    
+                    <div class="field-group">
+                        <label for="time-loss" class="field-label">Estimated Time Loss: <span id="time-loss-val">0</span> hrs</label>
+                        <input type="range" id="time-loss" min="0" max="8" step="0.5" value="0" class="premium-slider">
+                    </div>
+
+                    <textarea id="daily-note" placeholder="Optional: What is interfering? (e.g. Extra meetings, health, family)"></textarea>
                     
                     <div class="context-options">
                         <label class="toggle-container">
@@ -65,9 +71,12 @@
                 <!-- Probability Score -->
                 <section class="context-card probability-card">
                     <h3>Productivity Forecast</h3>
-                    <div class="forecast-value">
-                        <span id="prob-percentage">--</span>
-                        <small>Success Probability</small>
+                    <div class="forecast-area">
+                        <div class="forecast-value">
+                            <span id="prob-percentage">--</span>
+                            <small>Success Probability</small>
+                        </div>
+                        <div id="forecast-confidence" class="confidence-tag">Calculating...</div>
                     </div>
                     <button id="save-context-btn">Save Progress</button>
                 </section>

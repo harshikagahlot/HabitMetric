@@ -80,7 +80,12 @@ document.addEventListener("DOMContentLoaded", function () {
  * and heatmap calculations much simpler.
  */
 function getTodayString() {
-    return new Date().toISOString().slice(0, 10);
+    const d = new Date();
+    // Returns YYYY-MM-DD in local time
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
 }
 
 
@@ -132,6 +137,16 @@ function saveUser(updatedUser) {
    ========================================== */
 
 /**
+ * Returns a "YYYY-MM-DD" string for any given Date object in local time.
+ */
+function formatLocalDate(d) {
+    const year = d.getFullYear();
+    const month = String(d.getMonth() + 1).padStart(2, "0");
+    const day = String(d.getDate()).padStart(2, "0");
+    return `${year}-${month}-${day}`;
+}
+
+/**
  * Calculates the current streak — consecutive days ending today or yesterday.
  */
 function calculateStreak(datesArray) {
@@ -144,7 +159,7 @@ function calculateStreak(datesArray) {
     for (let i = 0; i < 365; i++) {
         const checkDate = new Date(today);
         checkDate.setDate(today.getDate() - i);
-        const dateStr = checkDate.toISOString().slice(0, 10);
+        const dateStr = formatLocalDate(checkDate);
 
         if (activeSet.has(dateStr)) {
             streak++;
