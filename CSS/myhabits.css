@@ -74,6 +74,14 @@ h1 {
     transform: translateY(-1px);
 }
 
+.category.active {
+    background: var(--accent);
+    color: var(--cta-text, #ffffff);
+    border-color: var(--accent);
+    box-shadow: 0 4px 12px rgba(0, 0, 0, 0.15);
+    font-weight: 600;
+}
+
 /* "Add Category" distinct look */
 .category.add {
     border: 1px dashed var(--text-muted);
@@ -117,6 +125,29 @@ h1 {
 
 /* ---- Habit List & Cards ---- */
 .habit-list {
+    margin-top: 30px;
+}
+
+.category-section {
+    margin-bottom: 40px;
+    animation: fadeIn 0.5s ease-out;
+}
+
+.category-divider {
+    font-size: 14px;
+    font-weight: 700;
+    color: var(--accent);
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    margin-bottom: 15px;
+    padding-bottom: 8px;
+    border-bottom: 1px solid var(--bg-hover);
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.category-habits {
     display: flex;
     flex-direction: column;
     gap: 12px;

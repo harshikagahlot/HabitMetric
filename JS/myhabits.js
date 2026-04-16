@@ -23,6 +23,7 @@ window.initMyHabits = function () {
     const closeCategoryBtn  = document.getElementById("close-category-modal");
     const saveCategoryBtn   = document.getElementById("save-category-btn");
     const categoryNameInput = document.getElementById("category-name-input");
+    const habitCategorySelect = document.getElementById("habit-category-select");
 
     // Guard: if critical elements are missing, bail out silently
     if (!categoryGrid || !addHabitBtn || !habitList) return;
@@ -41,129 +42,215 @@ window.initMyHabits = function () {
     }
 
     /* ==========================================
+       CONSTANTS & STATE
+       ========================================== */
+    const GENERAL_CAT_ID = "cat-general";
+    let currentFilter = "all"; // "all", "cat-general", or a category ID
+
+    /* ==========================================
        MIGRATION
        ========================================== */
-    function migrateHabitsIfNeeded(habits) {
-        const today = getTodayString();
-        return habits.map(h => {
-            if (Array.isArray(h.completions)) return h;
-            return {
-                id:          generateId(),
-                name:        h.name,
-                category:    h.category || "general",
-                createdAt:   today,
-                completions: h.completed ? [today] : []
-            };
-        });
+    function migrateToRelationalModel() {
+        console.log("[Migration] Checking data integrity...");
+        
+        // 1. Migrate Categories
+        let categories = JSON.parse(localStorage.getItem("categories"));
+        const defaultCats = [
+            { id: "cat-fitness",     name: "🏃 Fitness",      icon: "🏃", isDefault: true },
+            { id: "cat-study",       name: "📚 Study",        icon: "📚", isDefault: true },
+            { id: "cat-mindfulness", name: "🧠 Mindfulness",  icon: "🧠", isDefault: true },
+            { id: "cat-health",      name: "💧 Health",       icon: "💧", isDefault: true },
+            { id: "cat-productivity",name: "💻 Productivity", icon: "💻", isDefault: true }
+        ];
+
+        // If categories is Array<String> or missing, convert it
+        if (!categories || !categories.length || typeof categories[0] === "string") {
+            const migratedCats = defaultCats;
+            // If they had custom strings, we'd ideally map them, but for this MVP, 
+            // we seeding defaults + General.
+            localStorage.setItem("categories", JSON.stringify(migratedCats));
+            categories = migratedCats;
+        }
+
+        // 2. Migrate Habits
+        let habits = JSON.parse(localStorage.getItem("habits"));
+        if (habits && habits.length) {
+            let habitsChanged = false;
+            habits = habits.map(h => {
+                // If it doesn't have a categoryId, we need to map the old string 'category'
+                if (!h.categoryId) {
+                    habitsChanged = true;
+                    // Find a category that matches the name string
+                    const match = categories.find(c => c.name === h.category);
+                    h.categoryId = match ? match.id : GENERAL_CAT_ID;
+                    // Keep old h.category for backward compatibility with Dashboard/Analytics phases
+                }
+                if (!h.completions) h.completions = [];
+                if (!h.id) h.id = generateId();
+                return h;
+            });
+            if (habitsChanged) localStorage.setItem("habits", JSON.stringify(habits));
+        }
     }
+    migrateToRelationalModel();
 
 
     /* ==========================================
        CATEGORIES
        ========================================== */
-    let savedCategories = JSON.parse(localStorage.getItem("categories"));
-    if (!savedCategories || savedCategories.length === 0) {
-        savedCategories = ["🏃 Fitness", "📚 Study", "🧠 Mindfulness", "💧 Health", "💻 Productivity"];
-        localStorage.setItem("categories", JSON.stringify(savedCategories));
-    }
+    let savedCategories = JSON.parse(localStorage.getItem("categories")) || [];
 
-    savedCategories.forEach(name => addCategoryToDOM(name));
-
-    // Category Modal — wire up fresh every init (DOM is fresh after SPA swap)
+    // Category Modal UI Triggers
     if (addCategoryBtn && addCategoryModal) {
-        addCategoryBtn.addEventListener("click", () => {
+        addCategoryBtn.onclick = () => {
             addCategoryModal.classList.add("show");
             if (categoryNameInput) categoryNameInput.focus();
-        });
+        };
     }
     if (closeCategoryBtn && addCategoryModal) {
-        closeCategoryBtn.addEventListener("click", () => {
+        closeCategoryBtn.onclick = () => {
             addCategoryModal.classList.remove("show");
             if (categoryNameInput) categoryNameInput.value = "";
-        });
+        };
     }
-    if (saveCategoryBtn && addCategoryModal) {
-        saveCategoryBtn.addEventListener("click", () => {
-            const name = categoryNameInput ? categoryNameInput.value.trim() : "";
-            if (!name) {
-                if (categoryNameInput) categoryNameInput.style.borderBottom = "2px solid #ef4444";
-                return;
-            }
-            addCategoryToDOM(name);
-            savedCategories.push(name);
-            localStorage.setItem("categories", JSON.stringify(savedCategories));
-            addCategoryModal.classList.remove("show");
-            if (categoryNameInput) {
-                categoryNameInput.value = "";
-                categoryNameInput.style.borderBottom = "";
-            }
+    function renderCategoryChips() {
+        // Clear except the last "Add" button
+        const children = Array.from(categoryGrid.children);
+        children.forEach(child => {
+            if (!child.classList.contains("add")) child.remove();
         });
+
+        // 1. "All Habits" chip
+        const allChip = createCategoryChip({ id: "all", name: "All Habits" });
+        categoryGrid.insertBefore(allChip, addCategoryBtn);
+
+        // 2. Saved categories
+        savedCategories.forEach(cat => {
+            const chip = createCategoryChip(cat);
+            categoryGrid.insertBefore(chip, addCategoryBtn);
+        });
+
+        // 3. "Uncategorized" chip (only if habits exist in it)
+        const habits = getHabits();
+        const hasUncategorized = habits.some(h => h.categoryId === GENERAL_CAT_ID);
+        if (hasUncategorized || currentFilter === GENERAL_CAT_ID) {
+            const genChip = createCategoryChip({ id: GENERAL_CAT_ID, name: "General" });
+            categoryGrid.insertBefore(genChip, addCategoryBtn);
+        }
     }
 
-    function addCategoryToDOM(name) {
+    function createCategoryChip(cat) {
         const wrapper = document.createElement("div");
         wrapper.className = "cat-actions-wrapper";
 
         const btn = document.createElement("button");
         btn.classList.add("category");
-        btn.textContent = name;
+        if (currentFilter === cat.id) btn.classList.add("active");
+        btn.textContent = cat.name;
+        btn.onclick = () => {
+            currentFilter = cat.id;
+            renderCategoryChips();
+            refreshHabitList();
+        };
 
-        const actionBtn = document.createElement("button");
-        actionBtn.className = "cat-action-btn";
-        actionBtn.textContent = "⋮";
-
-        const menu = document.createElement("div");
-        menu.className = "dropdown-menu";
-
-        const renameItem = document.createElement("div");
-        renameItem.className = "dropdown-item";
-        renameItem.textContent = "Rename";
-
-        const deleteItem = document.createElement("div");
-        deleteItem.className = "dropdown-item danger";
-        deleteItem.textContent = "Delete";
-
-        menu.appendChild(renameItem);
-        menu.appendChild(deleteItem);
         wrapper.appendChild(btn);
-        wrapper.appendChild(actionBtn);
-        wrapper.appendChild(menu);
 
-        actionBtn.addEventListener("click", e => {
-            e.stopPropagation();
-            const wasOpen = menu.classList.contains("show");
-            closeAllDropdowns();
-            if (!wasOpen) menu.classList.add("show");
-        });
+        // Add 3-dot menu only for non-"all" and non-default categories
+        if (cat.id !== "all" && cat.id !== GENERAL_CAT_ID) {
+            const actionBtn = document.createElement("button");
+            actionBtn.className = "cat-action-btn";
+            actionBtn.textContent = "⋮";
+            
+            const menu = document.createElement("div");
+            menu.className = "dropdown-menu";
 
-        renameItem.addEventListener("click", e => {
-            e.stopPropagation();
-            closeAllDropdowns();
-            const newName = prompt("Rename category:", name);
-            if (newName && newName.trim()) {
-                const idx = savedCategories.indexOf(name);
-                if (idx > -1) {
-                    savedCategories[idx] = newName.trim();
-                    localStorage.setItem("categories", JSON.stringify(savedCategories));
-                    btn.textContent = newName.trim();
-                    name = newName.trim();
+            const renameItem = document.createElement("div");
+            renameItem.className = "dropdown-item";
+            renameItem.textContent = "Rename";
+            renameItem.onclick = (e) => {
+                e.stopPropagation();
+                closeAllDropdowns();
+                const newName = prompt("Rename category:", cat.name);
+                if (newName && newName.trim()) {
+                    cat.name = newName.trim();
+                    saveCategories();
+                    renderCategoryChips();
+                    updateCategoryDropdown();
+                    refreshHabitList();
                 }
-            }
-        });
+            };
 
-        deleteItem.addEventListener("click", e => {
-            e.stopPropagation();
-            closeAllDropdowns();
-            if (confirm(`Delete category "${name}"?`)) {
-                const idx = savedCategories.indexOf(name);
-                if (idx > -1) { savedCategories.splice(idx, 1); localStorage.setItem("categories", JSON.stringify(savedCategories)); }
-                savedHabits.forEach(h => { if (h.category === name) h.category = "general"; });
-                localStorage.setItem("habits", JSON.stringify(savedHabits));
-                wrapper.remove();
-            }
-        });
+            const deleteItem = document.createElement("div");
+            deleteItem.className = "dropdown-item danger";
+            deleteItem.textContent = "Delete";
+            deleteItem.onclick = (e) => {
+                e.stopPropagation();
+                closeAllDropdowns();
+                handleCategoryDelete(cat);
+            };
 
-        categoryGrid.insertBefore(wrapper, addCategoryBtn);
+            menu.appendChild(renameItem);
+            menu.appendChild(deleteItem);
+            wrapper.appendChild(actionBtn);
+            wrapper.appendChild(menu);
+
+            actionBtn.onclick = (e) => {
+                e.stopPropagation();
+                const wasOpen = menu.classList.contains("show");
+                closeAllDropdowns();
+                if (!wasOpen) menu.classList.add("show");
+            };
+        }
+
+        return wrapper;
+    }
+
+    function handleCategoryDelete(cat) {
+        const habits = getHabits();
+        const linkedHabits = habits.filter(h => h.categoryId === cat.id);
+
+        if (linkedHabits.length > 0) {
+            if (confirm(`Category "${cat.name}" contains ${linkedHabits.length} habits. Move them to "General" and delete?`)) {
+                linkedHabits.forEach(h => h.categoryId = GENERAL_CAT_ID);
+                localStorage.setItem("habits", JSON.stringify(habits));
+                finishDeletion();
+            }
+        } else {
+            if (confirm(`Delete empty category "${cat.name}"?`)) {
+                finishDeletion();
+            }
+        }
+
+        function finishDeletion() {
+            savedCategories = savedCategories.filter(c => c.id !== cat.id);
+            saveCategories();
+            if (currentFilter === cat.id) currentFilter = "all";
+            renderCategoryChips();
+            updateCategoryDropdown();
+            refreshHabitList();
+        }
+    }
+
+    function saveCategories() {
+        localStorage.setItem("categories", JSON.stringify(savedCategories));
+    }
+
+    function updateCategoryDropdown() {
+        if (!habitCategorySelect) return;
+        const habits = getHabits();
+        
+        let options = savedCategories.map(cat => 
+            `<option value="${cat.id}">${cat.name}</option>`
+        );
+        // Add General option at the end
+        options.push(`<option value="${GENERAL_CAT_ID}">General / Uncategorized</option>`);
+        
+        habitCategorySelect.innerHTML = options.join("");
+        
+        // Auto-select based on current filter
+        if (currentFilter !== "all") {
+            habitCategorySelect.value = currentFilter;
+        }
     }
 
 
@@ -183,10 +270,11 @@ window.initMyHabits = function () {
             btn.addEventListener("click", function () {
                 if (!currentHabitForEmoji) return;
                 let newIcon = this.classList.contains("remove-emoji") ? "" : this.textContent.trim();
-                const idx = savedHabits.findIndex(h => h.id === currentHabitForEmoji.id);
+                const habits = getHabits();
+                const idx = habits.findIndex(h => h.id === currentHabitForEmoji.id);
                 if (idx > -1) {
-                    savedHabits[idx].icon = newIcon;
-                    localStorage.setItem("habits", JSON.stringify(savedHabits));
+                    habits[idx].icon = newIcon;
+                    localStorage.setItem("habits", JSON.stringify(habits));
                     currentHabitForEmoji.icon = newIcon;
                     if (currentHabitDOMElement) {
                         currentHabitDOMElement.querySelector(".habit-name").textContent =
@@ -196,26 +284,50 @@ window.initMyHabits = function () {
                 emojiModal.classList.remove("show");
                 currentHabitForEmoji = null;
                 currentHabitDOMElement = null;
+                refreshHabitList(); // Sync all views
             });
         });
     }
 
 
     /* ==========================================
-       HABITS — Load + Seed
+       HABITS — Initial Load
        ========================================== */
-    let savedHabits = JSON.parse(localStorage.getItem("habits"));
-    if (!savedHabits) {
-        savedHabits = [
-            { id: generateId(), name: "Morning Run",    category: "🏃 Fitness", createdAt: getTodayString(), completions: [] },
-            { id: generateId(), name: "Drink 2L Water", category: "💧 Health",  createdAt: getTodayString(), completions: [] },
-            { id: generateId(), name: "Read 20 Pages",  category: "📚 Study",   createdAt: getTodayString(), completions: [] }
-        ];
-        localStorage.setItem("habits", JSON.stringify(savedHabits));
+    function getHabits() {
+        return JSON.parse(localStorage.getItem("habits")) || [];
     }
-    savedHabits = migrateHabitsIfNeeded(savedHabits);
-    localStorage.setItem("habits", JSON.stringify(savedHabits));
-    savedHabits.forEach(h => addHabitToDOM(h));
+
+    function refreshHabitList() {
+        habitList.innerHTML = "";
+        const habits = getHabits();
+        
+        // 1. Filter habits
+        const filtered = habits.filter(h => {
+            if (currentFilter === "all") return true;
+            return h.categoryId === currentFilter;
+        });
+
+        // 2. Update Header Label
+        const subtitle = document.querySelector(".page-subtitle");
+        let filterName = "All Habits";
+        if (currentFilter === GENERAL_CAT_ID) filterName = "General Habits";
+        else if (currentFilter !== "all") {
+            const cat = savedCategories.find(c => c.id === currentFilter);
+            if (cat) filterName = cat.name + " Habits";
+        }
+        subtitle.textContent = filterName + " — Building consistency one day at a time";
+
+        // 3. Render
+        if (filtered.length === 0) {
+            habitList.innerHTML = `<div class="empty-state">No habits found in this category. Click below to add one!</div>`;
+        } else {
+            filtered.forEach(h => addHabitToDOM(h));
+        }
+    }
+
+    renderCategoryChips();
+    updateCategoryDropdown();
+    refreshHabitList();
 
 
     /* ==========================================
@@ -240,6 +352,7 @@ window.initMyHabits = function () {
             const action   = habitActionInput ? habitActionInput.value.trim() : "";
             const time     = habitTimeInput   ? habitTimeInput.value : "";
             const location = habitLocationInput ? habitLocationInput.value.trim() : "";
+            const categoryId = habitCategorySelect ? habitCategorySelect.value : GENERAL_CAT_ID;
 
             if (!action) {
                 if (habitActionInput) habitActionInput.style.borderBottom = "2px solid #ef4444";
@@ -262,22 +375,30 @@ window.initMyHabits = function () {
                 intentionString += ")";
             }
 
+            // Find category object for backward compat string
+            const catObj = savedCategories.find(c => c.id === categoryId);
+            const catName = catObj ? catObj.name : "General";
+
             const newHabit = {
                 id:          generateId(),
                 name:        intentionString,
-                category:    "general",
+                categoryId:  categoryId,
+                category:    catName, // Fallback for other pages
                 createdAt:   getTodayString(),
                 completions: []
             };
 
-            savedHabits.push(newHabit);
-            localStorage.setItem("habits", JSON.stringify(savedHabits));
-            addHabitToDOM(newHabit);
-
+            const habits = getHabits();
+            habits.push(newHabit);
+            localStorage.setItem("habits", JSON.stringify(habits));
+            
             addHabitModal.classList.remove("show");
             if (habitActionInput) { habitActionInput.style.borderBottom = ""; habitActionInput.value = ""; }
             if (habitTimeInput) habitTimeInput.value = "";
             if (habitLocationInput) habitLocationInput.value = "";
+            
+            refreshHabitList();
+            renderCategoryChips(); // In case we added to Uncategorized for the first time
         });
     }
 
@@ -334,15 +455,18 @@ window.initMyHabits = function () {
 
         const checkbox = item.querySelector("input");
         checkbox.addEventListener("change", () => {
-            const idx = savedHabits.findIndex(h => h.id === habit.id);
+            const habits = getHabits();
+            const habitIdx = habits.findIndex(h => h.id === habit.id);
+            if (habitIdx === -1) return;
+
             if (checkbox.checked) {
-                if (!savedHabits[idx].completions.includes(today)) savedHabits[idx].completions.push(today);
+                if (!habits[habitIdx].completions.includes(today)) habits[habitIdx].completions.push(today);
                 item.classList.add("done");
             } else {
-                savedHabits[idx].completions = savedHabits[idx].completions.filter(d => d !== today);
+                habits[habitIdx].completions = habits[habitIdx].completions.filter(d => d !== today);
                 item.classList.remove("done");
             }
-            localStorage.setItem("habits", JSON.stringify(savedHabits));
+            localStorage.setItem("habits", JSON.stringify(habits));
         });
 
         const actionBtn = item.querySelector(".action-btn");
@@ -369,11 +493,14 @@ window.initMyHabits = function () {
             closeAllDropdowns();
             const newName = prompt("Edit habit name:", habit.name);
             if (newName && newName.trim()) {
-                const idx = savedHabits.findIndex(h => h.id === habit.id);
-                savedHabits[idx].name = newName.trim();
-                localStorage.setItem("habits", JSON.stringify(savedHabits));
-                habit.name = newName.trim();
-                item.querySelector(".habit-name").textContent = (emoji ? emoji + " " : "") + habit.name;
+                const habits = getHabits();
+                const hIdx = habits.findIndex(h => h.id === habit.id);
+                if (hIdx > -1) {
+                    habits[hIdx].name = newName.trim();
+                    localStorage.setItem("habits", JSON.stringify(habits));
+                    habit.name = newName.trim();
+                    item.querySelector(".habit-name").textContent = (emoji ? emoji + " " : "") + habit.name;
+                }
             }
         });
 
@@ -381,13 +508,39 @@ window.initMyHabits = function () {
             e.stopPropagation();
             closeAllDropdowns();
             if (confirm(`Permanently delete "${habit.name}"?\nYou will lose all streak history.`)) {
-                savedHabits = savedHabits.filter(h => h.id !== habit.id);
-                localStorage.setItem("habits", JSON.stringify(savedHabits));
+                const habits = getHabits().filter(h => h.id !== habit.id);
+                localStorage.setItem("habits", JSON.stringify(habits));
                 item.remove();
             }
         });
 
+        // Render strictly into the flat list (UI takes care of grouping visuals if needed)
+        // Since we are now filtering by category, we don't need the old 'Divider' logic 
+        // that was creating duplicate headers.
         habitList.appendChild(item);
+    }
+
+    // Modal Category Creation Sync
+    if (saveCategoryBtn && addCategoryModal) {
+        saveCategoryBtn.onclick = () => {
+            const name = categoryNameInput ? categoryNameInput.value.trim() : "";
+            if (!name) return;
+            
+            const newCat = {
+                id: generateId(),
+                name: name,
+                icon: "✨",
+                isDefault: false
+            };
+            
+            savedCategories.push(newCat);
+            saveCategories();
+            addCategoryModal.classList.remove("show");
+            categoryNameInput.value = "";
+            
+            renderCategoryChips();
+            updateCategoryDropdown();
+        };
     }
 
 }; // end initMyHabits

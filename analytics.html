@@ -4,13 +4,14 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <meta name="view-transition" content="same-origin">
-    <meta name="description" content="HabitMetric Analytics — Visualize your habit building progress.">
-    <title>Analytics — HabitMetric</title>
+    <meta name="description" content="HabitMetric Analytics — Track your mood, context, and productivity correlation.">
+    <title>Context & Analytics — HabitMetric</title>
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="CSS/base.css">
     <link rel="stylesheet" href="CSS/placeholder.css">
+    <link rel="stylesheet" href="CSS/analytics.css">
 </head>
 <body>
 
@@ -20,28 +21,72 @@
             <li><a href="index.html"><i data-lucide="layout-dashboard"></i> Dashboard</a></li>
             <li><a href="myhabits.html"><i data-lucide="check-circle"></i> My Habits</a></li>
             <li class="active"><a href="analytics.html"><i data-lucide="bar-chart-2"></i> Analytics</a></li>
-            <li><a href="risk-insights.html"><i data-lucide="alert-triangle"></i> Risk Insights</a></li>
+            <li><a href="habit-lab.html"><i data-lucide="flask-conical"></i> Habit Lab</a></li>
             <li><a href="settings.html"><i data-lucide="settings"></i> Settings</a></li>
         </ul>
     </div>
 
     <div class="main">
-        <div class="coming-soon">
-            <div class="coming-soon-icon">📊</div>
-            <span class="badge">COMING SOON</span>
-            <h1>Analytics</h1>
-            <p>Weekly and monthly breakdowns of your habit performance,
-               completion trends, and personal bests — all in one place.</p>
-            <a href="index.html" class="back-link">← Back to Dashboard</a>
+        <div class="analytics-container">
+            <div class="page-header">
+                <h1>Daily Context</h1>
+                <p class="page-subtitle">Log your state of mind to forecast today's productivity.</p>
+            </div>
+
+            <div class="context-grid">
+                <!-- Mood Intake -->
+                <section class="context-card mood-card">
+                    <h3>Current Mood</h3>
+                    <p class="card-desc">How are you feeling right now?</p>
+                    <div class="mood-selector">
+                        <button class="mood-btn" data-mood="1" title="Drained">🌑</button>
+                        <button class="mood-btn" data-mood="2" title="Low">☁️</button>
+                        <button class="mood-btn" data-mood="3" title="Neutral">✨</button>
+                        <button class="mood-btn" data-mood="4" title="Good">🌟</button>
+                        <button class="mood-btn" data-mood="5" title="Peak">🌀</button>
+                    </div>
+                    <div id="mood-label" class="context-status">Neutral</div>
+                </section>
+
+                <!-- Interference Log -->
+                <section class="context-card interference-card">
+                    <h3>Interference & Energy</h3>
+                    <p class="card-desc">Logging emergencies drops "Probability of Success" by 30%.</p>
+                    <textarea id="daily-note" placeholder="Any emergencies, time lack, or extra work?"></textarea>
+                    
+                    <div class="context-options">
+                        <label class="toggle-container">
+                            <input type="checkbox" id="rest-day-toggle">
+                            <span class="toggle-label">Today is a Rest Day</span>
+                        </label>
+                    </div>
+                </section>
+
+                <!-- Probability Score -->
+                <section class="context-card probability-card">
+                    <h3>Productivity Forecast</h3>
+                    <div class="forecast-value">
+                        <span id="prob-percentage">--</span>
+                        <small>Success Probability</small>
+                    </div>
+                    <button id="save-context-btn">Save Progress</button>
+                </section>
+            </div>
+
+            <!-- Visualization Placeholder (For future expansion) -->
+            <div id="analytics-chart-container" class="chart-area">
+                <p class="card-desc">Charts will populate once you have 3 days of context data.</p>
+            </div>
         </div>
     </div>
 
-    <!-- SPA Scripts: ALL logic files must be loaded on the shell -->
+    <!-- SPA Scripts -->
     <script src="https://unpkg.com/lucide@latest"></script>
     <script src="JS/app.js"></script>
     <script src="JS/dashboard.js"></script>
     <script src="JS/myhabits.js"></script>
     <script src="JS/settings.js"></script>
     <script src="JS/router.js"></script>
+    <script src="JS/analytics.js"></script>
 </body>
 </html>

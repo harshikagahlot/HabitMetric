@@ -45,39 +45,51 @@
             <div class="profile" id="user-avatar">JD</div>
         </div>
 
-        <div class="cards">
+        <div class="cards dashboard-grid">
             
-            <!-- Progress Ring Card -->
-            <div class="card" id="progress-card" style="text-align: center;">
+            <!-- 1. Progress Ring Card -->
+            <div class="card" id="progress-card">
                 <h3>Today</h3>
                 <div class="progress-ring-container">
-                    <svg class="progress-ring" width="120" height="120">
-                        <circle class="progress-ring__circle-bg" stroke="var(--bg-hover)" stroke-width="10" fill="transparent" r="50" cx="60" cy="60"/>
-                        <circle class="progress-ring__circle" stroke="var(--accent)" stroke-width="10" fill="transparent" r="50" cx="60" cy="60"/>
+                    <svg class="progress-ring" width="100" height="100">
+                        <circle class="progress-ring__circle-bg" stroke="var(--bg-hover)" stroke-width="8" fill="transparent" r="42" cx="50" cy="50"/>
+                        <circle class="progress-ring__circle" stroke="var(--accent)" stroke-width="8" fill="transparent" r="42" cx="50" cy="50"/>
                     </svg>
-                    <div class="progress-ring__text" id="today-progress-text">0/0</div>
+                    <div class="progress-ring__text" id="today-progress-text">--/--</div>
                 </div>
             </div>
 
+            <!-- 2. Streak Card -->
             <div class="card" id="streak-card">
                 <h3>Current Streak</h3>
-                <!-- id="streak-value" updated by dashboard.js -->
                 <p class="big" id="streak-value">0 Days</p>
-                <!-- id="longest-streak" shows personal best in muted text -->
                 <small id="longest-streak"></small>
             </div>
 
-            <!-- id="risk-card" — dashboard.js adds/removes class="warning" -->
+            <!-- 3. Drop Risk Card -->
             <div class="card" id="risk-card">
                 <h3>Drop Risk</h3>
-                <p class="big" id="risk-value">Low</p>
-                <small id="risk-reason">Keep going</small>
+                <p class="big" id="risk-value">Calculating...</p>
+                <small id="risk-reason">Syncing stats</small>
             </div>
 
-            <div class="card">
-                <h3>Consistency Score</h3>
-                <!-- 30-day completion rate updated by dashboard.js -->
-                <p class="big" id="consistency-value">–</p>
+            <!-- 4. Consistency Score Card (Now properly styled) -->
+            <div class="card" id="consistency-card">
+                <h3>Consistency</h3>
+                <p class="big" id="consistency-value">--%</p>
+                <div class="consistency-bar-bg">
+                    <div class="consistency-bar-fill" id="consistency-fill"></div>
+                </div>
+                <small>Last 30 days</small>
+            </div>
+
+            <!-- 5. Mood Card (New, Replacing Day Persona) -->
+            <div class="card" id="mood-card">
+                <h3>Today's Mood</h3>
+                <div class="mood-display">
+                    <div id="day-emoji" class="persona-emoji">✨</div>
+                    <p id="day-mood-label">Not Logged</p>
+                </div>
             </div>
         </div>
 

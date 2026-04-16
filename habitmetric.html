@@ -18,6 +18,7 @@
     <link rel="stylesheet" href="CSS/myhabits.css">
     <link rel="stylesheet" href="CSS/placeholder.css">
     <link rel="stylesheet" href="CSS/habit-lab.css">
+    <link rel="stylesheet" href="CSS/analytics.css">
 </head>
 <body>
 
@@ -74,10 +75,21 @@
                 <small id="risk-reason">Keep going</small>
             </div>
 
-            <div class="card">
-                <h3>Consistency Score</h3>
-                <!-- 30-day completion rate updated by dashboard.js -->
-                <p class="big" id="consistency-value">–</p>
+            <div class="stats-grid">
+                <!-- Day Status / Persona Card (NEW) -->
+                <div class="stat-card day-status-card">
+                    <div id="day-persona" class="persona-emoji">✨</div>
+                    <div class="persona-info">
+                        <h3 id="day-outlook">Outlook: Neutral</h3>
+                        <p id="day-prob-label">Success Prob: --%</p>
+                    </div>
+                </div>
+
+                <div class="card">
+                    <h3>Consistency Score</h3>
+                    <!-- 30-day completion rate updated by dashboard.js -->
+                    <p class="big" id="consistency-value">–</p>
+                </div>
             </div>
         </div>
 
@@ -106,5 +118,6 @@
     <script src="JS/settings.js"></script>
     <script src="JS/router.js"></script>
     <script src="JS/habit-lab.js"></script>
+    <script src="JS/analytics.js"></script>
 </body>
 </html>

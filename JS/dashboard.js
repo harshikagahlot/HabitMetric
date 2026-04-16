@@ -73,9 +73,13 @@ window.initDashboard = function () {
     }
 
     function updateConsistencyCard() {
-        const el = document.getElementById("consistency-value");
-        if (!el) return;
-        el.textContent = getConsistency30Days(getAllActiveDates()) + "%";
+        const valEl = document.getElementById("consistency-value");
+        const fillEl = document.getElementById("consistency-fill");
+        if (!valEl || !fillEl) return;
+        
+        const score = getConsistency30Days(getAllActiveDates());
+        valEl.textContent = score + "%";
+        fillEl.style.width = score + "%";
     }
 
     function updateProgressRing() {
@@ -110,6 +114,28 @@ window.initDashboard = function () {
         const dayOfYear = Math.floor((new Date() - start) / 86400000);
         const identity  = user.identities[dayOfYear % user.identities.length];
         statementEl.textContent = `Today you are building: ${identity} 📖`;
+    }
+
+    function updateDayStatus() {
+        const today = getTodayString();
+        const contextData = JSON.parse(localStorage.getItem("dailyContext")) || {};
+        const emojiEl = document.getElementById("day-emoji");
+        const labelEl = document.getElementById("day-mood-label");
+
+        if (!emojiEl || !labelEl) return;
+
+        if (contextData[today]) {
+            const d = contextData[today];
+            const emojis = ["🌑", "☁️", "✨", "🌟", "🌀"];
+            const labels = ["Drained", "Low", "Neutral", "Good", "Peak"];
+            
+            emojiEl.textContent = emojis[d.mood - 1];
+            labelEl.textContent = labels[d.mood - 1];
+            
+        } else {
+            emojiEl.textContent = "✨";
+            labelEl.textContent = "Not Logged";
+        }
     }
 
     // ---- Calendar ----
@@ -179,7 +205,7 @@ window.initDashboard = function () {
     updateStreakCard();
     updateRiskCard();
     updateConsistencyCard();
-    updateIdentityStatement();
+    updateDayStatus();
     renderCalendar(_dashCurrentDate);
 
     setTimeout(() => updateProgressRing(), 50);
