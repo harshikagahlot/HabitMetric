@@ -34,21 +34,49 @@
     <div class="main">
         <div class="risk-container">
             <div class="page-header">
-                <h1>Risk Insights</h1>
-                <p class="page-subtitle">Behavioral psychology coaching for your neural habit loops.</p>
+                <h1>Decision Support</h1>
+                <p class="page-subtitle">Rule-based coaching behavior from your neural habit loops.</p>
             </div>
 
-            <!-- AI Coach Section -->
-            <div id="coach-container">
-                <!-- Populated by risk.js -->
-                <div class="coach-bubble loading">
-                    <p>Coach is analyzing your patterns...</p>
+            <!-- 1. Risk Summary Header -->
+            <div class="risk-summary-header" id="risk-status-card">
+                <div class="status-badge">Calculating...</div>
+                <h2>Risk Analysis</h2>
+                <div id="risk-level-display" class="risk-value">Evaluating Data...</div>
+                <div class="risk-progress-bar">
+                    <div id="risk-meter" class="risk-meter-fill" style="width: 0%"></div>
                 </div>
             </div>
 
-            <!-- Detailed Metrics Section -->
-            <div id="risk-metrics-container">
-                <!-- Populated by risk.js -->
+            <div class="insights-grid" id="insights-grid">
+                <!-- Insight Cards Populated by JS -->
+                <div class="empty-data-msg">
+                    <p>Collecting data signals... please wait.</p>
+                </div>
+            </div>
+
+            <!-- 2. Ask the Coach (Conversational MVP) -->
+            <div class="coach-chat-section">
+                <div class="chat-header">
+                    <h3>💬 Ask the Coach</h3>
+                    <p>Inquire about your patterns, risks, or consistency.</p>
+                </div>
+                
+                <div class="chat-history" id="chat-history">
+                    <div class="coach-msg bubble">
+                        Hello! I'm analyzing your behavior. You can ask me things like "Why am I losing consistency?" or "What should I reduce today?"
+                    </div>
+                </div>
+
+                <div class="chat-input-wrapper">
+                    <input type="text" id="coach-input" placeholder="Type your question here...">
+                    <button id="ask-btn"><i data-lucide="send"></i></button>
+                </div>
+            </div>
+            
+            <div id="insufficient-data-notice" class="notice-card hidden">
+                <h3>📊 Need More Data</h3>
+                <p>Log 3 days of habits and daily context to unlock advanced coaching insights.</p>
             </div>
 
         </div>
