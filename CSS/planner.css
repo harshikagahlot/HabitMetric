@@ -1,0 +1,224 @@
+/* ==========================================
+   HabitMetric — Smart Planner Foundation Styling
+   ========================================== */
+
+.planner-container {
+    max-width: 800px;
+    margin: 0 auto;
+    padding-bottom: 80px;
+}
+
+/* 1. Mode Selector (Tabs) */
+.planner-modes {
+    display: flex;
+    gap: 10px;
+    margin-bottom: 30px;
+    background: var(--bg-card);
+    padding: 6px;
+    border-radius: 12px;
+    border: 1px solid var(--border-color);
+}
+
+.mode-tab {
+    flex: 1;
+    padding: 10px;
+    border: none;
+    background: transparent;
+    color: var(--text-dim);
+    font-weight: 600;
+    cursor: pointer;
+    border-radius: 8px;
+    transition: all 0.2s ease;
+}
+
+.mode-tab.active {
+    background: var(--accent);
+    color: white;
+}
+
+/* 2. Planner Form Card */
+.planner-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 30px;
+    margin-bottom: 30px;
+    box-shadow: 0 4px 20px rgba(0,0,0,0.05);
+}
+
+.form-section {
+    margin-bottom: 25px;
+}
+
+.form-section label {
+    display: block;
+    font-weight: 600;
+    margin-bottom: 8px;
+    color: var(--text-main);
+}
+
+.form-section p {
+    font-size: 0.85rem;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+}
+
+textarea.planner-input {
+    width: 100%;
+    min-height: 120px;
+    background: var(--bg-body);
+    border: 1px solid var(--border-color);
+    border-radius: 12px;
+    padding: 15px;
+    color: var(--text-main);
+    font-family: inherit;
+    resize: vertical;
+    outline: none;
+    transition: border-color 0.2s;
+}
+
+textarea.planner-input:focus {
+    border-color: var(--accent);
+}
+
+.planner-grid-form {
+    display: grid;
+    grid-template-columns: 1fr 1fr;
+    gap: 20px;
+}
+
+.input-field {
+    width: 100%;
+    background: var(--bg-body);
+    border: 1px solid var(--border-color);
+    border-radius: 10px;
+    padding: 12px;
+    color: var(--text-main);
+}
+
+/* 3. Generate Actions */
+.generate-actions {
+    display: flex;
+    justify-content: center;
+    margin-top: 30px;
+}
+
+.btn-generate {
+    background: var(--accent);
+    color: white;
+    padding: 14px 40px;
+    border-radius: 50px;
+    font-weight: 700;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.btn-generate:hover {
+    transform: translateY(-2px);
+    background: #7c3aed;
+}
+
+/* 4. Generated Output */
+.plan-output-card {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 30px;
+    animation: slideUp 0.4s ease;
+}
+
+.output-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+    border-bottom: 1px solid var(--border-color);
+    padding-bottom: 15px;
+}
+
+.generated-list {
+    display: flex;
+    flex-direction: column;
+    gap: 12px;
+}
+
+.planned-item {
+    background: var(--bg-hover);
+    padding: 15px 20px;
+    border-radius: 12px;
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    transition: transform 0.2s;
+}
+
+.planned-item:hover {
+    transform: translateX(5px);
+}
+
+.planned-item .badge {
+    padding: 4px 8px;
+    border-radius: 6px;
+    font-size: 0.7rem;
+    font-weight: 700;
+}
+
+.planned-item .high { background: #fee2e2; color: #ef4444; }
+.planned-item .med { background: #fef3c7; color: #d97706; }
+
+/* 5. Execution Section in My Habits */
+.planner-execution-section {
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    border-radius: 16px;
+    padding: 24px;
+    margin-bottom: 40px;
+    border-left: 4px solid var(--accent);
+}
+
+.planner-section-header {
+    margin-bottom: 20px;
+}
+
+.planner-section-header h2 {
+    font-size: 1.2rem;
+    margin-bottom: 4px;
+}
+
+.planner-todo-segment {
+    margin-bottom: 15px;
+}
+
+.planner-todo-segment:last-child { margin-bottom: 0; }
+
+.segment-label {
+    font-size: 0.75rem;
+    font-weight: 700;
+    text-transform: uppercase;
+    color: var(--text-dim);
+    margin-bottom: 10px;
+    display: block;
+}
+
+.planner-task-item {
+    display: flex;
+    align-items: center;
+    gap: 12px;
+    padding: 10px 0;
+    border-bottom: 1px solid var(--bg-hover);
+}
+
+.planner-task-item:last-child { border-bottom: none; }
+
+.planner-task-item.done span {
+    text-decoration: line-through;
+    opacity: 0.5;
+}
+
+@keyframes slideUp {
+    from { opacity: 0; transform: translateY(20px); }
+    to { opacity: 1; transform: translateY(0); }
+}
+
+.hidden { display: none; }

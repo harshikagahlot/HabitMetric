@@ -25,6 +25,10 @@ window.initMyHabits = function () {
     const categoryNameInput = document.getElementById("category-name-input");
     const habitCategorySelect = document.getElementById("habit-category-select");
 
+    // Planner UI
+    const plannerZone = document.getElementById("planner-execution-zone");
+    const plannerContainer = document.getElementById("planner-items-container");
+
     // Guard: if critical elements are missing, bail out silently
     if (!categoryGrid || !addHabitBtn || !habitList) return;
 
@@ -328,6 +332,7 @@ window.initMyHabits = function () {
     renderCategoryChips();
     updateCategoryDropdown();
     refreshHabitList();
+    renderPlannerExecutionZone();
 
 
     /* ==========================================
@@ -541,6 +546,82 @@ window.initMyHabits = function () {
             renderCategoryChips();
             updateCategoryDropdown();
         };
+    }
+
+    // --- Smart Planner Execution Integration ---
+    function renderPlannerExecutionZone() {
+        // Re-query fresh inside the function to ensure we catch the new DOM
+        const zone = document.getElementById("planner-execution-zone");
+        const container = document.getElementById("planner-items-container");
+        
+        if (!zone || !container) {
+            console.log("[MyHabits] Planner zone elements not found.");
+            return;
+        }
+
+        const pItems = JSON.parse(localStorage.getItem("plannerItems")) || [];
+        if (pItems.length === 0) {
+            zone.classList.add("hidden");
+            return;
+        }
+
+        zone.classList.remove("hidden");
+        container.innerHTML = "";
+
+        // Group by category (Match the targets used in planner.js)
+        const groups = {
+            "today_todo": { label: "Today's To-Do", items: [] },
+            "weekly_todo": { label: "Weekly To-Do", items: [] },
+            "monthly_todo": { label: "Monthly To-Do", items: [] }
+        };
+
+        pItems.forEach(it => {
+            if (groups[it.category]) groups[it.category].items.push(it);
+        });
+
+        Object.keys(groups).forEach(key => {
+            const group = groups[key];
+            if (group.items.length === 0) return;
+
+            const segment = document.createElement("div");
+            segment.className = "planner-todo-segment";
+            segment.innerHTML = `<span class="segment-label">${group.label}</span>`;
+
+            group.items.forEach(task => {
+                const itemDiv = document.createElement("div");
+                itemDiv.className = `planner-task-item ${task.status === "done" ? "done" : ""}`;
+                
+                itemDiv.innerHTML = `
+                    <input type="checkbox" ${task.status === "done" ? "checked" : ""}>
+                    <span>${task.title}</span>
+                `;
+
+                const checkbox = itemDiv.querySelector("input");
+                checkbox.onchange = () => {
+                    togglePlannerTaskStatus(task.id);
+                    itemDiv.classList.toggle("done", checkbox.checked);
+                };
+
+                segment.appendChild(itemDiv);
+            });
+
+            container.appendChild(segment);
+        });
+    }
+
+    function togglePlannerTaskStatus(taskId) {
+        const stored = localStorage.getItem("plannerItems");
+        let items = [];
+        try {
+            items = JSON.parse(stored) || [];
+        } catch (e) { return; }
+        
+        const taskIdx = items.findIndex(it => it.id === taskId);
+        if (taskIdx > -1) {
+            items[taskIdx].status = items[taskIdx].status === "done" ? "pending" : "done";
+            localStorage.setItem("plannerItems", JSON.stringify(items));
+            console.log(`[MyHabits] Task ${taskId} toggled to ${items[taskIdx].status}`);
+        }
     }
 
 }; // end initMyHabits

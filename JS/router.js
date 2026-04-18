@@ -141,7 +141,7 @@ function triggerInitFunction(url) {
         if (typeof window.initSettings === "function") window.initSettings();
     } else if (url.includes("analytics.html")) {
         if (typeof window.initAnalytics === "function") window.initAnalytics();
-    } else if (url.includes("habit-lab.html")) {
-        if (typeof window.initHabitLab === "function") window.initHabitLab();
+    } else if (url.includes("planner.html")) {
+        if (typeof window.initPlanner === "function") window.initPlanner();
     }
 }
