@@ -40,72 +40,39 @@
 
             <!-- Planning Mode Selector -->
             <div class="planner-modes" id="planner-mode-tabs">
-                <button class="mode-tab active" data-mode="today">Today</button>
-                <button class="mode-tab" data-mode="week">Week</button>
-                <button class="mode-tab" data-mode="month">Month</button>
+                <button class="mode-tab active" data-mode="week">Weekly Planner</button>
+                <button class="mode-tab" data-mode="month">Monthly Overview</button>
             </div>
 
             <!-- Planner Input Form -->
             <div class="planner-card">
                 <div class="form-section">
-                    <label for="raw-plan">Paste Your Rough Plan / Timetable</label>
-                    <p>Enter your to-do list, schedule fragments, or brain dump here.</p>
-                    <textarea id="raw-plan" class="planner-input" placeholder="Example: Revise Physics Unit 1, 2 hours of DSA, call mom at 8 PM, gym in evening..."></textarea>
-                </div>
-
-                <div class="planner-grid-form">
-                    <div class="form-section">
-                        <label for="top-priority">Top Priority</label>
-                        <input type="text" id="top-priority" class="input-field" placeholder="The #1 must-do item">
-                    </div>
-                    <div class="form-section">
-                        <label for="available-hours">Available Focused Hours</label>
-                        <input type="number" id="available-hours" class="input-field" value="4" min="1" max="16">
-                    </div>
-                    <div class="form-section">
-                        <label for="must-not-miss">Must-Not-Miss Detail</label>
-                        <input type="text" id="must-not-miss" class="input-field" placeholder="Specific deadline or anchor">
-                    </div>
-                    <div class="form-section">
-                        <label for="planning-intensity">Load Preference</label>
-                        <select id="planning-intensity" class="input-field">
-                            <option value="light">Light Day (Minimalist)</option>
-                            <option value="balanced" selected>Balanced (Sustainable)</option>
-                            <option value="intense">Intense (High Output)</option>
-                        </select>
-                    </div>
-                </div>
-
-                <div class="form-section">
-                    <label for="fixed-commitments">Fixed Commitments (Existing Schedule)</label>
-                    <textarea id="fixed-commitments" class="planner-input" style="min-height: 80px;" placeholder="e.g. College 9-4, Coaching 6-8 PM"></textarea>
+                    <label for="raw-plan">Paste Your Rough Plan / Schedule</label>
+                    <p>Enter your to-do lists, schedule fragments, or goals (one per line).</p>
+                    <textarea id="raw-plan" class="planner-input" placeholder="Example:
+- 3 gym sessions
+- Read 10 pages daily
+- Review weekly budget
+- Code for 2 hours"></textarea>
                 </div>
 
                 <div class="generate-actions">
-                    <button id="generate-plan-btn" class="btn-generate">Generate Structured Plan</button>
+                    <button id="generate-plan-btn" class="btn-generate">Generate Habit Plan</button>
                 </div>
             </div>
 
             <!-- Generated Plan Output -->
             <div id="plan-output" class="plan-output-card hidden">
                 <div class="output-header">
-                    <h3 id="output-title">Your Today Plan</h3>
-                    <div id="output-stats" class="badge">Balanced Load</div>
+                    <h3 id="output-title">Your Generated Habits</h3>
                 </div>
                 
                 <div class="generated-list" id="generated-items-list">
                     <!-- Items inserted by JS -->
                 </div>
 
-                <div class="save-actions" style="margin-top: 30px; border-top: 1px solid var(--border-color); padding-top: 20px;">
-                    <p style="text-align: center; margin-bottom: 20px; font-weight: 600; color: var(--text-dim);">
-                        Add these to your Habits page execution list:
-                    </p>
-                    <div style="display: flex; gap: 10px; justify-content: center;">
-                        <button class="btn-save-to-habits" data-target="today_todo" style="background: var(--accent); color: white; padding: 10px 20px; border-radius: 8px; border: none; cursor: pointer;">Today's To-Do</button>
-                        <button class="btn-save-to-habits" data-target="weekly_todo" style="background: var(--bg-hover); color: var(--text-main); padding: 10px 20px; border-radius: 8px; border: 1px solid var(--border-color); cursor: pointer;">Weekly To-Do</button>
-                        <button class="btn-save-to-habits" data-target="monthly_todo" style="background: var(--bg-hover); color: var(--text-main); padding: 10px 20px; border-radius: 8px; border: 1px solid var(--border-color); cursor: pointer;">Monthly To-Do</button>
-                    </div>
+                <div class="save-actions">
+                    <button id="btn-add-all" class="btn-add-all"><i data-lucide="plus-circle"></i> Add All to My Habits</button>
                 </div>
             </div>
 

@@ -4,23 +4,16 @@
    ========================================== */
 
 window.initPlanner = function() {
-    console.log("[Planner] Initializing foundation MVP...");
+    console.log("[Planner] Initializing clean planner MVP...");
     
     // DOM Elements
     const modeTabs = document.querySelectorAll(".mode-tab");
     const rawPlanInput = document.getElementById("raw-plan");
-    const topPriorityInput = document.getElementById("top-priority");
-    const hoursInput = document.getElementById("available-hours");
-    const intensityInput = document.getElementById("planning-intensity");
-    const mustNotMissInput = document.getElementById("must-not-miss");
-    
     const generateBtn = document.getElementById("generate-plan-btn");
     const outputArea = document.getElementById("plan-output");
     const outputList = document.getElementById("generated-items-list");
     const outputTitle = document.getElementById("output-title");
-    const outputStats = document.getElementById("output-stats");
-    
-    const saveBtns = document.querySelectorAll(".btn-save-to-habits");
+    const topAddAllBtn = document.getElementById("btn-add-all");
 
     if (!generateBtn) {
         console.warn("[Planner] Generate button not found in DOM");
@@ -28,7 +21,10 @@ window.initPlanner = function() {
     }
 
     // Load Last Mode from Storage
-    let currentMode = localStorage.getItem("planner_last_mode") || "today";
+    let currentMode = localStorage.getItem("planner_last_mode");
+    if (currentMode !== "week" && currentMode !== "month") {
+        currentMode = "week"; // Default fallback
+    }
     
     // 1. Tab Logic - Initialization
     function setupTabs() {
@@ -52,15 +48,12 @@ window.initPlanner = function() {
 
     function updateUIForMode(mode) {
         if (!rawPlanInput || !outputTitle) return;
-        if (mode === "today") {
-            rawPlanInput.placeholder = "Example: Revise Physics Unit 1, 2 hours of DSA, call mom at 8 PM...";
-            outputTitle.textContent = "Your Today Plan";
-        } else if (mode === "week") {
-            rawPlanInput.placeholder = "Example: Finish Project X, 3 gym sessions, revise 5 units, prep for presentation...";
-            outputTitle.textContent = "Weekly Execution Guide";
+        if (mode === "week") {
+            rawPlanInput.placeholder = "Example:\n- 3 gym sessions\n- Read 10 pages daily\n- Code for 2 hours\n- Weekly budget review";
+            outputTitle.textContent = "Weekly Execution Plan";
         } else {
-            rawPlanInput.placeholder = "Example: Complete Milestone 1, build lifestyle habits, clear backlogs...";
-            outputTitle.textContent = "Monthly Milestone View";
+            rawPlanInput.placeholder = "Example:\n- Complete Milestone 1\n- Build morning routine\n- Read 2 books\n- Save $500";
+            outputTitle.textContent = "Monthly Milestone Plan";
         }
     }
 
@@ -71,115 +64,138 @@ window.initPlanner = function() {
     // 2. Generation Logic
     generateBtn.onclick = () => {
         const rawText = rawPlanInput.value.trim();
-        const topPriority = topPriorityInput ? topPriorityInput.value.trim() : "";
-        const mustNotMiss = mustNotMissInput ? mustNotMissInput.value.trim() : "";
-        const hours = parseInt(hoursInput ? hoursInput.value : 4) || 4;
-        const intensity = intensityInput ? intensityInput.value : "balanced";
 
-        if (!rawText && !topPriority) {
-            alert("Please enter your rough plan before generating.");
+        if (!rawText) {
+            alert("Please enter a rough plan in the text box before generating.");
             return;
         }
 
-        // Improved Parser: Split by newline, dots, commas, or list markers
+        // Improved Parser: Split by newline, strip bullets, numbers, hyphens
         let items = rawText
-            .split(/[\n,;•\-\d\.]+/ ) 
-            .map(s => s.trim())
-            .filter(s => s.length > 3); // Minimum length for a real task
+            .split(/\n/)
+            .map(s => s.replace(/^[•\-\*\d\.\)]+\s*/, '').trim())
+            .filter(s => s.length > 2); // Minimum length to be considered a task
 
-        // Rank and Filter
-        const structuredPlan = generateMVPPlan(items, topPriority, mustNotMiss, hours, intensity);
+        if (items.length === 0) {
+            alert("Could not find any clear tasks. Try listing them one per line.");
+            return;
+        }
+
+        // Deduplicate
+        let uniqueItems = [...new Set(items)];
+
+        const structuredPlan = uniqueItems.map(item => {
+            const lower = item.toLowerCase();
+            
+            // Guess priority
+            let priority = "Medium";
+            if (lower.includes("important") || lower.includes("must") || lower.includes("urgent")) priority = "High";
+            if (lower.includes("optional") || lower.includes("if possible")) priority = "Low";
+
+            // Guess frequency
+            let frequency = "Daily";
+            if (lower.includes("times") || lower.includes("weekly") || lower.includes("week")) frequency = "Multiple times a week";
+            if (lower.includes("monthly") || lower.includes("month")) frequency = "Monthly";
+            
+            // Guess time block
+            let timeBlock = "Anytime";
+            if (lower.match(/morning|am\b/i)) timeBlock = "Morning";
+            if (lower.match(/evening|pm\b|night/i)) timeBlock = "Evening";
+            if (lower.match(/afternoon/i)) timeBlock = "Afternoon";
+
+            return {
+                id: "plan-" + Math.random().toString(36).substr(2, 9),
+                title: item,
+                priority: priority,
+                frequency: frequency,
+                timeBlock: timeBlock
+            };
+        });
         
-        // Render
-        renderPreview(structuredPlan, intensity);
         lastGeneratedItems = structuredPlan;
+        renderPreview();
     };
 
-    function generateMVPPlan(items, priority, mustMiss, hours, intensity) {
-        let result = [];
-        
-        // Multipliers based on intensity
-        let capacityMultiplier = 1.5; 
-        if (intensity === "light") capacityMultiplier = 1;
-        if (intensity === "intense") capacityMultiplier = 3;
-        
-        const taskCap = Math.max(3, Math.min(12, Math.floor(hours * capacityMultiplier)));
-
-        // 1. Add Priority if exists
-        if (priority) {
-            result.push({ title: priority, priority: "high", note: "Top Priority" });
-        }
-
-        // 2. Add Must-Not-Miss if exists
-        if (mustMiss && !result.some(r => r.title === mustMiss)) {
-            result.push({ title: mustMiss, priority: "high", note: "Strict Requirement" });
-        }
-
-        // 3. Process remaining items
-        items.forEach(item => {
-            if (result.length >= taskCap) return;
-            if (result.some(r => r.title.toLowerCase() === item.toLowerCase())) return;
-            
-            result.push({
-                title: item,
-                priority: "medium",
-                note: ""
-            });
-        });
-
-        return result;
-    }
-
-    function renderPreview(planItems, intensity) {
+    function renderPreview() {
         if (!outputList || !outputArea) return;
         outputList.innerHTML = "";
+        
+        if (lastGeneratedItems.length === 0) {
+            outputArea.classList.add("hidden");
+            return;
+        }
+        
         outputArea.classList.remove("hidden");
         
-        planItems.forEach((item, idx) => {
+        lastGeneratedItems.forEach((item) => {
             const div = document.createElement("div");
             div.className = "planned-item";
+            div.dataset.id = item.id;
             
             div.innerHTML = `
-                <div class="badge ${item.priority === 'high' ? 'high' : 'med'}">${item.priority.toUpperCase()}</div>
                 <div class="item-content">
                     <strong>${item.title}</strong>
-                    ${item.note ? `<p style="font-size: 0.75rem; color: var(--text-dim); margin-top: 2px;">${item.note}</p>` : ""}
+                    <div class="item-meta">
+                        Priority: ${item.priority} &nbsp;•&nbsp; Freq: ${item.frequency} &nbsp;•&nbsp; Time: ${item.timeBlock}
+                    </div>
+                </div>
+                <div class="item-actions">
+                    <button class="btn-icon btn-add-single" title="Add to Habits" aria-label="Add to Habits">
+                        <i data-lucide="plus"></i> Add
+                    </button>
+                    <button class="btn-icon btn-delete-single" title="Remove" aria-label="Remove">
+                        <i data-lucide="trash-2"></i>
+                    </button>
                 </div>
             `;
+            
+            // Attach specific events
+            div.querySelector(".btn-delete-single").onclick = () => {
+                lastGeneratedItems = lastGeneratedItems.filter(it => it.id !== item.id);
+                renderPreview();
+            };
+            
+            div.querySelector(".btn-add-single").onclick = (e) => {
+                savePlanItemsToStorage([item]);
+                lastGeneratedItems = lastGeneratedItems.filter(it => it.id !== item.id);
+                renderPreview();
+            };
+
             outputList.appendChild(div);
         });
-
-        if (outputStats) {
-            outputStats.textContent = `${intensity.toUpperCase()} LOAD • ${planItems.length} ITEMS`;
-            outputStats.className = "badge " + intensity;
+        
+        if (typeof lucide !== "undefined") {
+            lucide.createIcons();
         }
     }
 
-    // 3. Save Logic
-    saveBtns.forEach(btn => {
-        btn.onclick = () => {
-            const targetCategory = btn.dataset.target; // today_todo, weekly_todo, monthly_todo
-            if (lastGeneratedItems.length === 0) {
-                alert("Please generate a plan first!");
-                return;
-            }
-
-            savePlanItemsToStorage(lastGeneratedItems, targetCategory);
+    // 3. Global Bulk Save Logic
+    if (topAddAllBtn) {
+        topAddAllBtn.onclick = () => {
+            if (lastGeneratedItems.length === 0) return;
             
-            const originalText = btn.textContent;
-            btn.textContent = "Added! ✓";
-            btn.style.background = "var(--accent)";
-            btn.style.color = "white";
+            savePlanItemsToStorage(lastGeneratedItems);    
+            
+            const originalText = topAddAllBtn.innerHTML;
+            topAddAllBtn.innerHTML = "<i data-lucide='check'></i> Added All!";
+            topAddAllBtn.style.background = "#10b981"; // success green
+            topAddAllBtn.style.color = "white";
+            lucide.createIcons();
             
             setTimeout(() => {
-                btn.textContent = originalText;
-                btn.style.background = "";
-                btn.style.color = "";
+                topAddAllBtn.innerHTML = originalText;
+                topAddAllBtn.style.background = "";
+                topAddAllBtn.style.color = "";
+                lucide.createIcons();
             }, 2000);
-        };
-    });
 
-    function savePlanItemsToStorage(items, category) {
+            // Empty the list
+            lastGeneratedItems = [];
+            renderPreview();
+        };
+    }
+
+    function savePlanItemsToStorage(items) {
         const storedHabits = localStorage.getItem("habits");
         let habits = [];
         try {

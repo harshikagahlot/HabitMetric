@@ -65,7 +65,7 @@
 
 textarea.planner-input {
     width: 100%;
-    min-height: 120px;
+    min-height: 160px;
     background: var(--bg-body);
     border: 1px solid var(--border-color);
     border-radius: 12px;
@@ -75,25 +75,11 @@ textarea.planner-input {
     resize: vertical;
     outline: none;
     transition: border-color 0.2s;
+    line-height: 1.5;
 }
 
 textarea.planner-input:focus {
     border-color: var(--accent);
-}
-
-.planner-grid-form {
-    display: grid;
-    grid-template-columns: 1fr 1fr;
-    gap: 20px;
-}
-
-.input-field {
-    width: 100%;
-    background: var(--bg-body);
-    border: 1px solid var(--border-color);
-    border-radius: 10px;
-    padding: 12px;
-    color: var(--text-main);
 }
 
 /* 3. Generate Actions */
@@ -145,27 +131,131 @@ textarea.planner-input:focus {
 
 .planned-item {
     background: var(--bg-hover);
-    padding: 15px 20px;
+    padding: 16px 20px;
     border-radius: 12px;
     display: flex;
+    justify-content: space-between;
     align-items: center;
     gap: 15px;
-    transition: transform 0.2s;
+    transition: transform 0.2s, background 0.2s;
 }
 
 .planned-item:hover {
-    transform: translateX(5px);
+    transform: translateX(4px);
+    background: var(--border-color);
 }
 
-.planned-item .badge {
-    padding: 4px 8px;
-    border-radius: 6px;
-    font-size: 0.7rem;
-    font-weight: 700;
+.item-content {
+    flex: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
 }
 
-.planned-item .high { background: #fee2e2; color: #ef4444; }
-.planned-item .med { background: #fef3c7; color: #d97706; }
+.item-content strong {
+    font-size: 1rem;
+    color: var(--text-light);
+}
+
+.item-meta {
+    font-size: 0.8rem;
+    color: var(--text-dim);
+}
+
+.item-actions {
+    display: flex;
+    gap: 8px;
+}
+
+.btn-icon {
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    gap: 6px;
+    background: var(--bg-card);
+    border: 1px solid var(--border-color);
+    color: var(--text-main);
+    padding: 8px 12px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-size: 0.85rem;
+    font-weight: 500;
+    transition: all 0.2s ease;
+}
+
+.btn-icon .lucide {
+    width: 16px;
+    height: 16px;
+}
+
+.btn-add-single:hover {
+    background: var(--accent);
+    color: white;
+    border-color: var(--accent);
+}
+
+.btn-delete-single:hover {
+    background: #fee2e2;
+    color: #ef4444;
+    border-color: #fca5a5;
+}
+
+.save-actions {
+    margin-top: 30px;
+    padding-top: 25px;
+    border-top: 1px solid var(--border-color);
+    display: flex;
+    justify-content: center;
+}
+
+.btn-add-all {
+    display: flex;
+    align-items: center;
+    gap: 8px;
+    background: var(--text-light);
+    color: var(--bg-dark);
+    padding: 12px 24px;
+    border-radius: 8px;
+    font-weight: 600;
+    font-size: 1rem;
+    border: none;
+    cursor: pointer;
+    transition: transform 0.2s, background 0.2s;
+}
+
+.btn-add-all:hover {
+    transform: translateY(-2px);
+    background: white;
+}
+
+.btn-add-all .lucide {
+    width: 20px;
+    height: 20px;
+}
+
+@media (max-width: 600px) {
+    .planned-item {
+        flex-direction: column;
+        align-items: flex-start;
+        padding: 16px;
+    }
+    
+    .item-actions {
+        width: 100%;
+        margin-top: 10px;
+        justify-content: space-between;
+    }
+    
+    .btn-icon {
+        flex: 1;
+        padding: 10px;
+    }
+    
+    .btn-add-all {
+        width: 100%;
+        justify-content: center;
+    }
+}
 
 /* 5. Execution Section in My Habits */
 .planner-execution-section {
