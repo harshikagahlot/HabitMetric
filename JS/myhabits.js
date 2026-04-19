@@ -374,7 +374,6 @@ window.initMyHabits = function () {
     renderCategoryChips();
     updateCategoryDropdown();
     refreshHabitList();
-    renderPlannerExecutionZone();
 
 
     /* ==========================================
