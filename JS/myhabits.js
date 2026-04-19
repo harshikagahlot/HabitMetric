@@ -504,12 +504,18 @@ window.initMyHabits = function () {
        HABIT CARD RENDERER
        ========================================== */
     function addHabitToDOM(habit) {
-        const today          = getTodayString();
+        const today          = typeof getTodayString === "function" ? getTodayString() : new Date().toISOString().slice(0, 10);
         const isDoneToday    = habit.completions.includes(today);
-        const streak         = calculateStreak(habit.completions);
+        
+        // Pass habit object so streak calculations skip off-days
+        const streak         = typeof calculateStreak === "function" ? calculateStreak(habit.completions, habit) : 0;
+        
         const yesterday      = new Date(); yesterday.setDate(yesterday.getDate() - 1);
-        const yesterdayStr   = formatLocalDate(yesterday);
-        const missedYesterday= !habit.completions.includes(yesterdayStr);
+        const yesterdayStr   = typeof formatLocalDate === "function" ? formatLocalDate(yesterday) : yesterday.toISOString().slice(0, 10);
+        
+        // Check if the habit was even due yesterday before penalizing
+        const wasDueYesterday = typeof isHabitDueOnDate === "function" ? isHabitDueOnDate(habit, yesterdayStr) : true;
+        const missedYesterday= wasDueYesterday && !habit.completions.includes(yesterdayStr);
         const showWarning    = missedYesterday && !isDoneToday && habit.completions.length > 0;
 
         let emoji = habit.icon !== undefined ? habit.icon : "";

@@ -92,7 +92,7 @@ window.initAnalytics = function() {
         const habits = JSON.parse(localStorage.getItem("habits")) || [];
         if (!habits.length) return { bonus: 0, level: "New User" };
         
-        let totalPossible = habits.length * 7;
+        let totalPossible = 0;
         let totalDone = 0;
         const today = new Date();
         
@@ -100,10 +100,21 @@ window.initAnalytics = function() {
             for (let i = 1; i <= 7; i++) {
                 const day = new Date(today);
                 day.setDate(today.getDate() - i);
-                const ds = formatLocalDate(day);
-                if (h.completions && h.completions.includes(ds)) totalDone++;
+                const ds = typeof formatLocalDate === "function" ? formatLocalDate(day) : day.toISOString().slice(0, 10);
+                
+                // Only expect completion if the habit was due that day
+                const wasDue = typeof isHabitDueOnDate === "function" ? isHabitDueOnDate(h, ds) : true;
+                
+                if (wasDue) {
+                    totalPossible++;
+                    if (h.completions && h.completions.includes(ds)) {
+                        totalDone++;
+                    }
+                }
             }
         });
+
+        if (totalPossible === 0) return { bonus: 0, level: "No Valid Habits" };
 
         const rate = totalDone / totalPossible;
         if (rate > 0.8) return { bonus: 10, level: "High Confidence" };

@@ -148,25 +148,38 @@ function formatLocalDate(d) {
 
 /**
  * Calculates the current streak — consecutive days ending today or yesterday.
+ * Checks against habit rules to skip off-days for weekly/monthly habits.
  */
-function calculateStreak(datesArray) {
+function calculateStreak(datesArray, habitObj = null) {
     if (!datesArray || datesArray.length === 0) return 0;
 
     const activeSet = new Set(datesArray);
     let streak = 0;
     const today = new Date();
+    
+    // We only want to track if we've seen at least one "due" day before giving up
+    let checkedAtLeastOneDueDay = false;
 
     for (let i = 0; i < 365; i++) {
         const checkDate = new Date(today);
         checkDate.setDate(today.getDate() - i);
         const dateStr = formatLocalDate(checkDate);
 
+        // If it's a recurring habit, skip days where it wasn't even due
+        if (habitObj && typeof isHabitDueOnDate === "function") {
+            if (!isHabitDueOnDate(habitObj, dateStr)) {
+                continue; 
+            }
+        }
+        
+        checkedAtLeastOneDueDay = true;
+
         if (activeSet.has(dateStr)) {
             streak++;
         } else if (i === 0) {
             continue; // today not done yet — check yesterday before stopping
         } else {
-            break;    // gap found — streak ends
+            break;    // gap found on a DUE day — streak ends
         }
     }
 
@@ -176,7 +189,7 @@ function calculateStreak(datesArray) {
 /**
  * Finds the longest streak ever achieved across history.
  */
-function getLongestStreak(datesArray) {
+function getLongestStreak(datesArray, habitObj = null) {
     if (!datesArray || datesArray.length === 0) return 0;
 
     const sortedDates = [...new Set(datesArray)].sort();
@@ -192,7 +205,30 @@ function getLongestStreak(datesArray) {
             current++;
             longest = Math.max(longest, current);
         } else {
-            current = 1; // gap — reset
+            // Gap exists. But maybe the gap days were off-days?
+            let allGapDaysSafe = false;
+            
+            if (habitObj && typeof isHabitDueOnDate === "function") {
+                allGapDaysSafe = true;
+                // Check every single day between prev and curr
+                for (let j = 1; j < diffDays; j++) {
+                    const gapDate = new Date(prev);
+                    gapDate.setDate(prev.getDate() + j);
+                    const gapDateStr = formatLocalDate(gapDate);
+                    
+                    if (isHabitDueOnDate(habitObj, gapDateStr)) {
+                        allGapDaysSafe = false;
+                        break;
+                    }
+                }
+            }
+
+            if (allGapDaysSafe) {
+                current++;
+                longest = Math.max(longest, current);
+            } else {
+                current = 1; // Unexcused gap — reset
+            }
         }
     }
 
@@ -200,22 +236,30 @@ function getLongestStreak(datesArray) {
 }
 
 /**
- * 30-day consistency: what % of the last 30 days had any activity.
+ * 30-day consistency: what % of the DUE last 30 days had any activity.
  */
-function getConsistency30Days(datesArray) {
+function getConsistency30Days(datesArray, habitObj = null) {
     if (!datesArray) return 0;
     const activeSet = new Set(datesArray);
     let activeDayCount = 0;
+    let dueDayCount = 0;
     const today = new Date();
 
     for (let i = 0; i < 30; i++) {
         const checkDate = new Date(today);
         checkDate.setDate(today.getDate() - i);
-        const dateStr = checkDate.toISOString().slice(0, 10);
+        const dateStr = formatLocalDate(checkDate);
+        
+        if (habitObj && typeof isHabitDueOnDate === "function") {
+            if (!isHabitDueOnDate(habitObj, dateStr)) continue;
+        }
+        
+        dueDayCount++;
         if (activeSet.has(dateStr)) activeDayCount++;
     }
 
-    return Math.round((activeDayCount / 30) * 100);
+    if (dueDayCount === 0) return 0;
+    return Math.round((activeDayCount / dueDayCount) * 100);
 }
 
 
