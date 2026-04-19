@@ -105,6 +105,37 @@
                         <!-- Options populated by JS -->
                     </select>
                 </div>
+                <div class="form-row">
+                    <span class="intention-label">Recurrence</span>
+                    <select id="habit-recurrence-select">
+                        <option value="daily">Daily</option>
+                        <option value="weekly">Weekly</option>
+                        <option value="monthly">Monthly</option>
+                        <option value="once">One-Time (Date)</option>
+                    </select>
+                </div>
+                
+                <!-- Dynamic config options -->
+                <div class="form-row hidden" id="config-weekly">
+                    <span class="intention-label">Days</span>
+                    <div class="weekday-bubbles" style="display: flex; gap: 5px;">
+                        <label><input type="checkbox" name="weekdays" value="1"> Mon</label>
+                        <label><input type="checkbox" name="weekdays" value="2"> Tue</label>
+                        <label><input type="checkbox" name="weekdays" value="3"> Wed</label>
+                        <label><input type="checkbox" name="weekdays" value="4"> Thu</label>
+                        <label><input type="checkbox" name="weekdays" value="5"> Fri</label>
+                        <label><input type="checkbox" name="weekdays" value="6"> Sat</label>
+                        <label><input type="checkbox" name="weekdays" value="7"> Sun</label>
+                    </div>
+                </div>
+                <div class="form-row hidden" id="config-monthly">
+                    <span class="intention-label">Date(s)</span>
+                    <input type="text" id="habit-month-dates" placeholder="e.g. 1, 15" autocomplete="off">
+                </div>
+                <div class="form-row hidden" id="config-once">
+                    <span class="intention-label">Date</span>
+                    <input type="date" id="habit-once-date">
+                </div>
             </div>
             <div class="modal-actions">
                 <button id="close-habit-modal" class="btn modal-close-btn">Cancel</button>

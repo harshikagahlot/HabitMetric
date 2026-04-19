@@ -220,6 +220,42 @@ function getConsistency30Days(datesArray) {
 
 
 /**
+ * Checks if a habit is due on a specific date string (YYYY-MM-DD) based on its recurrence type.
+ */
+function isHabitDueOnDate(habit, dateStr) {
+    const rec = habit.recurrence || "daily";
+    if (rec === "daily") return true;
+
+    if (rec === "weekly") {
+        // new Date("YYYY-MM-DD") is parsed as UTC, so we must add time offset or use split
+        const [y, m, d] = dateStr.split('-');
+        const dateObj = new Date(y, m - 1, d);
+        // JS getDay(): 0=Sun, 1=Mon...6=Sat. 
+        // We match to standard ISO: 1=Mon, 2=Tue...7=Sun
+        let isoDay = dateObj.getDay();
+        if (isoDay === 0) isoDay = 7;
+        
+        // habit.weekdays is e.g., ["1","3"]
+        if (!habit.weekdays || habit.weekdays.length === 0) return true; // fallback
+        return habit.weekdays.includes(String(isoDay));
+    }
+
+    if (rec === "monthly") {
+        const [y, m, d] = dateStr.split('-');
+        if (!habit.monthDates || habit.monthDates.length === 0) return true; // fallback
+        // Check if `d` (without leading zero) is in array
+        return habit.monthDates.includes(String(parseInt(d, 10)));
+    }
+
+    if (rec === "once") {
+        if (!habit.targetDate) return true;
+        return dateStr === habit.targetDate;
+    }
+
+    return true; // default true 
+}
+
+/**
  * Ensures new users are redirected to the onboarding flow
  * if they haven't completed it yet.
  */

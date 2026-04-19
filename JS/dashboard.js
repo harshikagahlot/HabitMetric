@@ -17,9 +17,21 @@ window.initDashboard = function () {
     function getLevelForDate(dateString) {
         const habits = JSON.parse(localStorage.getItem("habits")) || [];
         if (!habits.length) return { level: "none", count: 0, total: 0 };
+        
         let count = 0;
-        habits.forEach(h => { if (h.completions && h.completions.includes(dateString)) count++; });
-        const total = habits.length;
+        let dueHabits = habits;
+
+        // Ensure we only calculate stats against habits actually due on this date.
+        // We use window.isHabitDueOnDate from app.js
+        if (typeof isHabitDueOnDate === "function") {
+            dueHabits = habits.filter(h => isHabitDueOnDate(h, dateString));
+        }
+
+        const total = dueHabits.length;
+        if (total === 0) return { level: "none", count: 0, total: 0 };
+
+        dueHabits.forEach(h => { if (h.completions && h.completions.includes(dateString)) count++; });
+        
         const rate  = count / total;
         let level = "high";
         if (rate === 0)       level = "none";

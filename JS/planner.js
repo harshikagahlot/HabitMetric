@@ -204,14 +204,32 @@ window.initPlanner = function() {
             habits = [];
         }
 
-        const newItems = items.map(it => ({
-            id: typeof generateId !== "undefined" ? generateId() : "plan-" + Math.random().toString(36).substr(2, 9),
-            name: it.title,
-            category: "planner", 
-            createdAt: typeof getTodayString !== "undefined" ? getTodayString() : new Date().toISOString().slice(0, 10),
-            completions: [],
-            isSystemGenerated: true
-        }));
+        const newItems = items.map(it => {
+            let rec = "daily";
+            let wd = [];
+            let md = [];
+            
+            if (it.frequency === "Multiple times a week") {
+                rec = "weekly";
+                wd = ["1","3","5"]; // arbitrary MWF default for planner
+            } else if (it.frequency === "Monthly") {
+                rec = "monthly";
+                md = ["1"]; // arbitrary 1st of month default for planner
+            }
+
+            return {
+                id: typeof generateId !== "undefined" ? generateId() : "plan-" + Math.random().toString(36).substr(2, 9),
+                name: it.title,
+                category: "planner", 
+                createdAt: typeof getTodayString !== "undefined" ? getTodayString() : new Date().toISOString().slice(0, 10),
+                completions: [],
+                isSystemGenerated: true,
+                recurrence: rec,
+                weekdays: wd,
+                monthDates: md,
+                targetDate: null
+            };
+        });
 
         const finalStore = [...habits, ...newItems];
         localStorage.setItem("habits", JSON.stringify(finalStore));

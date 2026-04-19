@@ -305,13 +305,27 @@ window.initMyHabits = function () {
         habitList.innerHTML = "";
         const habits = getHabits();
         
-        // 1. Filter habits
-        const filtered = habits.filter(h => {
+        // 1. Filter habits based on Category
+        let filtered = habits.filter(h => {
             if (currentFilter === "all") return true;
             return h.categoryId === currentFilter;
         });
 
-        // 2. Update Header Label
+        // 2. Filter habits based on Recurrence (Only show due today)
+        const todayStr = typeof getTodayString === "function" ? getTodayString() : new Date().toISOString().slice(0, 10);
+        
+        let dueToday = [];
+        let notDue = [];
+
+        filtered.forEach(h => {
+            if (typeof isHabitDueOnDate === "function" && isHabitDueOnDate(h, todayStr)) {
+                dueToday.push(h);
+            } else {
+                notDue.push(h);
+            }
+        });
+
+        // 3. Update Header Label
         const subtitle = document.querySelector(".page-subtitle");
         let filterName = "All Habits";
         if (currentFilter === GENERAL_CAT_ID) filterName = "General Habits";
@@ -321,11 +335,39 @@ window.initMyHabits = function () {
         }
         subtitle.textContent = filterName + " — Building consistency one day at a time";
 
-        // 3. Render
-        if (filtered.length === 0) {
-            habitList.innerHTML = `<div class="empty-state">No habits found in this category. Click below to add one!</div>`;
+        // 4. Render Groups
+        if (dueToday.length === 0) {
+            habitList.innerHTML = `<div class="empty-state">No habits due today for this category. Click below to add one!</div>`;
         } else {
-            filtered.forEach(h => addHabitToDOM(h));
+            // Group by recurrence
+            const groups = {
+                "daily": dueToday.filter(h => !h.recurrence || h.recurrence === "daily"),
+                "weekly": dueToday.filter(h => h.recurrence === "weekly"),
+                "monthly": dueToday.filter(h => h.recurrence === "monthly"),
+                "once": dueToday.filter(h => h.recurrence === "once")
+            };
+
+            const labels = {
+                "daily": "Daily Habits",
+                "weekly": "Weekly Habits",
+                "monthly": "Monthly Habits",
+                "once": "One-Time Tasks"
+            };
+
+            ['daily', 'weekly', 'monthly', 'once'].forEach(key => {
+                if (groups[key].length > 0) {
+                    const header = document.createElement("div");
+                    header.style.fontSize = "0.75rem";
+                    header.style.fontWeight = "700";
+                    header.style.textTransform = "uppercase";
+                    header.style.color = "var(--text-dim)";
+                    header.style.margin = "20px 0 10px 0";
+                    header.textContent = labels[key];
+                    habitList.appendChild(header);
+
+                    groups[key].forEach(h => addHabitToDOM(h));
+                }
+            });
         }
     }
 
@@ -344,14 +386,37 @@ window.initMyHabits = function () {
             if (habitActionInput) habitActionInput.focus();
         });
     }
+
+    // Recurrence Select Logic
+    const recSelect = document.getElementById("habit-recurrence-select");
+    const confWeekly = document.getElementById("config-weekly");
+    const confMonthly = document.getElementById("config-monthly");
+    const confOnce = document.getElementById("config-once");
+
+    if (recSelect) {
+        recSelect.addEventListener("change", (e) => {
+            const val = e.target.value;
+            if(confWeekly) confWeekly.classList.add("hidden");
+            if(confMonthly) confMonthly.classList.add("hidden");
+            if(confOnce) confOnce.classList.add("hidden");
+
+            if(val === "weekly" && confWeekly) confWeekly.classList.remove("hidden");
+            if(val === "monthly" && confMonthly) confMonthly.classList.remove("hidden");
+            if(val === "once" && confOnce) confOnce.classList.remove("hidden");
+        });
+    }
+
     if (closeHabitBtn && addHabitModal) {
         closeHabitBtn.addEventListener("click", () => {
             addHabitModal.classList.remove("show");
             if (habitActionInput) habitActionInput.value = "";
             if (habitTimeInput) habitTimeInput.value = "";
             if (habitLocationInput) habitLocationInput.value = "";
+            if (recSelect) recSelect.value = "daily";
+            recSelect.dispatchEvent(new Event("change"));
         });
     }
+
     if (saveHabitBtn && addHabitModal) {
         saveHabitBtn.addEventListener("click", () => {
             const action   = habitActionInput ? habitActionInput.value.trim() : "";
@@ -380,17 +445,37 @@ window.initMyHabits = function () {
                 intentionString += ")";
             }
 
-            // Find category object for backward compat string
             const catObj = savedCategories.find(c => c.id === categoryId);
             const catName = catObj ? catObj.name : "General";
 
+            // Extract Recurrence Data
+            const recurrence = recSelect ? recSelect.value : "daily";
+            let weekdays = [];
+            let monthDates = [];
+            let targetDate = null;
+
+            if (recurrence === "weekly") {
+                const boxes = document.querySelectorAll('input[name="weekdays"]:checked');
+                boxes.forEach(b => weekdays.push(b.value));
+            } else if (recurrence === "monthly") {
+                const mdRaw = document.getElementById("habit-month-dates") ? document.getElementById("habit-month-dates").value : "";
+                monthDates = mdRaw.split(',').map(s => s.trim()).filter(s => parseInt(s, 10));
+            } else if (recurrence === "once") {
+                const dp = document.getElementById("habit-once-date");
+                if (dp) targetDate = dp.value;
+            }
+
             const newHabit = {
-                id:          generateId(),
+                id:          typeof generateId === "function" ? generateId() : Math.random().toString(36).substr(2, 9),
                 name:        intentionString,
                 categoryId:  categoryId,
-                category:    catName, // Fallback for other pages
-                createdAt:   getTodayString(),
-                completions: []
+                category:    catName, 
+                createdAt:   typeof getTodayString === "function" ? getTodayString() : new Date().toISOString().slice(0, 10),
+                completions: [],
+                recurrence:  recurrence,
+                weekdays:    weekdays,
+                monthDates:  monthDates,
+                targetDate:  targetDate
             };
 
             const habits = getHabits();
@@ -401,9 +486,16 @@ window.initMyHabits = function () {
             if (habitActionInput) { habitActionInput.style.borderBottom = ""; habitActionInput.value = ""; }
             if (habitTimeInput) habitTimeInput.value = "";
             if (habitLocationInput) habitLocationInput.value = "";
+            if (recSelect) {
+                recSelect.value = "daily";
+                recSelect.dispatchEvent(new Event("change"));
+            }
+            if (document.getElementById("habit-month-dates")) document.getElementById("habit-month-dates").value = "";
+            if (document.getElementById("habit-once-date")) document.getElementById("habit-once-date").value = "";
+            document.querySelectorAll('input[name="weekdays"]').forEach(cb => cb.checked = false);
             
             refreshHabitList();
-            renderCategoryChips(); // In case we added to Uncategorized for the first time
+            renderCategoryChips(); 
         });
     }
 
