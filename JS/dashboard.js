@@ -72,12 +72,19 @@ window.initDashboard = function () {
         }
     }
 
-    function updateConsistencyCard() {
+    function updateTodayCompletionCard() {
         const valEl = document.getElementById("consistency-value");
         const fillEl = document.getElementById("consistency-fill");
         if (!valEl || !fillEl) return;
         
-        const score = getConsistency30Days(getAllActiveDates());
+        const today = getTodayString ? getTodayString() : new Date().toISOString().slice(0, 10);
+        const stats = getLevelForDate(today);
+        
+        let score = 0;
+        if (stats.total > 0) {
+            score = Math.round((stats.count / stats.total) * 100);
+        }
+        
         valEl.textContent = score + "%";
         fillEl.style.width = score + "%";
     }
@@ -202,7 +209,7 @@ window.initDashboard = function () {
     // ---- Run all updates ----
     updateStreakCard();
     updateRiskCard();
-    updateConsistencyCard();
+    updateTodayCompletionCard();
     updateDayStatus();
     renderCalendar(_dashCurrentDate);
 

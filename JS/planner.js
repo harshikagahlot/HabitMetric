@@ -180,29 +180,25 @@ window.initPlanner = function() {
     });
 
     function savePlanItemsToStorage(items, category) {
-        const stored = localStorage.getItem("plannerItems");
-        let plannerItems = [];
+        const storedHabits = localStorage.getItem("habits");
+        let habits = [];
         try {
-            plannerItems = JSON.parse(stored) || [];
+            habits = JSON.parse(storedHabits) || [];
         } catch (e) {
-            plannerItems = [];
+            habits = [];
         }
-        
-        // Remove existing items of same category to prevent duplication/mix
-        const filteredItems = plannerItems.filter(item => item.category !== category);
 
         const newItems = items.map(it => ({
-            id: "task-" + Math.random().toString(36).substr(2, 9),
-            title: it.title,
-            priority: it.priority,
-            category: category, // today_todo, weekly_todo, monthly_todo
-            status: "pending",
-            createdAt: new Date().toISOString(),
+            id: typeof generateId !== "undefined" ? generateId() : "plan-" + Math.random().toString(36).substr(2, 9),
+            name: it.title,
+            category: "planner", 
+            createdAt: typeof getTodayString !== "undefined" ? getTodayString() : new Date().toISOString().slice(0, 10),
+            completions: [],
             isSystemGenerated: true
         }));
 
-        const finalStore = [...filteredItems, ...newItems];
-        localStorage.setItem("plannerItems", JSON.stringify(finalStore));
-        console.log(`[Planner] Committed ${newItems.length} items to ${category}`);
+        const finalStore = [...habits, ...newItems];
+        localStorage.setItem("habits", JSON.stringify(finalStore));
+        console.log(`[Planner] Committed ${newItems.length} Smart Planner items to habits.`);
     }
 };
