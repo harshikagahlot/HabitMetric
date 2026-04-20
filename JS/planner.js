@@ -1,238 +1,418 @@
 /* ==========================================
-   HabitMetric — Smart Planner Logic (planner.js)
-   Rule-based MVP for generating realistic execution plans.
+   HabitMetric — Smart Planner Logic (Guided Guided Architecture)
    ========================================== */
 
 window.initPlanner = function() {
-    console.log("[Planner] Initializing clean planner MVP...");
-    
-    // DOM Elements
+    console.log("[Planner] Initializing Guided Execution Engine...");
+
     const modeTabs = document.querySelectorAll(".mode-tab");
-    const rawPlanInput = document.getElementById("raw-plan");
-    const generateBtn = document.getElementById("generate-plan-btn");
-    const outputArea = document.getElementById("plan-output");
-    const outputList = document.getElementById("generated-items-list");
-    const outputTitle = document.getElementById("output-title");
-    const topAddAllBtn = document.getElementById("btn-add-all");
-
-    if (!generateBtn) {
-        console.warn("[Planner] Generate button not found in DOM");
-        return;
-    }
-
-    // Load Last Mode from Storage
-    let currentMode = localStorage.getItem("planner_last_mode");
-    if (currentMode !== "week" && currentMode !== "month") {
-        currentMode = "week"; // Default fallback
-    }
     
-    // 1. Tab Logic - Initialization
-    function setupTabs() {
-        modeTabs.forEach(tab => {
-            if (tab.dataset.mode === currentMode) {
-                tab.classList.add("active");
-            } else {
-                tab.classList.remove("active");
+    // UI Containers
+    const step1Card = document.getElementById("step1-intention-card");
+    const containerToday = document.getElementById("form-today");
+    const containerWeek = document.getElementById("form-week");
+    const containerMonth = document.getElementById("form-month");
+    
+    const inputToday = document.getElementById("raw-plan-today");
+    const inputWeek = document.getElementById("raw-plan-week");
+    const inputMonth = document.getElementById("raw-plan-month");
+
+    // Breakdown Elements
+    const step2Card = document.getElementById("step2-breakdown-card");
+    const breakdownTitle = document.getElementById("breakdown-title");
+    const breakdownSubtitle = document.getElementById("breakdown-subtitle");
+    const dateSelectorTrack = document.getElementById("date-selector-track");
+    const dateTaskForm = document.getElementById("date-task-form");
+    const dateTaskLabel = document.getElementById("task-form-date-label");
+    const backToStep1Btn = document.getElementById("btn-back-to-step1");
+    
+    // Task Input
+    const taskTitle = document.getElementById("task-title");
+    const taskNotes = document.getElementById("task-notes");
+    const taskPriority = document.getElementById("task-priority");
+    const taskCategory = document.getElementById("task-category");
+    const btnSaveTask = document.getElementById("btn-save-task");
+    const dailySavedItems = document.getElementById("daily-saved-items");
+
+    const savedPlansContainer = document.getElementById("saved-plans-container");
+
+    // State
+    let currentMode = localStorage.getItem("planner_last_mode") || "week";
+    let activePlanId = null; // Stays null until saved
+    let activePlanIntent = "";
+    let activeSelectedDateString = null; // YYYY-MM-DD
+    let sessionPlannedItems = []; // Temporarily hold items for the breakdown UI before committing
+
+    // 1. Initial State Hydration
+    function setupIsolatedState() {
+        if (inputToday) inputToday.value = localStorage.getItem("plannerDraftToday") || "";
+        if (inputWeek) inputWeek.value = localStorage.getItem("plannerDraftWeek") || "";
+        if (inputMonth) inputMonth.value = localStorage.getItem("plannerDraftMonth") || "";
+
+        if (inputToday) inputToday.addEventListener("input", () => localStorage.setItem("plannerDraftToday", inputToday.value));
+        if (inputWeek) inputWeek.addEventListener("input", () => localStorage.setItem("plannerDraftWeek", inputWeek.value));
+        if (inputMonth) inputMonth.addEventListener("input", () => localStorage.setItem("plannerDraftMonth", inputMonth.value));
+    }
+
+    function switchMode(mode) {
+        currentMode = mode;
+        localStorage.setItem("planner_last_mode", currentMode);
+        
+        modeTabs.forEach(t => t.classList.remove("active"));
+        const activeTab = document.querySelector(`.mode-tab[data-mode="${mode}"]`);
+        if (activeTab) activeTab.classList.add("active");
+
+        if(containerToday) containerToday.classList.add("hidden");
+        if(containerWeek) containerWeek.classList.add("hidden");
+        if(containerMonth) containerMonth.classList.add("hidden");
+
+        if (mode === "today" && containerToday) containerToday.classList.remove("hidden");
+        if (mode === "week" && containerWeek) containerWeek.classList.remove("hidden");
+        if (mode === "month" && containerMonth) containerMonth.classList.remove("hidden");
+        
+        // Always reset UI to Step 1 on mode switch
+        showStep1();
+    }
+
+    // Bind Tabs
+    modeTabs.forEach(tab => {
+        tab.onclick = () => switchMode(tab.dataset.mode);
+    });
+
+    // 2. Step 1 -> Step 2 Transitions
+    function showStep1() {
+        if(step1Card) step1Card.classList.remove("hidden");
+        if(step2Card) step2Card.classList.add("hidden");
+        activePlanId = null;
+        activePlanIntent = "";
+        activeSelectedDateString = null;
+        sessionPlannedItems = [];
+    }
+
+    function generateId() {
+        return Math.random().toString(36).substr(2, 9);
+    }
+
+    function showStep2(mode, intentionText) {
+        if (!intentionText.trim()) {
+            alert("Please enter a goal or intention first.");
+            return;
+        }
+
+        activePlanIntent = intentionText.trim();
+        activePlanId = mode + "-" + generateId();
+        
+        if(step1Card) step1Card.classList.add("hidden");
+        if(step2Card) step2Card.classList.remove("hidden");
+        if(dateTaskForm) dateTaskForm.classList.add("hidden"); // Hide until date clicked
+
+        if (mode === "today") {
+            if(breakdownTitle) breakdownTitle.textContent = "Today's Action Plan";
+            if(breakdownSubtitle) breakdownSubtitle.textContent = "Start adding specific tasks directly into today's queue.";
+            if(dateSelectorTrack) dateSelectorTrack.classList.add("hidden");
+            
+            // Auto click today
+            const tDate = new Date();
+            selectDateForForm(tDate);
+            
+        } else if (mode === "week") {
+            if(breakdownTitle) breakdownTitle.textContent = "Break Down The Week";
+            if(breakdownSubtitle) breakdownSubtitle.textContent = "Select a date to attach a specific action task.";
+            if(dateSelectorTrack) {
+                dateSelectorTrack.classList.remove("hidden");
+                renderDateSelectorTrack("week");
             }
-
-            tab.onclick = () => {
-                modeTabs.forEach(t => t.classList.remove("active"));
-                tab.classList.add("active");
-                currentMode = tab.dataset.mode;
-                localStorage.setItem("planner_last_mode", currentMode);
-                updateUIForMode(currentMode);
-            };
-        });
-        updateUIForMode(currentMode);
-    }
-
-    function updateUIForMode(mode) {
-        if (!rawPlanInput || !outputTitle) return;
-        if (mode === "week") {
-            rawPlanInput.placeholder = "Example:\n- 3 gym sessions\n- Read 10 pages daily\n- Code for 2 hours\n- Weekly budget review";
-            outputTitle.textContent = "Weekly Execution Plan";
-        } else {
-            rawPlanInput.placeholder = "Example:\n- Complete Milestone 1\n- Build morning routine\n- Read 2 books\n- Save $500";
-            outputTitle.textContent = "Monthly Milestone Plan";
+        } else if (mode === "month") {
+            if(breakdownTitle) breakdownTitle.textContent = "Break Down The Month";
+            if(breakdownSubtitle) breakdownSubtitle.textContent = "Select a date to attach a specific action task.";
+            if(dateSelectorTrack) {
+                dateSelectorTrack.classList.remove("hidden");
+                renderDateSelectorTrack("month");
+            }
         }
     }
 
-    setupTabs();
+    const btnSaveToday = document.getElementById("btn-save-today");
+    const btnSaveWeek = document.getElementById("btn-save-week");
+    const btnSaveMonth = document.getElementById("btn-save-month");
 
-    let lastGeneratedItems = [];
+    if(btnSaveToday) btnSaveToday.onclick = () => showStep2("today", inputToday.value);
+    if(btnSaveWeek) btnSaveWeek.onclick = () => showStep2("week", inputWeek.value);
+    if(btnSaveMonth) btnSaveMonth.onclick = () => showStep2("month", inputMonth.value);
+    
+    if (backToStep1Btn) backToStep1Btn.onclick = showStep1;
 
-    // 2. Generation Logic
-    generateBtn.onclick = () => {
-        const rawText = rawPlanInput.value.trim();
+    // 3. Date Track Generation
+    function renderDateSelectorTrack(scope) {
+        if (!dateSelectorTrack) return;
+        dateSelectorTrack.innerHTML = "";
+        const now = new Date();
+        const daysToRender = [];
 
-        if (!rawText) {
-            alert("Please enter a rough plan in the text box before generating.");
-            return;
+        if (scope === "week") {
+            // Find current week Monday to Sunday
+            const dayOfWeek = now.getDay() || 7; // 1-7
+            const monday = new Date(now);
+            monday.setDate(now.getDate() - dayOfWeek + 1);
+            
+            for (let i = 0; i < 7; i++) {
+                const d = new Date(monday);
+                d.setDate(monday.getDate() + i);
+                daysToRender.push(d);
+            }
+        } else if (scope === "month") {
+            // Render from today until end of month (or next 30 days)
+            // Let's do current month days from 1 to end
+            const year = now.getFullYear();
+            const month = now.getMonth();
+            const daysInMonth = new Date(year, month + 1, 0).getDate();
+            
+            for (let i = 1; i <= daysInMonth; i++) {
+                daysToRender.push(new Date(year, month, i));
+            }
         }
 
-        // Improved Parser: Split by newline, strip bullets, numbers, hyphens
-        let items = rawText
-            .split(/\n/)
-            .map(s => s.replace(/^[•\-\*\d\.\)]+\s*/, '').trim())
-            .filter(s => s.length > 2); // Minimum length to be considered a task
+        const daysOfWeekStr = ["Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat"];
+        const todayStr = (typeof formatLocalDate === "function") ? formatLocalDate(now) : now.toISOString().slice(0, 10);
 
-        if (items.length === 0) {
-            alert("Could not find any clear tasks. Try listing them one per line.");
-            return;
-        }
-
-        // Deduplicate
-        let uniqueItems = [...new Set(items)];
-
-        const structuredPlan = uniqueItems.map(item => {
-            const lower = item.toLowerCase();
+        daysToRender.forEach(d => {
+            const dString = (typeof formatLocalDate === "function") ? formatLocalDate(d) : d.toISOString().slice(0, 10);
             
-            // Guess priority
-            let priority = "Medium";
-            if (lower.includes("important") || lower.includes("must") || lower.includes("urgent")) priority = "High";
-            if (lower.includes("optional") || lower.includes("if possible")) priority = "Low";
-
-            // Guess frequency
-            let frequency = "Daily";
-            if (lower.includes("times") || lower.includes("weekly") || lower.includes("week")) frequency = "Multiple times a week";
-            if (lower.includes("monthly") || lower.includes("month")) frequency = "Monthly";
+            const b = document.createElement("div");
+            b.className = "date-bubble";
+            if (dString === todayStr && scope !== "month") b.style.borderColor = "var(--accent)"; // highlight today lightly
             
-            // Guess time block
-            let timeBlock = "Anytime";
-            if (lower.match(/morning|am\b/i)) timeBlock = "Morning";
-            if (lower.match(/evening|pm\b|night/i)) timeBlock = "Evening";
-            if (lower.match(/afternoon/i)) timeBlock = "Afternoon";
+            b.innerHTML = `
+                <span class="db-day">${daysOfWeekStr[d.getDay()]}</span>
+                <span class="db-num">${d.getDate()}</span>
+            `;
 
-            return {
-                id: "plan-" + Math.random().toString(36).substr(2, 9),
-                title: item,
-                priority: priority,
-                frequency: frequency,
-                timeBlock: timeBlock
+            b.onclick = () => {
+                document.querySelectorAll(".date-bubble").forEach(x => x.classList.remove("active"));
+                b.classList.add("active");
+                selectDateForForm(d);
             };
-        });
-        
-        lastGeneratedItems = structuredPlan;
-        renderPreview();
-    };
 
-    function renderPreview() {
-        if (!outputList || !outputArea) return;
-        outputList.innerHTML = "";
+            dateSelectorTrack.appendChild(b);
+        });
+    }
+
+    function selectDateForForm(dateObj) {
+        activeSelectedDateString = (typeof formatLocalDate === "function") ? formatLocalDate(dateObj) : dateObj.toISOString().slice(0, 10);
         
-        if (lastGeneratedItems.length === 0) {
-            outputArea.classList.add("hidden");
-            return;
+        const options = { weekday: 'long', month: 'short', day: 'numeric' };
+        if(dateTaskLabel) dateTaskLabel.textContent = "Tasks for " + dateObj.toLocaleDateString(undefined, options);
+        if(dateTaskForm) dateTaskForm.classList.remove("hidden");
+        
+        if(taskTitle) {
+            taskTitle.value = "";
+            taskTitle.focus();
         }
+        if(taskNotes) taskNotes.value = "";
+        if(taskCategory) taskCategory.value = "";
         
-        outputArea.classList.remove("hidden");
-        
-        lastGeneratedItems.forEach((item) => {
-            const div = document.createElement("div");
-            div.className = "planned-item";
-            div.dataset.id = item.id;
+        renderDailySavedItems();
+    }
+
+    // 4. Task Creation
+    if (btnSaveTask) {
+        btnSaveTask.onclick = () => {
+            const title = taskTitle ? taskTitle.value.trim() : "";
+            if (!title) return;
             
-            div.innerHTML = `
+            const itemObj = {
+                id: "pt-" + generateId(),
+                title: title,
+                notes: taskNotes ? taskNotes.value.trim() : "",
+                priority: taskPriority ? taskPriority.value : "Medium",
+                category: taskCategory ? taskCategory.value.trim() || undefined : undefined,
+                dateStr: activeSelectedDateString,
+                sourcePlanType: currentMode,
+                parentPlanId: activePlanId
+            };
+            
+            sessionPlannedItems.push(itemObj);
+            
+            if(taskTitle) {
+                taskTitle.value = "";
+                taskTitle.focus();
+            }
+            if(taskNotes) taskNotes.value = "";
+            
+            // Visual feedback
+            btnSaveTask.textContent = "Saved! ✔";
+            btnSaveTask.style.background = "#10b981";
+            setTimeout(() => {
+                btnSaveTask.textContent = "Save to Date";
+                btnSaveTask.style.background = "";
+            }, 1000);
+            
+            renderDailySavedItems();
+        };
+    }
+
+    function renderDailySavedItems() {
+        if(!dailySavedItems) return;
+        dailySavedItems.innerHTML = "";
+        const itemsForDate = sessionPlannedItems.filter(i => i.dateStr === activeSelectedDateString);
+        
+        if (itemsForDate.length === 0) return;
+        
+        itemsForDate.forEach(it => {
+            const el = document.createElement("div");
+            el.className = "planned-item"; // reuse css
+            el.innerHTML = `
                 <div class="item-content">
-                    <strong>${item.title}</strong>
+                    <strong>${it.title}</strong>
                     <div class="item-meta">
-                        Priority: ${item.priority} &nbsp;•&nbsp; Freq: ${item.frequency} &nbsp;•&nbsp; Time: ${item.timeBlock}
+                        Priority: ${it.priority} ${it.category ? `&nbsp;•&nbsp; Cat: ${it.category}` : ''}
                     </div>
                 </div>
                 <div class="item-actions">
-                    <button class="btn-icon btn-add-single" title="Add to Habits" aria-label="Add to Habits">
-                        <i data-lucide="plus"></i> Add
-                    </button>
-                    <button class="btn-icon btn-delete-single" title="Remove" aria-label="Remove">
+                    <button class="btn-icon btn-delete-single">
                         <i data-lucide="trash-2"></i>
                     </button>
                 </div>
             `;
-            
-            // Attach specific events
-            div.querySelector(".btn-delete-single").onclick = () => {
-                lastGeneratedItems = lastGeneratedItems.filter(it => it.id !== item.id);
-                renderPreview();
+            el.querySelector(".btn-delete-single").onclick = () => {
+                sessionPlannedItems = sessionPlannedItems.filter(x => x.id !== it.id);
+                renderDailySavedItems();
             };
-            
-            div.querySelector(".btn-add-single").onclick = (e) => {
-                savePlanItemsToStorage([item]);
-                lastGeneratedItems = lastGeneratedItems.filter(it => it.id !== item.id);
-                renderPreview();
-            };
-
-            outputList.appendChild(div);
+            dailySavedItems.appendChild(el);
         });
         
-        if (typeof lucide !== "undefined") {
-            lucide.createIcons();
-        }
+        if (typeof lucide !== "undefined") lucide.createIcons();
     }
 
-    // 3. Global Bulk Save Logic
-    if (topAddAllBtn) {
-        topAddAllBtn.onclick = () => {
-            if (lastGeneratedItems.length === 0) return;
+    // 5. Final Plan Commitment
+    const btnFinishPlan = document.getElementById("btn-finish-plan");
+    if(btnFinishPlan) {
+        btnFinishPlan.onclick = () => {
+            // 1. Save The Intention block
+            if (currentMode === "week" || currentMode === "month") {
+                const storageKey = currentMode === "week" ? "weeklyPlans" : "monthlyPlans";
+                const plans = JSON.parse(localStorage.getItem(storageKey)) || [];
+                plans.push({
+                    id: activePlanId,
+                    type: currentMode,
+                    createdAt: new Date().toISOString(),
+                    intention: activePlanIntent
+                });
+                localStorage.setItem(storageKey, JSON.stringify(plans));
+            }
             
-            savePlanItemsToStorage(lastGeneratedItems);    
+            // 2. Inject ALL the session items dynamically into the global Habits array
+            // so that they sync with My Habits flawlessly.
+            if (sessionPlannedItems.length > 0) {
+                const habits = JSON.parse(localStorage.getItem("habits")) || [];
+                
+                const newHabits = sessionPlannedItems.map(it => {
+                    return {
+                        id: it.id, // mapped from plan task
+                        name: it.title,
+                        category: it.category || "planner", // Use general planner if missing, but we mapped it
+                        createdAt: (typeof getTodayString !== "undefined") ? getTodayString() : new Date().toISOString().slice(0, 10),
+                        completions: [],
+                        isSystemGenerated: true,
+                        recurrence: "once",
+                        targetDate: it.dateStr,
+                        parentPlanId: it.parentPlanId,
+                        sourcePlanType: it.sourcePlanType,
+                        priority: it.priority,
+                        notes: it.notes
+                    };
+                });
+                
+                localStorage.setItem("habits", JSON.stringify([...habits, ...newHabits]));
+            }
             
-            const originalText = topAddAllBtn.innerHTML;
-            topAddAllBtn.innerHTML = "<i data-lucide='check'></i> Added All!";
-            topAddAllBtn.style.background = "#10b981"; // success green
-            topAddAllBtn.style.color = "white";
-            lucide.createIcons();
-            
-            setTimeout(() => {
-                topAddAllBtn.innerHTML = originalText;
-                topAddAllBtn.style.background = "";
-                topAddAllBtn.style.color = "";
-                lucide.createIcons();
-            }, 2000);
+            // 3. Reset and refresh UI
+            // Clear drafts because we successfully committed!
+            if (currentMode === "today") { localStorage.removeItem("plannerDraftToday"); if(inputToday) inputToday.value = ""; }
+            if (currentMode === "week") { localStorage.removeItem("plannerDraftWeek"); if(inputWeek) inputWeek.value = ""; }
+            if (currentMode === "month") { localStorage.removeItem("plannerDraftMonth"); if(inputMonth) inputMonth.value = ""; }
 
-            // Empty the list
-            lastGeneratedItems = [];
-            renderPreview();
+            showStep1();
+            renderHistoricalPlans();
         };
     }
 
-    function savePlanItemsToStorage(items) {
-        const storedHabits = localStorage.getItem("habits");
-        let habits = [];
-        try {
-            habits = JSON.parse(storedHabits) || [];
-        } catch (e) {
-            habits = [];
+    // 6. Historical Plans Rendering
+    function renderHistoricalPlans() {
+        if(!savedPlansContainer) return;
+        savedPlansContainer.innerHTML = "";
+        
+        const wPlans = JSON.parse(localStorage.getItem("weeklyPlans")) || [];
+        const mPlans = JSON.parse(localStorage.getItem("monthlyPlans")) || [];
+        const allPlans = [...wPlans, ...mPlans].sort((a,b) => new Date(b.createdAt) - new Date(a.createdAt));
+        
+        const habits = JSON.parse(localStorage.getItem("habits")) || [];
+        
+        if (allPlans.length === 0) {
+            savedPlansContainer.innerHTML = "<p style='color: var(--text-dim)'>No saved plans. Your active intentions will appear here.</p>";
+            return;
         }
 
-        const newItems = items.map(it => {
-            let rec = "daily";
-            let wd = [];
-            let md = [];
+        allPlans.forEach(plan => {
+            const card = document.createElement("div");
+            card.className = "plan-block-card";
             
-            if (it.frequency === "Multiple times a week") {
-                rec = "weekly";
-                wd = ["1","3","5"]; // arbitrary MWF default for planner
-            } else if (it.frequency === "Monthly") {
-                rec = "monthly";
-                md = ["1"]; // arbitrary 1st of month default for planner
+            const childrenTasks = habits.filter(h => h.parentPlanId === plan.id);
+            const dateMap = {};
+            childrenTasks.forEach(h => {
+                const arr = dateMap[h.targetDate] || [];
+                arr.push(h);
+                dateMap[h.targetDate] = arr;
+            });
+
+            let childrenHTML = "";
+            for (const [dateKey, tasks] of Object.entries(dateMap)) {
+                childrenHTML += `<div style="margin-top: 10px;">
+                    <strong style="color:var(--text-light); font-size:0.85rem;">Date: ${dateKey}</strong>
+                    <ul style="list-style:inside; color:var(--text-dim); font-size:0.85rem; padding-left:5px;">`;
+                tasks.forEach(t => {
+                    const doneText = t.completions.includes(dateKey) ? " <span style='color:var(--accent)'>(Done)</span>" : "";
+                    childrenHTML += `<li>${t.name}${doneText}</li>`;
+                });
+                childrenHTML += `</ul></div>`;
             }
 
-            return {
-                id: typeof generateId !== "undefined" ? generateId() : "plan-" + Math.random().toString(36).substr(2, 9),
-                name: it.title,
-                category: "planner", 
-                createdAt: typeof getTodayString !== "undefined" ? getTodayString() : new Date().toISOString().slice(0, 10),
-                completions: [],
-                isSystemGenerated: true,
-                recurrence: rec,
-                weekdays: wd,
-                monthDates: md,
-                targetDate: null
-            };
-        });
+            card.innerHTML = `
+                <div class="plan-block-header">
+                    <span class="plan-badge">${plan.type === 'week' ? 'Weekly Plan' : 'Monthly Plan'}</span>
+                    <button class="btn-icon btn-delete-plan" style="color:#ef4444; border-color:#fca5a5;">
+                        <i data-lucide="trash-2"></i>
+                    </button>
+                </div>
+                <div class="plan-intention-view">"${plan.intention}"</div>
+                ${childrenTasks.length > 0 ? `<div class="plan-children-list"><strong>Scheduled Actions:</strong>${childrenHTML}</div>` : ''}
+            `;
 
-        const finalStore = [...habits, ...newItems];
-        localStorage.setItem("habits", JSON.stringify(finalStore));
-        console.log(`[Planner] Committed ${newItems.length} Smart Planner items to habits.`);
+            card.querySelector(".btn-delete-plan").onclick = () => {
+                if(confirm("Delete this plan? (This will also delete the associated tasks)")) {
+                    // Delete Plan Obj
+                    const storageKey = plan.type === "week" ? "weeklyPlans" : "monthlyPlans";
+                    const pList = JSON.parse(localStorage.getItem(storageKey));
+                    localStorage.setItem(storageKey, JSON.stringify(pList.filter(p => p.id !== plan.id)));
+                    
+                    // Cascade Delete the physical Habits generated
+                    const updatedHabits = habits.filter(h => h.parentPlanId !== plan.id);
+                    localStorage.setItem("habits", JSON.stringify(updatedHabits));
+                    
+                    renderHistoricalPlans();
+                }
+            };
+
+            savedPlansContainer.appendChild(card);
+        });
+        
+        if (typeof lucide !== "undefined") lucide.createIcons();
     }
+
+
+    // Boot Process
+    setupIsolatedState();
+    switchMode(currentMode);
+    renderHistoricalPlans();
+
 };

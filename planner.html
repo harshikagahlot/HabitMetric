@@ -40,40 +40,112 @@
 
             <!-- Planning Mode Selector -->
             <div class="planner-modes" id="planner-mode-tabs">
+                <button class="mode-tab" data-mode="today">Today Planner</button>
                 <button class="mode-tab active" data-mode="week">Weekly Planner</button>
                 <button class="mode-tab" data-mode="month">Monthly Overview</button>
             </div>
 
-            <!-- Planner Input Form -->
-            <div class="planner-card">
-                <div class="form-section">
-                    <label for="raw-plan">Paste Your Rough Plan / Schedule</label>
-                    <p>Enter your to-do lists, schedule fragments, or goals (one per line).</p>
-                    <textarea id="raw-plan" class="planner-input" placeholder="Example:
-- 3 gym sessions
-- Read 10 pages daily
-- Review weekly budget
-- Code for 2 hours"></textarea>
+            <!-- Step 1: Intention / Draft Forms (Strictly Isolated) -->
+            <div class="planner-card" id="step1-intention-card">
+                
+                <!-- TODAY FORM -->
+                <div id="form-today" class="mode-form-container hidden">
+                    <div class="form-section">
+                        <label for="raw-plan-today">Plan My Today</label>
+                        <p>Write out your core goals for today. What must get done?</p>
+                        <textarea id="raw-plan-today" class="planner-input" placeholder="Example:
+- Finish the assignment
+- Go for a run
+- Email professor"></textarea>
+                    </div>
+                    <div class="generate-actions">
+                        <button id="btn-save-today" class="btn-generate">Save Today's Goal</button>
+                    </div>
                 </div>
 
-                <div class="generate-actions">
-                    <button id="generate-plan-btn" class="btn-generate">Generate Habit Plan</button>
+                <!-- WEEK FORM -->
+                <div id="form-week" class="mode-form-container">
+                    <div class="form-section">
+                        <label for="raw-plan-week">Plan My Week</label>
+                        <p>What are your major priorities for this entire week?</p>
+                        <textarea id="raw-plan-week" class="planner-input" placeholder="Example:
+- 3 gym sessions
+- Read 10 pages daily
+- Code for 2 hours
+- Weekly budget review"></textarea>
+                    </div>
+                    <div class="generate-actions">
+                        <button id="btn-save-week" class="btn-generate">Save Weekly Goal & Select Days</button>
+                    </div>
+                </div>
+
+                <!-- MONTH FORM -->
+                <div id="form-month" class="mode-form-container hidden">
+                    <div class="form-section">
+                        <label for="raw-plan-month">Plan My Month</label>
+                        <p>Sketch your trajectory for the upcoming month. What milestones matter?</p>
+                        <textarea id="raw-plan-month" class="planner-input" placeholder="Example:
+- Complete Milestone 1
+- Build morning routine
+- Read 2 books
+- Save $500"></textarea>
+                    </div>
+                    <div class="generate-actions">
+                        <button id="btn-save-month" class="btn-generate">Save Monthly Goal & Select Days</button>
+                    </div>
                 </div>
             </div>
 
-            <!-- Generated Plan Output -->
-            <div id="plan-output" class="plan-output-card hidden">
+            <!-- Step 2: Date Breakdown Phase -->
+            <div id="step2-breakdown-card" class="plan-output-card hidden">
                 <div class="output-header">
-                    <h3 id="output-title">Your Generated Habits</h3>
+                    <h3 id="breakdown-title">Let's Break It Down</h3>
+                    <button id="btn-back-to-step1" class="btn-icon">Cancel</button>
                 </div>
                 
-                <div class="generated-list" id="generated-items-list">
-                    <!-- Items inserted by JS -->
+                <p class="breakdown-subtext" id="breakdown-subtitle">Select a date to attach a specific action task.</p>
+
+                <div id="date-selector-track" class="date-scroll-track">
+                    <!-- Javascript generates clickable date blocks depending on week/month mode -->
+                </div>
+
+                <div id="date-task-form" class="hidden">
+                    <div class="task-form-header">
+                        <h4 id="task-form-date-label">Tasks for April 18</h4>
+                    </div>
+                    
+                    <div class="task-form-inputs">
+                        <input type="text" id="task-title" placeholder="Action Task Title (e.g. Do arrays)">
+                        <input type="text" id="task-notes" placeholder="Notes (Optional)">
+                        <div class="task-form-row">
+                            <select id="task-priority">
+                                <option value="High">High Priority</option>
+                                <option value="Medium" selected>Medium Priority</option>
+                                <option value="Low">Low Priority</option>
+                            </select>
+                            <input type="text" id="task-category" placeholder="Category (Optional)">
+                        </div>
+                        <button id="btn-save-task" class="btn-generate btn-small">Save to Date</button>
+                    </div>
+
+                    <div id="daily-saved-items" class="daily-saved-list">
+                        <!-- Shows items saved strictly to THIS selected date inside this session -->
+                    </div>
                 </div>
 
                 <div class="save-actions">
-                    <button id="btn-add-all" class="btn-add-all"><i data-lucide="plus-circle"></i> Add All to My Habits</button>
+                    <button id="btn-finish-plan" class="btn-add-all"><i data-lucide="check-circle"></i> Commit Plan</button>
                 </div>
+            </div>
+
+            <!-- Saved Plans Historical View -->
+            <div class="page-header" style="margin-top: 60px;">
+                <h2>Saved Plans</h2>
+                <p class="page-subtitle">Your active intentions and scheduled breakdown.</p>
+            </div>
+            
+            <div id="saved-plans-container" class="saved-plans-grid">
+                <!-- Javascript renders historical Week/Month plan blocks here -->
             </div>
 
         </div>
