@@ -10,7 +10,9 @@ window.initDashboard = function () {
     function getAllActiveDates() {
         const habits = JSON.parse(localStorage.getItem("habits")) || [];
         const dateSet = new Set();
-        habits.forEach(h => { if (h.completions) h.completions.forEach(d => dateSet.add(d)); });
+        habits.forEach(h => { 
+            if (!h.isSystemGenerated && h.completions) h.completions.forEach(d => dateSet.add(d)); 
+        });
         return Array.from(dateSet).sort();
     }
 
@@ -22,9 +24,12 @@ window.initDashboard = function () {
         let dueHabits = habits;
 
         // Ensure we only calculate stats against habits actually due on this date.
-        // We use window.isHabitDueOnDate from app.js
+        // We use window.isHabitDueOnDate from app.js.
+        // Rule: Do not mix Planner tasks (isSystemGenerated) into streak math.
         if (typeof isHabitDueOnDate === "function") {
-            dueHabits = habits.filter(h => isHabitDueOnDate(h, dateString));
+            dueHabits = habits.filter(h => !h.isSystemGenerated && isHabitDueOnDate(h, dateString));
+        } else {
+            dueHabits = habits.filter(h => !h.isSystemGenerated);
         }
 
         const total = dueHabits.length;
@@ -193,8 +198,87 @@ window.initDashboard = function () {
             box.classList.add("day", stats.level);
             box.textContent = day;
             box.setAttribute("title", `${ds} — ${stats.count}/${stats.total} habits (${stats.level})`);
+            
+            // Add click listener for side panel
+            box.style.cursor = "pointer";
+            box.onclick = () => renderCalendarTasksPanel(ds);
+
             calendarEl.appendChild(box);
         }
+    }
+
+    // ---- Calendar Tasks Panel Extension ----
+    function renderCalendarTasksPanel(dateString) {
+        const panel = document.getElementById("calendar-tasks-panel");
+        const titleEl = document.getElementById("cal-panel-date");
+        const listEl = document.getElementById("cal-panel-list");
+        if (!panel || !titleEl || !listEl) return;
+
+        panel.style.display = "block";
+        const dObj = new Date(dateString);
+        // Correct timezone parsing
+        const correctedDate = new Date(dObj.getTime() + dObj.getTimezoneOffset() * 60000);
+        titleEl.textContent = "Tasks for " + correctedDate.toLocaleDateString(undefined, {month:'short', day:'numeric'});
+        listEl.innerHTML = "";
+
+        let habits = JSON.parse(localStorage.getItem("habits")) || [];
+        // Only get tasks explicitly assigned to this date (planner output)
+        const dayTasks = habits.filter(h => h.isSystemGenerated && h.targetDate === dateString);
+
+        if (dayTasks.length === 0) {
+            listEl.innerHTML = "<p style='font-size:0.8rem; color:var(--text-dim);'>No planner tasks for this date.</p>";
+            return;
+        }
+
+        dayTasks.forEach(task => {
+            const isDone = task.completions.includes(dateString);
+            const el = document.createElement("div");
+            el.style.background = "var(--bg-body)";
+            el.style.padding = "8px 10px";
+            el.style.borderRadius = "8px";
+            el.style.fontSize = "0.85rem";
+            el.style.display = "flex";
+            el.style.justifyContent = "space-between";
+            el.style.alignItems = "center";
+            el.style.border = "1px solid var(--border-color)";
+
+            el.innerHTML = `
+                <div style="display:flex; align-items:center; gap:8px;">
+                    <input type="checkbox" style="accent-color:var(--accent); cursor:pointer;" ${isDone ? 'checked' : ''}>
+                    <span style="${isDone ? 'text-decoration:line-through; opacity:0.5' : ''}">${task.name}</span>
+                </div>
+                <button title="Delete Task" style="background:none; border:none; color:#ef4444; cursor:pointer;">✕</button>
+            `;
+
+            // Checkbox logic
+            const cb = el.querySelector("input");
+            cb.onchange = () => {
+                habits = JSON.parse(localStorage.getItem("habits")) || [];
+                const idx = habits.findIndex(h => h.id === task.id);
+                if (idx > -1) {
+                    if (cb.checked) {
+                        if (!habits[idx].completions.includes(dateString)) habits[idx].completions.push(dateString);
+                    } else {
+                        habits[idx].completions = habits[idx].completions.filter(x => x !== dateString);
+                    }
+                    localStorage.setItem("habits", JSON.stringify(habits));
+                    renderCalendarTasksPanel(dateString); // re-render panel
+                }
+            };
+
+            // Delete logic
+            const delBtn = el.querySelector("button");
+            delBtn.onclick = () => {
+                if (confirm("Delete this planner task?")) {
+                    habits = JSON.parse(localStorage.getItem("habits")) || [];
+                    const updated = habits.filter(h => h.id !== task.id);
+                    localStorage.setItem("habits", JSON.stringify(updated));
+                    renderCalendarTasksPanel(dateString); // re-render panel
+                }
+            };
+
+            listEl.appendChild(el);
+        });
     }
 
     // ---- Attach calendar navigation (only once, use cloneNode trick to wipe old listeners) ----

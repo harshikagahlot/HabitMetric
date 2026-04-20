@@ -93,13 +93,20 @@
             </div>
         </div>
 
-        <div class="calendar-wrapper">
-            <div class="calendar-header">
-                <button id="prevMonth">←</button>
-                <h2 id="monthYear"></h2>
-                <button id="nextMonth">→</button>
+        <div class="calendar-wrapper" style="display: flex; gap: 20px; align-items: flex-start;">
+            <div style="flex: 1;">
+                <div class="calendar-header">
+                    <button id="prevMonth">←</button>
+                    <h2 id="monthYear"></h2>
+                    <button id="nextMonth">→</button>
+                </div>
+                <div class="calendar" id="calendar"></div>
             </div>
-            <div class="calendar" id="calendar"></div>
+            
+            <div id="calendar-tasks-panel" style="width: 280px; background: var(--bg-hover); border-radius: 12px; padding: 15px; border: 1px solid var(--border-color); display: none;">
+                <h4 id="cal-panel-date" style="margin-bottom: 10px; color: var(--text-main); font-size: 0.95rem;">Tasks</h4>
+                <div id="cal-panel-list" style="display:flex; flex-direction:column; gap:8px;"></div>
+            </div>
         </div>
 
         <div class="insight">

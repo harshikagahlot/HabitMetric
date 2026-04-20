@@ -314,12 +314,17 @@ window.initMyHabits = function () {
         // 2. Filter habits based on Recurrence (Only show due today)
         const todayStr = typeof getTodayString === "function" ? getTodayString() : new Date().toISOString().slice(0, 10);
         
-        let dueToday = [];
+        let dueTodayPlanner = [];
+        let dueNormal = [];
         let notDue = [];
 
         filtered.forEach(h => {
             if (typeof isHabitDueOnDate === "function" && isHabitDueOnDate(h, todayStr)) {
-                dueToday.push(h);
+                if (h.isSystemGenerated) {
+                    dueTodayPlanner.push(h);
+                } else {
+                    dueNormal.push(h);
+                }
             } else {
                 notDue.push(h);
             }
@@ -336,15 +341,29 @@ window.initMyHabits = function () {
         subtitle.textContent = filterName + " — Building consistency one day at a time";
 
         // 4. Render Groups
-        if (dueToday.length === 0) {
+        if (dueTodayPlanner.length === 0 && dueNormal.length === 0) {
             habitList.innerHTML = `<div class="empty-state">No habits due today for this category. Click below to add one!</div>`;
         } else {
-            // Group by recurrence
+            // Render Planner Items first
+            if (dueTodayPlanner.length > 0) {
+                const header = document.createElement("div");
+                header.style.fontSize = "0.85rem";
+                header.style.fontWeight = "700";
+                header.style.textTransform = "uppercase";
+                header.style.color = "var(--accent)";
+                header.style.margin = "20px 0 10px 0";
+                header.textContent = "Today's Planner Tasks";
+                habitList.appendChild(header);
+
+                dueTodayPlanner.forEach(h => addHabitToDOM(h));
+            }
+
+            // Group normal habits by recurrence
             const groups = {
-                "daily": dueToday.filter(h => !h.recurrence || h.recurrence === "daily"),
-                "weekly": dueToday.filter(h => h.recurrence === "weekly"),
-                "monthly": dueToday.filter(h => h.recurrence === "monthly"),
-                "once": dueToday.filter(h => h.recurrence === "once")
+                "daily": dueNormal.filter(h => !h.recurrence || h.recurrence === "daily"),
+                "weekly": dueNormal.filter(h => h.recurrence === "weekly"),
+                "monthly": dueNormal.filter(h => h.recurrence === "monthly"),
+                "once": dueNormal.filter(h => h.recurrence === "once")
             };
 
             const labels = {
@@ -517,6 +536,10 @@ window.initMyHabits = function () {
         const missedYesterday= wasDueYesterday && !habit.completions.includes(yesterdayStr);
         const showWarning    = missedYesterday && !isDoneToday && habit.completions.length > 0;
 
+        // Supress streaks and warnings for Planner generated items to separate them from normal habit logic
+        const showStreak     = !habit.isSystemGenerated && streak > 0;
+        const showWarningUI  = !habit.isSystemGenerated && showWarning;
+
         let emoji = habit.icon !== undefined ? habit.icon : "";
         if (habit.icon === undefined) {
             const cat = (habit.category || "").toLowerCase();
@@ -541,8 +564,8 @@ window.initMyHabits = function () {
                 </div>
               </div>
               <div class="habit-right">
-                ${streak > 0 ? `<span class="badge streak-chip">🔥 ${streak} Day Streak</span>` : ""}
-                ${showWarning ? `<span class="badge warning-chip">⚠️ Missed Yesterday</span>` : ""}
+                ${showStreak ? `<span class="badge streak-chip">🔥 ${streak} Day Streak</span>` : ""}
+                ${showWarningUI ? `<span class="badge warning-chip">⚠️ Missed Yesterday</span>` : ""}
               </div>
             </label>
             <div class="habit-actions-wrapper">
