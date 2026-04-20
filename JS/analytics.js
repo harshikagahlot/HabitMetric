@@ -220,4 +220,5 @@ window.initAnalytics = function() {
         // Push update to dashboard if in memory
         if (typeof window.initDashboard === "function") window.initDashboard();
     };
+    if (typeof window.initDashboard === "function") window.initDashboard();
 };

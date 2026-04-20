@@ -17,20 +17,24 @@
  */
 function setGreeting() {
     const greetingEl = document.getElementById("greeting");
-    if (!greetingEl) return; // Not all pages have a greeting
+    if (!greetingEl) return; 
 
     const hour = new Date().getHours();
     let timeOfDay;
-
-    const user = getUser();
-    const name = user && user.name ? user.name : "Friend";
 
     if (hour >= 5  && hour < 12) timeOfDay = "Good Morning";
     else if (hour >= 12 && hour < 17) timeOfDay = "Good Afternoon";
     else if (hour >= 17 && hour < 21) timeOfDay = "Good Evening";
     else                               timeOfDay = "Good Night";
 
-    greetingEl.textContent = timeOfDay + ", " + name + " 👋";
+    const user = getUser();
+    const name = (user && user.name && user.name.trim()) ? user.name.trim() : null;
+
+    if (name) {
+        greetingEl.textContent = `${timeOfDay}, ${name} 👋`;
+    } else {
+        greetingEl.textContent = `${timeOfDay} 👋`;
+    }
 }
 
 
@@ -52,21 +56,8 @@ document.addEventListener("DOMContentLoaded", function () {
         }
     });
 
-    // Render Lucide SVG icons if the script is loaded
     if (typeof lucide !== "undefined") {
         lucide.createIcons();
-    }
-
-    // Update the avatar circle with real user initials
-    // "Harsh Gahlot" → "HG", "Harsh" → "H", no name → "?"
-    const avatarEl = document.getElementById("user-avatar");
-    if (avatarEl) {
-        const user = getUser();
-        const name = (user && user.name) ? user.name.trim() : "";
-        const initials = name
-            ? name.split(/\s+/).map(function(w) { return w[0]; }).join("").toUpperCase().slice(0, 2)
-            : "?";
-        avatarEl.textContent = initials;
     }
 });
 

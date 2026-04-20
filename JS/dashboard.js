@@ -16,33 +16,39 @@ window.initDashboard = function () {
         return Array.from(dateSet).sort();
     }
 
-    function getLevelForDate(dateString) {
+    function getLevelForDate(dateString, includePlanner = true) {
         const habits = JSON.parse(localStorage.getItem("habits")) || [];
         if (!habits.length) return { level: "none", count: 0, total: 0 };
         
         let count = 0;
-        let dueHabits = habits;
+        let dueHabits = [];
 
-        // Ensure we only calculate stats against habits actually due on this date.
-        // We use window.isHabitDueOnDate from app.js.
-        // Rule: Do not mix Planner tasks (isSystemGenerated) into streak math.
         if (typeof isHabitDueOnDate === "function") {
-            dueHabits = habits.filter(h => !h.isSystemGenerated && isHabitDueOnDate(h, dateString));
+            dueHabits = habits.filter(h => {
+                // Rule: For heatmap/completion rate, we follow the includePlanner flag.
+                // For Streaks (implied by excludePlanner), we only want manual core habits.
+                if (h.isSystemGenerated) {
+                    return includePlanner && h.targetDate === dateString;
+                }
+                return isHabitDueOnDate(h, dateString);
+            });
         } else {
-            dueHabits = habits.filter(h => !h.isSystemGenerated);
+            dueHabits = habits.filter(h => includePlanner || !h.isSystemGenerated);
         }
 
         const total = dueHabits.length;
         if (total === 0) return { level: "none", count: 0, total: 0 };
 
-        dueHabits.forEach(h => { if (h.completions && h.completions.includes(dateString)) count++; });
+        dueHabits.forEach(h => { 
+            if (h.completions && h.completions.includes(dateString)) count++; 
+        });
         
         const rate  = count / total;
         let level = "high";
         if (rate === 0)       level = "none";
         else if (rate <= 0.40) level = "low";
         else if (rate <= 0.70) level = "medium";
-        return { level, count, total };
+        return { level, count, total, rate };
     }
 
     function buildDateString(year, month, day) {
@@ -64,28 +70,43 @@ window.initDashboard = function () {
     }
 
     function updateRiskCard() {
-        const streak    = calculateStreak(getAllActiveDates());
         const riskCard  = document.getElementById("risk-card");
         const riskValue = document.getElementById("risk-value");
         const riskReason= document.getElementById("risk-reason");
         if (!riskCard) return;
 
-        if (streak === 0) {
-            riskValue.textContent  = "—";
-            riskReason.textContent = "Start your first habit";
+        const todayStr = getTodayString();
+        const contextData = JSON.parse(localStorage.getItem("dailyContext")) || {};
+        const todayContext = contextData[todayStr] || {};
+        
+        const stats = getLevelForDate(todayStr, true);
+        const completionRate = stats.total > 0 ? (stats.count / stats.total) : 1;
+        
+        // Logical rule-based risk calculation
+        // Factors: Completion Rate (0-1), Mood (1-5), Time Loss (0-10), Rest Day (bool)
+        const mood = todayContext.mood || 3;
+        const timeLoss = todayContext.timeLoss || 0;
+        const isRestDay = todayContext.restDay || false;
+
+        // Calculation: baseline risk is inverse of completion
+        let riskScore = (1 - completionRate) * 50; 
+        riskScore += (6 - mood) * 10; // Low mood adds risk
+        riskScore += timeLoss * 2;   // Interference adds risk
+        
+        if (isRestDay) riskScore -= 30; // Rest day dramatically lowers pressure/risk
+
+        if (riskScore < 30) {
+            riskValue.textContent  = "Low";
+            riskReason.textContent = "Stable momentum. Keep going.";
             riskCard.classList.remove("warning");
-        } else if (streak >= 7 && streak <= 10) {
-            riskValue.textContent  = "High";
-            riskReason.textContent = `Day ${streak} — historically risky. Check in today.`;
-            riskCard.classList.add("warning");
-        } else if (streak >= 3 && streak <= 6) {
+        } else if (riskScore < 60) {
             riskValue.textContent  = "Medium";
-            riskReason.textContent = "Building momentum. Stay consistent.";
+            riskReason.textContent = "Slight turbulence. Stay focused.";
             riskCard.classList.remove("warning");
         } else {
-            riskValue.textContent  = "Low";
-            riskReason.textContent = "You're in a strong rhythm. 🔥";
-            riskCard.classList.remove("warning");
+            riskValue.textContent  = "High";
+            riskReason.textContent = "Significant drop risk! Prioritize ease.";
+            riskCard.classList.add("warning");
         }
     }
 
@@ -141,22 +162,40 @@ window.initDashboard = function () {
     }
 
     function updateDayStatus() {
-        const today = getTodayString();
+        const todayStr = getTodayString();
         const contextData = JSON.parse(localStorage.getItem("dailyContext")) || {};
         const emojiEl = document.getElementById("day-emoji");
         const labelEl = document.getElementById("day-mood-label");
+        const outlookEl = document.getElementById("day-outlook");
+        const probEl = document.getElementById("day-prob-label");
 
         if (!emojiEl || !labelEl) return;
 
-        if (contextData[today]) {
-            const d = contextData[today];
-            // Use saved values directly for perfect sync
+        if (contextData[todayStr]) {
+            const d = contextData[todayStr];
             emojiEl.textContent = d.moodEmoji || "✨";
             labelEl.textContent = d.moodLabel || "Logged";
+
+            // Dashboard integration for Outlook and Prob
+            if (outlookEl) {
+                const prob = d.probability || 0;
+                let outlook = "Neutral";
+                if (prob > 85) outlook = "Excellent";
+                else if (prob > 70) outlook = "Positive";
+                else if (prob > 40) outlook = "Challenging";
+                else outlook = "Critical";
+                
+                outlookEl.textContent = `Outlook: ${outlook}`;
+            }
+            if (probEl) {
+                probEl.textContent = `Success Prob: ${d.probability || '--'}%`;
+            }
             
         } else {
             emojiEl.textContent = "✨";
             labelEl.textContent = "Not Logged";
+            if (outlookEl) outlookEl.textContent = "Outlook: Neutral";
+            if (probEl) probEl.textContent = "Success Prob: --%";
         }
     }
 
@@ -222,33 +261,51 @@ window.initDashboard = function () {
         listEl.innerHTML = "";
 
         let habits = JSON.parse(localStorage.getItem("habits")) || [];
-        // Only get tasks explicitly assigned to this date (planner output)
-        const dayTasks = habits.filter(h => h.isSystemGenerated && h.targetDate === dateString);
+        
+        // Filter for habits due on this date (Manual OR Planner generated)
+        const dayTasks = habits.filter(h => {
+            if (h.isSystemGenerated) {
+                return h.targetDate === dateString;
+            } else {
+                return typeof isHabitDueOnDate === "function" ? isHabitDueOnDate(h, dateString) : true;
+            }
+        });
 
         if (dayTasks.length === 0) {
-            listEl.innerHTML = "<p style='font-size:0.8rem; color:var(--text-dim);'>No planner tasks for this date.</p>";
+            listEl.innerHTML = "<p style='font-size:0.8rem; color:var(--text-dim); text-align:center; padding:10px;'>No tasks or habits scheduled for this date.</p>";
             return;
         }
 
         dayTasks.forEach(task => {
             const isDone = task.completions.includes(dateString);
             const el = document.createElement("div");
+            el.className = "cal-task-item"; // We can style this or use inline
             el.style.background = "var(--bg-body)";
-            el.style.padding = "8px 10px";
-            el.style.borderRadius = "8px";
+            el.style.padding = "10px";
+            el.style.borderRadius = "10px";
             el.style.fontSize = "0.85rem";
             el.style.display = "flex";
             el.style.justifyContent = "space-between";
             el.style.alignItems = "center";
             el.style.border = "1px solid var(--border-color)";
+            el.style.transition = "all 0.2s ease";
+
+            const typeLabel = task.isSystemGenerated ? '<span style="font-size:0.6rem; color:var(--accent); font-weight:700; text-transform:uppercase;">Planner</span>' : '<span style="font-size:0.6rem; color:var(--text-dim); font-weight:700; text-transform:uppercase;">Habit</span>';
 
             el.innerHTML = `
-                <div style="display:flex; align-items:center; gap:8px;">
-                    <input type="checkbox" style="accent-color:var(--accent); cursor:pointer;" ${isDone ? 'checked' : ''}>
-                    <span style="${isDone ? 'text-decoration:line-through; opacity:0.5' : ''}">${task.name}</span>
+                <div style="display:flex; flex-direction:column; gap:2px; flex:1;">
+                    ${typeLabel}
+                    <div style="display:flex; align-items:center; gap:8px;">
+                        <input type="checkbox" style="width:16px; height:16px; accent-color:var(--accent); cursor:pointer;" ${isDone ? 'checked' : ''}>
+                        <span style="${isDone ? 'text-decoration:line-through; opacity:0.5' : ''}">${task.name}</span>
+                    </div>
                 </div>
-                <button title="Delete Task" style="background:none; border:none; color:#ef4444; cursor:pointer;">✕</button>
+                <button title="Delete" style="background:none; border:none; color:var(--text-dim); cursor:pointer; padding:5px; font-size:1.1rem; opacity:0.6 hover:opacity:1;">&times;</button>
             `;
+
+            // Hover effects
+            el.onmouseenter = () => el.style.borderColor = "var(--accent)";
+            el.onmouseleave = () => el.style.borderColor = "var(--border-color)";
 
             // Checkbox logic
             const cb = el.querySelector("input");
@@ -263,17 +320,21 @@ window.initDashboard = function () {
                     }
                     localStorage.setItem("habits", JSON.stringify(habits));
                     renderCalendarTasksPanel(dateString); // re-render panel
+                    // Full Dashboard Refresh to update all metrics (ring, cards, heatmap)
+                    initDashboard();
                 }
             };
 
             // Delete logic
             const delBtn = el.querySelector("button");
             delBtn.onclick = () => {
-                if (confirm("Delete this planner task?")) {
+                const msg = task.isSystemGenerated ? "Delete this planner task?" : `Permanently delete entire habit "${task.name}"?`;
+                if (confirm(msg)) {
                     habits = JSON.parse(localStorage.getItem("habits")) || [];
                     const updated = habits.filter(h => h.id !== task.id);
                     localStorage.setItem("habits", JSON.stringify(updated));
-                    renderCalendarTasksPanel(dateString); // re-render panel
+                    renderCalendarTasksPanel(dateString);
+                    initDashboard();
                 }
             };
 
